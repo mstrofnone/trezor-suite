@@ -73,6 +73,14 @@ export const eslint = [
             'import/no-default-export': 'off',
         },
     },
+
+    // tsdown CLI requires `export default` from its config.
+    {
+        files: ['tsdown.config.ts'],
+        rules: {
+            'import/no-default-export': 'off',
+        },
+    },
 ];
 
 const playwrightEslintRules = {
