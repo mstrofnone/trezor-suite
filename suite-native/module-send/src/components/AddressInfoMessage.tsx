@@ -40,21 +40,20 @@ export const AddressInfoMessage = ({ txId, link, type = 'info' }: AddressInfoMes
                     <Text variant="body-xs" color={color}>
                         <Translation
                             id={txId}
-                            values={
-                                link
-                                    ? {
-                                          link: linkChunk => (
-                                              <Link
-                                                  href={link}
-                                                  label={linkChunk}
-                                                  textVariant="body-xs"
-                                                  isUnderlined
-                                                  textColor={color}
-                                              />
-                                          ),
-                                      }
-                                    : undefined
-                            }
+                            values={{
+                                link: linkChunk =>
+                                    link ? (
+                                        <Link
+                                            href={link}
+                                            label={linkChunk}
+                                            textVariant="body-xs"
+                                            isUnderlined
+                                            textColor={color}
+                                        />
+                                    ) : (
+                                        linkChunk
+                                    ),
+                            }}
                         />
                     </Text>
                 </Box>

@@ -86,18 +86,14 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
         [],
     );
 
-    // bech32 and CashAddr addresses are valid as uppercase but are not accepted by Trezor.
-    // BCH addresses are also valid without the `bitcoincash:` prefix but Trezor requires it.
-    // Mirror desktop behavior by silently autocorrecting these instead of rejecting the input.
+    // Mirror desktop behavior by silently autocorrecting addresses that Trezor would otherwise
+    // reject: bech32/CashAddr addresses must be lowercase, and BCH addresses must include the
+    // `bitcoincash:` prefix.
     const autocorrectAddress = (newValue: string): string => {
-        if (!symbol) return newValue;
-
         if (isBitcoinCashAddressUppercase(newValue) || isBech32AddressUppercase(newValue)) {
-            const lowercased = newValue.toLowerCase();
-            setValue(addressFieldName, lowercased, { shouldValidate: true });
             showAutocorrectMessage('moduleSend.outputs.recipients.address.convertedToLowercase');
 
-            return lowercased;
+            return newValue.toLowerCase();
         }
 
         if (
@@ -105,11 +101,9 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
             !hasBitcoinCashAddressPrefix(newValue) &&
             isAddressValid(`bitcoincash:${newValue}`, symbol)
         ) {
-            const prefixed = `bitcoincash:${newValue}`;
-            setValue(addressFieldName, prefixed, { shouldValidate: true });
             showAutocorrectMessage('moduleSend.outputs.recipients.address.addedBitcoincashPrefix');
 
-            return prefixed;
+            return `bitcoincash:${newValue}`;
         }
 
         return newValue;
@@ -142,9 +136,7 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
         }
 
         const corrected = autocorrectAddress(qrCodeData);
-        if (corrected === qrCodeData) {
-            setValue(addressFieldName, qrCodeData, { shouldValidate: true });
-        }
+        setValue(addressFieldName, corrected, { shouldValidate: true });
         if (symbol && isAddressValid(corrected, symbol)) {
             analytics.report({
                 type: events.sendAddressFilledEvent.name,
@@ -155,6 +147,9 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
 
     const handleChangeValue = (newValue: string) => {
         const corrected = autocorrectAddress(newValue);
+        if (corrected !== newValue) {
+            setValue(addressFieldName, corrected, { shouldValidate: true });
+        }
         if (symbol && isAddressValid(corrected, symbol)) {
             analytics.report({
                 type: events.sendAddressFilledEvent.name,
