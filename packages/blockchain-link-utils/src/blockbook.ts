@@ -272,6 +272,23 @@ export const transformTransaction = (
         type = 'unknown';
         amount = tx.value;
         targets = [];
+        // [btc-unknown-tx-debug] tx classified as 'unknown' because no inputs nor outputs match `myAddresses`.
+        // Possible causes: blockbook returned vin/vout without `addresses`, account.addresses missing the
+        // path used in the tx (gap-limit / coinjoin / taproot edge cases), or addressesOrDescriptor was
+        // not provided. See packages/connect/src/api/bitcoin/createPendingTx.ts for the pre-broadcast path.
+        // Intentionally no txid / addresses / descriptor: these reach Sentry and could deanonymize the user.
+        console.error('[btc-unknown-tx-debug] transformTransaction → type=unknown', {
+            isPending: !tx.blockHeight || tx.blockHeight <= 0,
+            myAddressesCount: myAddresses.length,
+            vinCount: inputs.length,
+            voutCount: outputs.length,
+            vinWithAddressesCount: inputs.filter(
+                v => Array.isArray(v.addresses) && v.addresses.length > 0,
+            ).length,
+            voutWithAddressesCount: outputs.filter(
+                v => Array.isArray(v.addresses) && v.addresses.length > 0,
+            ).length,
+        });
     }
 
     type = isTxFailed(tx) ? 'failed' : type;

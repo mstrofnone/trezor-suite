@@ -174,6 +174,23 @@ export const addFakePendingTxThunk = createThunk(
                     signedTransaction,
                     affectedAccount.addresses ?? affectedAccount.descriptor,
                 );
+                if (affectedAccountTransaction.type === 'unknown') {
+                    // [btc-unknown-tx-debug] the just-signed BTC tx was classified as 'unknown' before
+                    // even reaching the backend. The user will see "Unknown transaction" in the list
+                    // until the backend response replaces this entry. Root cause is upstream — see logs
+                    // from packages/connect/src/api/bitcoin/createPendingTx.ts and
+                    // packages/blockchain-link-utils/src/blockbook.ts (transformTransaction unknown branch).
+                    // Intentionally no txid / accountKey / descriptor: these reach Sentry and could
+                    // deanonymize the user. accountType + symbol are kept (low-cardinality, non-PII).
+                    console.error(
+                        '[btc-unknown-tx-debug] addFakePendingTxThunk → prepending tx has type=unknown',
+                        {
+                            accountType: affectedAccount.accountType,
+                            symbol: affectedAccount.symbol,
+                            hasAddresses: Boolean(affectedAccount.addresses),
+                        },
+                    );
+                }
                 const prependingTx = { ...affectedAccountTransaction, deadline: blockHeight + 2 };
                 dispatch(
                     transactionsActions.addTransaction({
