@@ -182,12 +182,19 @@ export const addFakePendingTxThunk = createThunk(
                     // packages/blockchain-link-utils/src/blockbook.ts (transformTransaction unknown branch).
                     // Intentionally no txid / accountKey / descriptor: these reach Sentry and could
                     // deanonymize the user. accountType + symbol are kept (low-cardinality, non-PII).
+                    // Per-bucket address counts help distinguish a stale-snapshot race (one bucket
+                    // suspiciously low / mid-update) from an empty-rehydration race on suite-native
+                    // (all three zero → store rehydration from MMKV had not completed yet — see
+                    // suite-native/storage/src/StorageProvider.tsx PersistGate diagnostics).
                     console.error(
                         '[btc-unknown-tx-debug] addFakePendingTxThunk → prepending tx has type=unknown',
                         {
                             accountType: affectedAccount.accountType,
                             symbol: affectedAccount.symbol,
                             hasAddresses: Boolean(affectedAccount.addresses),
+                            unusedCount: affectedAccount.addresses?.unused.length ?? 0,
+                            usedCount: affectedAccount.addresses?.used.length ?? 0,
+                            changeCount: affectedAccount.addresses?.change.length ?? 0,
                         },
                     );
                 }
