@@ -25,7 +25,7 @@ const deviceStaticSessionId = 'wallet-1@device:0';
 const account = mockWalletAccount({
     symbol: 'btc',
     deviceState: deviceStaticSessionId,
-    descriptor: asAccountDescriptor('account-1'),
+    descriptor: asAccountDescriptor('account1'),
 });
 
 const createDeps = ({
@@ -40,7 +40,7 @@ const createDeps = ({
     const otherWalletAccount = mockWalletAccount({
         symbol: 'btc',
         deviceState: 'wallet-2@device:0',
-        descriptor: asAccountDescriptor('account-2'),
+        descriptor: asAccountDescriptor('account2'),
     });
 
     return createMockDeps<DangerouslyWipeAllLabelsFromWalletDeps>({

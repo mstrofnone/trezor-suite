@@ -26,7 +26,7 @@ describe('AccountLabel', () => {
         deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
 
         accountType: 'normal',
-        descriptor: asAccountDescriptor('eth1-normal'),
+        descriptor: asAccountDescriptor('eth1normal'),
         visible: true,
     });
 

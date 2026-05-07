@@ -9,7 +9,7 @@ export const btc1NormalAccount = mockWalletAccount({
     accountLabel: 'BTC Account #1',
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
     accountType: 'normal',
-    descriptor: asAccountDescriptor('btc1-normal'),
+    descriptor: asAccountDescriptor('btc1normal'),
     addresses: {
         used: [
             {
@@ -67,7 +67,7 @@ export const btc2legacyAccount = mockWalletAccount({
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
 
     accountType: 'legacy',
-    descriptor: asAccountDescriptor('btc2-legacy'),
+    descriptor: asAccountDescriptor('btc2legacy'),
     addresses: {
         used: [],
         change: [],
@@ -82,7 +82,7 @@ export const eth1NormalAccount = mockWalletAccount({
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
 
     accountType: 'normal',
-    descriptor: asAccountDescriptor('eth1-normal'),
+    descriptor: asAccountDescriptor('eth1normal'),
     visible: true,
 });
 
@@ -91,7 +91,7 @@ export const eth2legacyAccount = mockWalletAccount({
     accountLabel: 'ETH Account #2',
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
     accountType: 'legacy',
-    descriptor: asAccountDescriptor('eth2-legacy'),
+    descriptor: asAccountDescriptor('eth2legacy'),
     visible: true,
 });
 
@@ -100,7 +100,7 @@ export const eth3legacyAccount = mockWalletAccount({
     accountLabel: 'ETH Account #3 HIDDEN',
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
     accountType: 'legacy',
-    descriptor: asAccountDescriptor('eth3-legacy'),
+    descriptor: asAccountDescriptor('eth3legacy'),
     visible: false,
 });
 
@@ -109,7 +109,7 @@ export const sol1normalAccount = mockWalletAccount({
     accountLabel: 'SOL Account #1',
     deviceState: MOCK_ACCOUNT_DEVICE_SESSION_ID,
     accountType: 'normal',
-    descriptor: asAccountDescriptor('sol1-normal'),
+    descriptor: asAccountDescriptor('sol1normal'),
     visible: true,
 });
 

@@ -148,8 +148,15 @@ export const createAccountKey = ({
     accountDescriptor,
     networkSymbol,
     deviceStaticSessionId,
-}: CreateAccountKeyParams): AccountKey =>
-    `${accountDescriptor}-${networkSymbol}-${deviceStaticSessionId}` as AccountKey;
+}: CreateAccountKeyParams): AccountKey => {
+    if (accountDescriptor.includes('-')) {
+        throw new Error(
+            `accountDescriptor must not contain '-' (got: '${accountDescriptor}'); '-' is the AccountKey separator and would break parseAccountKey.`,
+        );
+    }
+
+    return `${accountDescriptor}-${networkSymbol}-${deviceStaticSessionId}` as AccountKey;
+};
 
 /**
  * Descriptor or xpub/zpub/..
