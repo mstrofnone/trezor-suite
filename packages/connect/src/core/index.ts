@@ -6,8 +6,10 @@ import {
     CORE_CALL_CANCEL,
     CORE_EVENT,
     DEVICE,
+    ENABLED_NETWORKS_CHANGED,
     POPUP,
     RESPONSE_EVENT,
+    SET_ENABLED_NETWORKS,
     UI_EVENT,
     UI_REQUEST,
     UI_RESPONSE,
@@ -40,6 +42,7 @@ import type { AbstractMethod } from './AbstractMethod';
 import { getMethod } from './method';
 import { onCallFirmwareUpdate } from './onCallFirmwareUpdate';
 import { dispose as disposeBackend } from '../backend/BlockchainLink';
+import * as enabledNetworksStore from '../data/enabledNetworksStore';
 import { initializeFirmwareConfig } from '../data/firmwareInfo';
 import * as firmwareReleaseStore from '../data/firmwareReleaseStore';
 import * as localFirmwareStore from '../data/localFirmwareStore';
@@ -820,6 +823,18 @@ export class Core extends EventEmitter {
                 settingsStore.update({ transports: message.payload.transports });
                 resetTransports(this.getCoreContext());
                 break;
+
+            case SET_ENABLED_NETWORKS: {
+                const { canonical, changed } = enabledNetworksStore.set(message.payload);
+                if (changed) {
+                    this.sendCoreMessage({
+                        event: ENABLED_NETWORKS_CHANGED,
+                        type: ENABLED_NETWORKS_CHANGED,
+                        payload: canonical,
+                    });
+                }
+                break;
+            }
 
             case TRANSPORT.REQUEST_DEVICE:
                 /**
