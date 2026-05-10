@@ -6,7 +6,6 @@
 // - `BufferWritter.writeUInt64` is accepting string or number.
 
 import BN from 'bn.js';
-import { Int64LE } from 'int64-buffer';
 import pushdata from 'pushdata-bitcoin';
 import * as varuint from 'varuint-bitcoin';
 
@@ -69,20 +68,16 @@ export function writeUInt64LEasString(buffer: Buffer, value: string | number, of
     if (typeof value !== 'string') {
         return writeUInt64LE(buffer, value, offset);
     }
-    const v = new Int64LE(value);
-    v.toBuffer().copy(buffer, offset);
 
-    return offset + 8;
+    if (value.trim() === '') {
+        throw new Error('cannot write an empty string as a number');
+    }
+
+    return buffer.writeBigUInt64LE(BigInt(value), offset);
 }
 
 export function writeInt64LE(buffer: Buffer, value: number, offset: number) {
-    const v = new Int64LE(value);
-    const a = v.toArray();
-    for (let i = 0; i < 8; i++) {
-        buffer.writeUInt8(a[i], offset + i);
-    }
-
-    return offset + 8;
+    return buffer.writeBigInt64LE(BigInt(value), offset);
 }
 
 export function readVarInt(buffer: Buffer, offset: number) {
