@@ -20,14 +20,18 @@ describe('keepSession common param', () => {
         TrezorConnect.dispose();
     });
 
-    conditionalTest(['1', '<2.3.2'], 'keepSession with changing useCardanoDerivation', async () => {
+    conditionalTest(['1', '<2.3.2'], 'keepSession with toggled enabled networks', async () => {
         TrezorConnect.on('ui-request_passphrase', () => {
             TrezorConnect.uiResponse({ type: 'ui-receive_passphrase', payload: { value: 'a' } });
         });
 
-        const noDerivation = await TrezorConnect.cardanoGetPublicKey({
+        // Disable cardano-derivation by removing 'ada' from the runtime set; common.setup
+        // enabled it for the whole suite. getAccountDescriptor on a Cardano path now goes
+        // through a non-cardano session and is expected to fail.
+        await TrezorConnect.setEnabledNetworks([]);
+        const noDerivation = await TrezorConnect.getAccountDescriptor({
+            coin: 'ada',
             path: "m/1852'/1815'/0'/0/0",
-            useCardanoDerivation: false,
             keepSession: true,
         });
         if (noDerivation.success) throw new Error('noDerivation should not succeed');
@@ -35,13 +39,15 @@ describe('keepSession common param', () => {
             'Cardano derivation is not enabled for this session',
         );
 
-        const enableDerivation = await TrezorConnect.cardanoGetPublicKey({
+        // Re-enable. The next call forces a session re-create with derive_cardano.
+        await TrezorConnect.setEnabledNetworks(['ada']);
+        const enableDerivation = await TrezorConnect.getAccountDescriptor({
+            coin: 'ada',
             path: "m/1852'/1815'/0'/0/0",
-            useCardanoDerivation: true,
             keepSession: true,
         });
         if (!enableDerivation.success) throw new Error(enableDerivation.error.message);
-        expect(enableDerivation.payload.publicKey).toBeDefined();
+        expect(enableDerivation.payload.descriptor).toBeDefined();
 
         const { device } = enableDerivation;
         if (!device || !device.state) throw new Error('Device not found');
@@ -54,7 +60,8 @@ describe('keepSession common param', () => {
             ':0',
             ':1',
         ) as StaticSessionId;
-        const keepCardanoDerivation = await TrezorConnect.cardanoGetPublicKey({
+        const keepCardanoDerivation = await TrezorConnect.getAccountDescriptor({
+            coin: 'ada',
             path: "m/1852'/1815'/0'/0/0",
             device: {
                 // change instance to new but use already initialized state
@@ -65,9 +72,11 @@ describe('keepSession common param', () => {
                 },
                 path: device.path,
             },
-            // useCardanoDerivation: true, // NOTE: not required, its in the state
+            // 'ada' stays in the runtime set; derive_cardano is preserved in the session.
         });
         if (!keepCardanoDerivation.success) throw new Error(keepCardanoDerivation.error.message);
-        expect(keepCardanoDerivation.payload.publicKey).toEqual(enableDerivation.payload.publicKey);
+        expect(keepCardanoDerivation.payload.descriptor).toEqual(
+            enableDerivation.payload.descriptor,
+        );
     });
 });

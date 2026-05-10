@@ -8,6 +8,8 @@ export const blacklist: ConnectWebKey[] = [
     'off',
     'removeAllListeners',
     'uiResponse',
+    'setEnabledNetworks',
+    'getEnabledNetworks',
     'blockchainGetAccountBalanceHistory',
     'blockchainGetInfo',
     'blockchainGetCurrentFiatRates',

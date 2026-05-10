@@ -18,6 +18,7 @@ import type { Capability } from '@trezor/protobuf/src/definitions';
 import { isNotUndefined, isUUID, versionUtils } from '@trezor/utils';
 
 import { DEFAULT_FIRMWARE_RANGE, getFirmwareRange } from '../api/common/paramsValidator';
+import * as enabledNetworksStore from '../data/enabledNetworksStore';
 import type { Device } from '../device/Device';
 import type { UiPromiseCreator } from '../events/ui-promise';
 
@@ -169,11 +170,11 @@ export abstract class AbstractMethod<Name extends CallMethodPayload['method'], P
         this.useDevice = true;
         this.useDeviceState = true;
         this.useUi = true;
-        // should derive cardano seed? respect provided option or fall back to do it only when cardano method is called
+        // should derive cardano seed? on for any cardano* method, or when the application has
+        // declared 'ada' in its enabled networks set via TrezorConnect.setEnabledNetworks.
+        // No per-call escape hatch; useCardanoDerivation is no longer part of CommonParams.
         this.useCardanoDerivation =
-            typeof payload.useCardanoDerivation === 'boolean'
-                ? payload.useCardanoDerivation
-                : payload.method.startsWith('cardano');
+            payload.method.startsWith('cardano') || enabledNetworksStore.has('ada');
         this.confirmMissingBackup = false;
     }
 

@@ -84,7 +84,6 @@ describe(`TrezorConnect.discoverAccounts`, () => {
                 { symbol: 'ada' },
                 { symbol: 'xrp' },
             ],
-            useCardanoDerivation: true,
         });
 
         TrezorConnect.off(UI_REQUEST.BUNDLE_PROGRESS, onBundleProgress);

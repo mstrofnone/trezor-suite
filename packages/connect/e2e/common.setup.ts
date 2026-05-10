@@ -259,6 +259,11 @@ export const initTrezorConnect = async (
         },
         ...options,
     });
+
+    // Enable 'ada' so non-cardano methods called with Cardano paths (getAccountInfo,
+    // discoverAccounts, …) get a Cardano-aware session. cardano* methods auto-on
+    // regardless. Specific tests can override with their own setEnabledNetworks call.
+    await TrezorConnect.setEnabledNetworks(['ada']);
 };
 
 // skipping tests rules:

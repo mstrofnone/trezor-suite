@@ -14,12 +14,18 @@ import {
 import { createThunk } from '@suite-common/redux-utils';
 import { type TrezorDevice } from '@suite-common/suite-types';
 import { getBrowserName } from '@suite-common/suite-utils';
-import { deviceConnectThunks, selectEnabledNetworks } from '@suite-common/wallet-core';
+import { type NetworkSymbol } from '@suite-common/wallet-config';
+import {
+    changeNetworks,
+    deviceConnectThunks,
+    selectEnabledNetworks,
+} from '@suite-common/wallet-core';
 import TrezorConnect, {
     BLOCKCHAIN_EVENT,
     DEVICE,
     DEVICE_EVENT,
     type Device,
+    ENABLED_NETWORKS_CHANGED,
     TRANSPORT_EVENT,
     UI_EVENT,
     UI_REQUEST,
@@ -58,7 +64,6 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             services: { connectInitSettings, analytics },
         } = extra;
 
-        const getEnabledNetworks = () => selectEnabledNetworks(getState());
         const getEffectiveFirmwareChannel = selectEffectiveFirmwareChannel(
             extra.selectors.selectAllowPrerelease,
         );
@@ -146,6 +151,13 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             dispatch(action);
         });
 
+        // Connect-as-runtime-SoT for enabledNetworks: any time Connect's internal set
+        // changes (most often after our own setEnabledNetworks push below) it broadcasts
+        // the canonical post-validation list. Suite Redux mirrors via this listener.
+        TrezorConnect.on(ENABLED_NETWORKS_CHANGED, networks => {
+            dispatch(changeNetworks(networks as NetworkSymbol[]));
+        });
+
         const synchronize = getSynchronize();
 
         Object.keys(TrezorConnect)
@@ -157,17 +169,7 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
                 (TrezorConnect[key as ConnectKey] as any) = async (params: any) => {
                     dispatch(lockDevice(true));
 
-                    // cardano patch
-                    const enabledNetworks = getEnabledNetworks();
-                    const isCardanoMethod =
-                        key === 'call'
-                            ? params.method.startsWith('cardano')
-                            : key.startsWith('cardano');
-                    const cardanoEnabled = enabledNetworks.includes('ada') || isCardanoMethod;
-
-                    const result = await synchronize(() =>
-                        original({ ...params, useCardanoDerivation: cardanoEnabled }),
-                    );
+                    const result = await synchronize(() => original(params));
 
                     dispatch(lockDevice(false));
                     dispatch(
@@ -212,6 +214,11 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
                 firmwareHashCheckTimeouts,
                 firmwareChannel: getEffectiveFirmwareChannel(getState()),
             });
+
+            // Push the suite-storage-hydrated set into Connect. Connect responds with the
+            // canonical post-validation list via 'enabled-networks-changed', which the
+            // listener registered above writes back into Redux.
+            await TrezorConnect.setEnabledNetworks(selectEnabledNetworks(getState()));
         } catch (error) {
             let formattedError: string;
             if (typeof error === 'string') {
