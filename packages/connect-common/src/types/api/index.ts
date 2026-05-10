@@ -51,6 +51,7 @@ import type { getAccountInfo } from './getAccountInfo';
 import type { getAddress } from './getAddress';
 import type { getCoinInfo } from './getCoinInfo';
 import type { getDeviceState } from './getDeviceState';
+import type { getEnabledNetworks } from './getEnabledNetworks';
 import type { getFeatures } from './getFeatures';
 import type { getFirmwareHash } from './getFirmwareHash';
 import type { getNonce } from './getNonce';
@@ -75,6 +76,7 @@ import type { rippleGetAddress } from './rippleGetAddress';
 import type { rippleSignTransaction } from './rippleSignTransaction';
 import type { setBrightness } from './setBrightness';
 import type { setBusy } from './setBusy';
+import type { setEnabledNetworks } from './setEnabledNetworks';
 import type { showDeviceTutorial } from './showDeviceTutorial';
 import type { signMessage } from './signMessage';
 import type { signTransaction } from './signTransaction';
@@ -121,6 +123,14 @@ export const TrezorConnectManagement = Type.Object({
 
     // For internal use, no public documentation.
     updateConnectSettings: Type.Unsafe<typeof updateConnectSettings>(),
+
+    // Declare which networks the app has enabled — drives session-level
+    // derivation flags (today: 'ada' triggers `derive_cardano`).
+    // Canonical post-validation set arrives back via 'enabled-networks-changed'.
+    setEnabledNetworks: Type.Unsafe<typeof setEnabledNetworks>(),
+
+    // Read the current canonical set held in Connect core.
+    getEnabledNetworks: Type.Unsafe<typeof getEnabledNetworks>(),
 });
 export type TrezorConnectManagement = Static<typeof TrezorConnectManagement>;
 

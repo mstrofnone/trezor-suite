@@ -16,6 +16,8 @@ const TrezorConnect = factory({
     init: dummy('init'),
     call: dummy('call'),
     updateConnectSettings: dummy('updateConnectSettings'),
+    setEnabledNetworks: dummy('setEnabledNetworks'),
+    getEnabledNetworks: dummy('getEnabledNetworks'),
     uiResponse: dummy('uiResponse'),
     cancel: dummy('cancel'),
     dispose: dummy('dispose'),

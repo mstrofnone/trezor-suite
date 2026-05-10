@@ -7,6 +7,7 @@ import {
     createErrorMessage,
 } from '@trezor/connect-common/src/events';
 import type { ConnectImpl, ConnectImplSettings } from '@trezor/connect-common/src/impl/dynamic';
+import type { SetEnabledNetworks } from '@trezor/connect-common/src/types/api/setEnabledNetworks';
 import { type Log, initLog } from '@trezor/connect-common/src/utils/debug';
 
 import { getEnv } from '../connectSettings';
@@ -30,6 +31,21 @@ export class CoreInSuiteWeb implements ConnectImpl {
 
     public dispose() {
         return Promise.resolve(undefined);
+    }
+
+    public setEnabledNetworks(_networks: SetEnabledNetworks) {
+        return Promise.resolve(
+            createErrorMessage(
+                ERRORS.TypedError(
+                    'Method_InvalidPackage',
+                    'setEnabledNetworks is not supported in this implementation yet',
+                ),
+            ),
+        );
+    }
+
+    public getEnabledNetworks() {
+        return Promise.resolve([] as string[]);
     }
 
     public cancel(reason?: string) {

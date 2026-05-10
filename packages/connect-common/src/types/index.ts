@@ -59,6 +59,7 @@ export {
 } from './api/discoverAccounts';
 export { type FirmwareUpdateResponse } from './api/firmwareUpdate';
 export { type UpdateConnectSettings } from './api/updateConnectSettings';
+export { type SetEnabledNetworks } from './api/setEnabledNetworks';
 export { GetOwnershipId } from './api/getOwnershipId';
 export { GetOwnershipProof } from './api/getOwnershipProof';
 export { PushTransaction } from './api/pushTransaction';

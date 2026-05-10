@@ -5,8 +5,10 @@ import {
     type CallMethodAnyResponse,
     type CallMethodPayload,
     POPUP,
+    createErrorMessage,
 } from '@trezor/connect-common/src/events';
 import type { ConnectImpl, ConnectImplSettings } from '@trezor/connect-common/src/impl/dynamic';
+import type { SetEnabledNetworks } from '@trezor/connect-common/src/types/api/setEnabledNetworks';
 import type { Manifest } from '@trezor/connect-common/src/types/settings';
 import { WebsocketClient, WebsocketError } from '@trezor/websocket-client';
 
@@ -29,6 +31,21 @@ export class CoreInSuiteDesktop implements ConnectImpl {
         this.ws.dispose();
 
         return Promise.resolve(undefined);
+    }
+
+    public setEnabledNetworks(_networks: SetEnabledNetworks) {
+        return Promise.resolve(
+            createErrorMessage(
+                ERRORS.TypedError(
+                    'Method_InvalidPackage',
+                    'setEnabledNetworks is not supported in this implementation yet',
+                ),
+            ),
+        );
+    }
+
+    public getEnabledNetworks() {
+        return Promise.resolve([] as string[]);
     }
 
     public cancel(reason?: string) {

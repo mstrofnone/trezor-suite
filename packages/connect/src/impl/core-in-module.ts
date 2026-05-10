@@ -3,6 +3,8 @@ import {
     CORE_CALL,
     CORE_CALL_CANCEL,
     DEVICE_EVENT,
+    ENABLED_NETWORKS_CHANGED,
+    POPUP,
     RESPONSE_EVENT,
     TRANSPORT_EVENT,
     UI_EVENT,
@@ -17,6 +19,7 @@ import type {
     CoreEventMessage,
     CoreRequestMessage,
     MethodResponseMessage,
+    SetEnabledNetworks,
     UiResponseEvent,
     UpdateConnectSettings,
 } from '@trezor/connect-common';
@@ -36,6 +39,7 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
     private coreManager;
     private log;
     private messagePromises;
+    private enabledNetworks: string[] = [];
 
     private readonly boundOnCoreEvent = this.onCoreEvent.bind(this);
 
@@ -144,6 +148,25 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
         }
 
         return { success: true as const, payload: { message: 'success' } } as const;
+    }
+
+    public async setEnabledNetworks(networks: SetEnabledNetworks) {
+        const next = [...new Set(networks)];
+        const prev = this.enabledNetworks;
+        const changed =
+            next.length !== prev.length || next.some((symbol, idx) => symbol !== prev[idx]);
+
+        this.enabledNetworks = next;
+
+        if (changed) {
+            this.eventEmitter.emit(ENABLED_NETWORKS_CHANGED, next);
+        }
+
+        return { success: true as const, payload: { message: 'success' } } as const;
+    }
+
+    public async getEnabledNetworks() {
+        return [...this.enabledNetworks];
     }
 
     public async call(params: CallMethodPayload) {

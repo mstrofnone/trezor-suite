@@ -30,6 +30,8 @@ const TrezorConnect = factory(
         init: impl.init.bind(impl),
         call: impl.call.bind(impl),
         updateConnectSettings: impl.updateConnectSettings.bind(impl),
+        setEnabledNetworks: impl.setEnabledNetworks.bind(impl),
+        getEnabledNetworks: impl.getEnabledNetworks.bind(impl),
         uiResponse: impl.uiResponse.bind(impl),
         cancel: impl.cancel.bind(impl),
         dispose: impl.dispose.bind(impl),

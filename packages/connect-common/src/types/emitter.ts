@@ -7,6 +7,7 @@ import type {
     BlockchainEventMessage,
 } from '../events/blockchain';
 import type { DEVICE_EVENT, DeviceEvent, DeviceEventMessage } from '../events/device';
+import type { ENABLED_NETWORKS_CHANGED } from '../events/management';
 import type { PopupEvent, PopupEventMessage } from '../events/popup';
 import type { TRANSPORT_EVENT, TransportEvent, TransportEventMessage } from '../events/transport';
 import type { UI_EVENT, UiEvent, UiEventMessage } from '../events/ui-request';
@@ -20,6 +21,7 @@ type ConnectEventMap = {
     [TRANSPORT_EVENT]: TransportEventMessage;
     [BLOCKCHAIN_EVENT]: BlockchainEventMessage;
     [UI_EVENT]: UiEventMessage | PopupEventMessage;
+    [ENABLED_NETWORKS_CHANGED]: string[];
 } & EventPayloadMap<DeviceEvent> &
     EventPayloadMap<TransportEvent> &
     EventPayloadMap<BlockchainEvent> &

@@ -5,6 +5,7 @@ import { parseManifest, parseVersion } from '../data/connectSettings';
 import { type CallMethodPayload, createErrorMessage } from '../events';
 import type { ConnectFactoryDependencies } from '../factory';
 import type { ConnectSettings } from '../types';
+import type { SetEnabledNetworks } from '../types/api/setEnabledNetworks';
 import type { UpdateConnectSettings } from '../types/api/updateConnectSettings';
 import { ConnectEmitter } from '../types/emitter';
 
@@ -125,6 +126,14 @@ export class TrezorConnectDynamic implements ConnectFactoryDependencies<Record<n
                 ),
             ),
         );
+    }
+
+    public setEnabledNetworks(networks: SetEnabledNetworks) {
+        return this.getTarget().setEnabledNetworks(networks);
+    }
+
+    public getEnabledNetworks() {
+        return this.getTarget().getEnabledNetworks();
     }
 
     public async call(params: CallMethodPayload) {

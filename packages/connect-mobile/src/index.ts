@@ -7,7 +7,11 @@ import {
 import { type CallMethodPayload } from '@trezor/connect-common/src/events';
 import { createErrorMessage } from '@trezor/connect-common/src/events';
 import { type ConnectFactoryDependencies, factory } from '@trezor/connect-common/src/factory';
-import { type Manifest, type UpdateConnectSettings } from '@trezor/connect-common/src/types';
+import {
+    type Manifest,
+    type SetEnabledNetworks,
+    type UpdateConnectSettings,
+} from '@trezor/connect-common/src/types';
 import { ConnectEmitter } from '@trezor/connect-common/src/types/emitter';
 import { createDeferredManager, removeTrailingSlashes } from '@trezor/utils';
 
@@ -51,6 +55,14 @@ export class TrezorConnectDeeplink implements ConnectFactoryDependencies<Connect
 
     public updateConnectSettings(_params: UpdateConnectSettings) {
         return Promise.resolve(createErrorMessage(ERRORS.TypedError('Method_InvalidPackage')));
+    }
+
+    public setEnabledNetworks(_networks: SetEnabledNetworks) {
+        return Promise.resolve(createErrorMessage(ERRORS.TypedError('Method_InvalidPackage')));
+    }
+
+    public getEnabledNetworks() {
+        return Promise.resolve([] as string[]);
     }
 
     private openDeeplink: (method: string, id: string, params: any) => void = () => {
@@ -181,6 +193,8 @@ const TrezorConnect = factory<ConnectSettingsMobile, { handleDeeplink: (url: str
         call: impl.call.bind(impl),
         uiResponse: impl.uiResponse.bind(impl),
         updateConnectSettings: impl.updateConnectSettings.bind(impl),
+        setEnabledNetworks: impl.setEnabledNetworks.bind(impl),
+        getEnabledNetworks: impl.getEnabledNetworks.bind(impl),
         cancel: impl.cancel.bind(impl),
         dispose: impl.dispose.bind(impl),
     },
