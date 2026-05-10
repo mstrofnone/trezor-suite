@@ -78,6 +78,8 @@ describe('__info common param', () => {
                     'bleUnpair',
                     'firmwareUpdate', // todo: this should probably work with __info param as well
                     'updateConnectSettings',
+                    'setEnabledNetworks',
+                    'getEnabledNetworks',
                 ].includes(method)
             ) {
                 return;

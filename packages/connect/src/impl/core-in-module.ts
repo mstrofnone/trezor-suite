@@ -150,7 +150,7 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
         return { success: true as const, payload: { message: 'success' } } as const;
     }
 
-    public async setEnabledNetworks(networks: SetEnabledNetworks) {
+    public setEnabledNetworks(networks: SetEnabledNetworks) {
         const next = [...new Set(networks)];
         const prev = this.enabledNetworks;
         const changed =
@@ -162,11 +162,14 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
             this.eventEmitter.emit(ENABLED_NETWORKS_CHANGED, next);
         }
 
-        return { success: true as const, payload: { message: 'success' } } as const;
+        return Promise.resolve({
+            success: true as const,
+            payload: { message: 'success' },
+        } as const);
     }
 
-    public async getEnabledNetworks() {
-        return [...this.enabledNetworks];
+    public getEnabledNetworks() {
+        return Promise.resolve([...this.enabledNetworks]);
     }
 
     public async call(params: CallMethodPayload) {
