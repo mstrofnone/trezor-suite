@@ -627,7 +627,7 @@ export const allowReferers =
         }
     };
 
-export const parseBodyTextHelper = (request: Request) =>
+const parseBodyTextHelper = (request: Request) =>
     new Promise<string>(resolve => {
         const hasData =
             (request.headers['content-length'] &&
