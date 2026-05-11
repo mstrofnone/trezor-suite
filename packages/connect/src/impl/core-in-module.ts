@@ -106,6 +106,10 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
                 break;
 
             case ENABLED_NETWORKS_CHANGED:
+                // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+                console.log('[enabled-networks/connect-onCoreEvent] received, relaying', {
+                    payload,
+                });
                 this.enabledNetworksCache = [...payload];
                 this.eventEmitter.emit(ENABLED_NETWORKS_CHANGED, payload);
                 break;
@@ -157,6 +161,10 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
     }
 
     public setEnabledNetworks(networks: SetEnabledNetworks) {
+        // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+        console.log('[enabled-networks/connect-setter] setEnabledNetworks forward → core', {
+            networks,
+        });
         try {
             this.handleCoreMessage({ type: SET_ENABLED_NETWORKS, payload: networks });
         } catch (err) {
@@ -170,6 +178,11 @@ export abstract class CoreInModule implements ConnectFactoryDependencies<Connect
     }
 
     public getEnabledNetworks() {
+        // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+        console.log('[enabled-networks/connect-getter] getEnabledNetworks (from cache)', {
+            cache: this.enabledNetworksCache,
+        });
+
         return Promise.resolve([...this.enabledNetworksCache]);
     }
 

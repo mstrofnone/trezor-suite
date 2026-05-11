@@ -164,6 +164,12 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             const same =
                 currentSet.size === incomingSet.size &&
                 [...incomingSet].every(symbol => currentSet.has(symbol));
+            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+            console.log('[enabled-networks/suite-listener] enabled-networks-changed', {
+                incoming,
+                current,
+                action: same ? 'no-op (de-dup)' : 'dispatch changeNetworks',
+            });
             if (!same) {
                 dispatch(changeNetworks(incoming));
             }
@@ -229,7 +235,12 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             // Push the suite-storage-hydrated set into Connect. Connect responds with the
             // canonical post-validation list via 'enabled-networks-changed', which the
             // listener registered above writes back into Redux.
-            await TrezorConnect.setEnabledNetworks(selectEnabledNetworks(getState()));
+            const hydrated = selectEnabledNetworks(getState());
+            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+            console.log('[enabled-networks/suite-init] boot push setEnabledNetworks', {
+                hydrated,
+            });
+            await TrezorConnect.setEnabledNetworks(hydrated);
         } catch (error) {
             let formattedError: string;
             if (typeof error === 'string') {

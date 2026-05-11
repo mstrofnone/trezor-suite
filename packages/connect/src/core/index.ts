@@ -826,6 +826,12 @@ export class Core extends EventEmitter {
 
             case SET_ENABLED_NETWORKS: {
                 const { canonical, changed } = enabledNetworksStore.set(message.payload);
+                // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+                console.log('[enabled-networks/connect-core] SET_ENABLED_NETWORKS handled', {
+                    incoming: message.payload,
+                    canonical,
+                    changed,
+                });
                 if (changed) {
                     this.sendCoreMessage({
                         event: ENABLED_NETWORKS_CHANGED,

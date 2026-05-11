@@ -25,6 +25,12 @@ export const changeCoinVisibility = createThunk<
     } else if (!isAlreadyHidden) {
         enabledNetworks = [...enabledNetworks, symbol];
     }
+    // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+    console.log('[enabled-networks/suite-thunk] changeCoinVisibility', {
+        symbol,
+        shouldBeVisible,
+        next: enabledNetworks,
+    });
     // Suite Redux mirrors Connect; we dispatch directly so the rest of this thunk (and any
     // middleware reactions) see the new state synchronously. The setter notifies Connect;
     // the connect-init listener no-ops on the echoed event because the set already matches.

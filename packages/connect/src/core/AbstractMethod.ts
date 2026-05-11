@@ -175,6 +175,15 @@ export abstract class AbstractMethod<Name extends CallMethodPayload['method'], P
         // No per-call escape hatch; useCardanoDerivation is no longer part of CommonParams.
         this.useCardanoDerivation =
             payload.method.startsWith('cardano') || enabledNetworksStore.has('ada');
+        if (this.useCardanoDerivation) {
+            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+            console.log('[enabled-networks/connect-resolver] useCardanoDerivation', {
+                method: payload.method,
+                cardanoMethod: payload.method.startsWith('cardano'),
+                hasAdaInStore: enabledNetworksStore.has('ada'),
+                resolved: this.useCardanoDerivation,
+            });
+        }
         this.confirmMissingBackup = false;
     }
 
