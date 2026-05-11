@@ -151,28 +151,15 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             dispatch(action);
         });
 
-        // Connect-as-runtime-SoT for enabledNetworks: any time Connect's internal set
-        // changes (boot push, future device-driven mutations) it broadcasts the canonical
-        // post-validation list. Suite Redux mirrors via this listener. We de-dup against
-        // current Redux state because UI-driven toggles dispatch `changeNetworks`
-        // optimistically — the canonical echo arriving here is a no-op in that case.
+        // Connect is the runtime source of truth for enabledNetworks. Every mutation (boot
+        // push, UI toggle, future device-driven changes) reaches Redux through this single
+        // entry point — there is no optimistic dispatch elsewhere.
         TrezorConnect.on(ENABLED_NETWORKS_CHANGED, networks => {
-            const current = selectEnabledNetworks(getState());
-            const incoming = networks as NetworkSymbol[];
-            const currentSet = new Set(current);
-            const incomingSet = new Set(incoming);
-            const same =
-                currentSet.size === incomingSet.size &&
-                [...incomingSet].every(symbol => currentSet.has(symbol));
             // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
             console.log('[enabled-networks/suite-listener] enabled-networks-changed', {
-                incoming,
-                current,
-                action: same ? 'no-op (de-dup)' : 'dispatch changeNetworks',
+                incoming: networks,
             });
-            if (!same) {
-                dispatch(changeNetworks(incoming));
-            }
+            dispatch(changeNetworks(networks as NetworkSymbol[]));
         });
 
         const synchronize = getSynchronize();
