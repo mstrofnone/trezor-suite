@@ -1,5 +1,2 @@
-export const gridAlignItems = ['center', 'start', 'end', 'stretch', 'normal'] as const;
-export const gridJustifyContent = ['center', 'start', 'end', 'stretch', 'normal'] as const;
-
-export type GridAlignItems = (typeof gridAlignItems)[number];
-export type GridJustifyContent = (typeof gridJustifyContent)[number];
+export type GridAlignItems = 'center' | 'start' | 'end' | 'stretch' | 'normal';
+export type GridJustifyContent = 'center' | 'start' | 'end' | 'stretch' | 'normal';
