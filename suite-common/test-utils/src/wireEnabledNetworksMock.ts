@@ -1,5 +1,3 @@
-import TrezorConnect from '@trezor/connect';
-
 interface StoreLike {
     dispatch: (action: any) => unknown;
 }
@@ -20,6 +18,13 @@ export const wireEnabledNetworksMock = (
     // shape is `(payload) => { type, payload }`.
     changeNetworksAction: (networks: any) => any,
 ) => {
+    // Lazy-require — a top-level `import TrezorConnect from '@trezor/connect'` here would
+    // pull the connect-common types (cardano → @trezor/protobuf → @bufbuild/protobuf)
+    // into every consumer of `@suite-common/test-utils`, breaking tests in jsdom envs
+    // that lack the TextEncoder polyfill the runtime protobuf decoder needs.
+
+    const TrezorConnect = require('@trezor/connect').default;
+
     const impl = (networks: string[]) => {
         store.dispatch(changeNetworksAction(networks));
 
@@ -32,5 +37,5 @@ export const wireEnabledNetworksMock = (
     // Some test environments (e.g. wallet-core) don't activate the @trezor/connect auto-mock
     // from `test-utils/__mocks__`. Replace the property unconditionally — works whether the
     // existing function is the real one or a jest.fn.
-    (TrezorConnect as any).setEnabledNetworks = jest.fn(impl);
+    TrezorConnect.setEnabledNetworks = jest.fn(impl);
 };
