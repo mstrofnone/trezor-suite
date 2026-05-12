@@ -23,10 +23,11 @@ export const parseDeviceStaticSessionId = (deviceStaticSessionId: string) => {
         };
     }
 
-    // TODO: drop this fallback in trezor/trezor-suite#27494 (Stage 2), which
-    // migrates the bogus `'foo-bar' as AccountKey` literals scattered across
-    // the test suite to `createAccountKey()` and re-enables the no-hyphen
-    // invariant on the descriptor.
+    // TODO: drop this fallback once the remaining single-segment `'foo' as AccountKey`
+    // literals and bogus `deviceState: 'device-state-2'` strings in coinjoin fixtures
+    // are migrated. The no-hyphen invariants in `createAccountKey` (descriptor +
+    // networkSymbol + deviceStaticSessionId) are now active, so any *new* misuse
+    // fails loudly at the source.
     const [walletDescriptor = '', deviceId = ''] = deviceStaticSessionId.split('@');
 
     return {

@@ -19,8 +19,8 @@ import {
     createDangerouslyWipeAllLabelsFromWallet,
 } from '../createDangerouslyWipeAllLabelsFromWallet';
 
-const walletDescriptor = asWalletDescriptor('wallet-1');
-const deviceStaticSessionId = 'wallet-1@device:0';
+const walletDescriptor = asWalletDescriptor('wallet1');
+const deviceStaticSessionId = 'wallet1@device:0';
 
 const account = mockWalletAccount({
     symbol: 'btc',
@@ -39,7 +39,7 @@ const createDeps = ({
     UpdateOutputLabelDep): DangerouslyWipeAllLabelsFromWalletDeps => {
     const otherWalletAccount = mockWalletAccount({
         symbol: 'btc',
-        deviceState: 'wallet-2@device:0',
+        deviceState: 'wallet2@device:0',
         descriptor: asAccountDescriptor('account2'),
     });
 

@@ -10,10 +10,10 @@ import {
     selectFilteredDeviceAccountsGroupedByNetworkAccountType,
 } from '../selectors';
 
-const SELECTED_WALLET_DESCRIPTOR = asWalletDescriptor('selected-wallet');
-const SELECTED_DEVICE_STATIC_SESSION_ID = 'selected-wallet@device-id:0';
-const OTHER_WALLET_DESCRIPTOR = asWalletDescriptor('other-wallet');
-const OTHER_DEVICE_STATIC_SESSION_ID = 'other-wallet@device-id:0';
+const SELECTED_WALLET_DESCRIPTOR = asWalletDescriptor('selectedWallet');
+const SELECTED_DEVICE_STATIC_SESSION_ID = 'selectedWallet@deviceId:0';
+const OTHER_WALLET_DESCRIPTOR = asWalletDescriptor('otherWallet');
+const OTHER_DEVICE_STATIC_SESSION_ID = 'otherWallet@deviceId:0';
 
 const selectedDevice = mockSuiteDevice({
     id: 'selected-device',

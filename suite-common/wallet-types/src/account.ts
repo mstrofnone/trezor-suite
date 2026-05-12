@@ -154,6 +154,16 @@ export const createAccountKey = ({
             `accountDescriptor must not contain '-' (got: '${accountDescriptor}'); '-' is the AccountKey separator and would break parseAccountKey.`,
         );
     }
+    if (networkSymbol.includes('-')) {
+        throw new Error(
+            `networkSymbol must not contain '-' (got: '${networkSymbol}'); '-' is the AccountKey separator and would break parseAccountKey.`,
+        );
+    }
+    if (deviceStaticSessionId.includes('-')) {
+        throw new Error(
+            `deviceStaticSessionId must not contain '-' (got: '${deviceStaticSessionId}'); '-' is the AccountKey separator and would break parseAccountKey.`,
+        );
+    }
 
     return `${accountDescriptor}-${networkSymbol}-${deviceStaticSessionId}` as AccountKey;
 };
