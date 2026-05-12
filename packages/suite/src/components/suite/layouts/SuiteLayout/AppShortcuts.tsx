@@ -128,6 +128,12 @@ export const AppShortcuts = () => {
             dispatch(goto({ routeName: 'suite-index', params: { modal: 'send' } }));
         }
 
+        // press ALT + R to open receive flow
+        if (altKey && e.code === KEYBOARD_CODE.KEY_R && isDeviceSelected) {
+            e.preventDefault();
+            dispatch(goto({ routeName: 'suite-index', params: { modal: 'receive' } }));
+        }
+
         // press ALT + T to toggle dark/light theme
         if (altKey && !shiftKey && !cmdOrCtrl && e.code === KEYBOARD_CODE.KEY_T) {
             e.preventDefault();
