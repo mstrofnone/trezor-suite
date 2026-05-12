@@ -4,7 +4,7 @@ import { type EnhancedStore } from '@reduxjs/toolkit';
 import type { BuyTrade, CryptoId } from 'invity-api';
 
 import { selectTradingProviderMetadata, tradingBuyActions } from '@suite-common/trading';
-import { type AccountKey, asAccountDescriptor } from '@suite-common/wallet-types';
+import { asAccountDescriptor } from '@suite-common/wallet-types';
 import { Form, useField } from '@suite-native/forms';
 import {
     type TestStore,
@@ -39,9 +39,9 @@ jest.mock('@trezor/react-utils', () => {
     };
 });
 
-const btc1AccountKey = 'btc-account-1' as AccountKey; // Todo: create properly via `createAccountKey()`
-const btc2AccountKey = 'btc-account-2' as AccountKey; // Todo: create properly via `createAccountKey()`
-const btc3AccountKey = 'btc-account-3' as AccountKey; // Todo: create properly via `createAccountKey()`
+const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount1') });
+const btc2Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount2') });
+const btc3Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount3') });
 
 describe('useBuyForm', () => {
     const renderUseTradingBuyForm = (store: TestStore) =>
@@ -49,7 +49,7 @@ describe('useBuyForm', () => {
 
     const getInitializedStore = (amountInSats = false) => {
         const tradingState = getInitializedTradingState();
-        tradingState.buy.tradingAccountKey = btc1AccountKey;
+        tradingState.buy.tradingAccountKey = btc1Account.key;
 
         return createTradingLightStore({
             overrides: {
@@ -61,12 +61,9 @@ describe('useBuyForm', () => {
                             : PROTO.AmountUnit.BITCOIN,
                     },
                     accounts: [
-                        getBtcAccount(btc1AccountKey),
-                        getBtcAccount(btc2AccountKey),
-                        {
-                            ...getBtcAccount(btc3AccountKey),
-                            descriptor: asAccountDescriptor(''),
-                        },
+                        btc1Account,
+                        btc2Account,
+                        { ...btc3Account, descriptor: asAccountDescriptor('') },
                     ],
                 },
             },
@@ -99,11 +96,11 @@ describe('useBuyForm', () => {
         const { result } = renderUseTradingBuyForm(store);
 
         act(() => {
-            store.dispatch(tradingBuyActions.setTradingAccountKey(btc2AccountKey));
+            store.dispatch(tradingBuyActions.setTradingAccountKey(btc2Account.key));
         });
 
         expect(result.current.getValues('receiveAccount')).toEqual({
-            account: expect.objectContaining({ key: btc2AccountKey }),
+            account: expect.objectContaining({ key: btc2Account.key }),
         });
     });
 
@@ -125,12 +122,12 @@ describe('useBuyForm', () => {
         const { result } = renderUseTradingBuyForm(store);
 
         act(() => {
-            store.dispatch(tradingBuyActions.setTradingAccountKey(btc1AccountKey));
+            store.dispatch(tradingBuyActions.setTradingAccountKey(btc1Account.key));
             result.current.setValue('asset', undefined as unknown as TradeableAsset);
         });
 
         expect(result.current.getValues('receiveAccount')).toEqual({
-            account: expect.objectContaining({ key: btc1AccountKey }),
+            account: expect.objectContaining({ key: btc1Account.key }),
         });
     });
 

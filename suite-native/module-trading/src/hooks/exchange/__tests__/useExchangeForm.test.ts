@@ -5,7 +5,7 @@ import {
     selectTradingProviderMetadata,
     tradingExchangeActions,
 } from '@suite-common/trading';
-import { type AccountKey } from '@suite-common/wallet-types';
+import { asAccountDescriptor } from '@suite-common/wallet-types';
 import { events } from '@suite-native/analytics';
 import { type TestStore, act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 import {
@@ -14,6 +14,7 @@ import {
     exchangeCexdirect,
     exchangeQuotes,
     getBtcAccount,
+    getEthAccount,
     invityDexQuote,
     mercuryoFixedBestQuote,
     mercuryoFixedWorstQuote,
@@ -48,7 +49,8 @@ const createPrefetchDexQuoteApprovalThunkMock = (
     return () => result;
 };
 
-const btc1AccountKey = 'btc-account-1' as AccountKey; // Todo: create properly via `createAccountKey()`
+const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btc1normal') });
+const eth1Account = getEthAccount({ descriptor: asAccountDescriptor('eth1normal') });
 
 describe('useExchangeForm', () => {
     let store: TestStore;
@@ -286,16 +288,8 @@ describe('useExchangeForm', () => {
             renderUseExchangeForm();
 
             await act(async () => {
-                store.dispatch(
-                    tradingExchangeActions.setTradingAccountKey(
-                        'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                    ),
-                );
-                store.dispatch(
-                    tradingExchangeActions.setReceiveAccountKey(
-                        'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                    ),
-                );
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(eth1Account.key));
+                store.dispatch(tradingExchangeActions.setReceiveAccountKey(eth1Account.key));
                 store.dispatch(tradingExchangeActions.saveQuotes([dexQuoteWithDexTx]));
                 await Promise.resolve();
             });
@@ -312,16 +306,8 @@ describe('useExchangeForm', () => {
             renderUseExchangeForm();
 
             await act(async () => {
-                store.dispatch(
-                    tradingExchangeActions.setTradingAccountKey(
-                        'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                    ),
-                );
-                store.dispatch(
-                    tradingExchangeActions.setReceiveAccountKey(
-                        'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                    ),
-                );
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(eth1Account.key));
+                store.dispatch(tradingExchangeActions.setReceiveAccountKey(eth1Account.key));
                 store.dispatch(tradingExchangeActions.saveQuotes([dexQuoteWithDexTx]));
                 await Promise.resolve();
                 store.dispatch(
@@ -345,10 +331,10 @@ describe('useExchangeForm', () => {
             const { result } = renderUseExchangeForm();
 
             act(() => {
-                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1Account.key));
             });
 
-            expect(result.current.getValues('sendAccount')).toEqual(getBtcAccount(btc1AccountKey));
+            expect(result.current.getValues('sendAccount')).toEqual(btc1Account);
         });
     });
 
@@ -417,12 +403,12 @@ describe('useExchangeForm', () => {
             const { result } = renderUseExchangeForm();
 
             act(() => {
-                store.dispatch(tradingExchangeActions.setReceiveAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setReceiveAccountKey(btc1Account.key));
             });
 
             expect(result.current.getValues('receiveAccount')).toEqual(
                 expect.objectContaining({
-                    account: getBtcAccount(btc1AccountKey),
+                    account: btc1Account,
                 }),
             );
         });
@@ -467,7 +453,7 @@ describe('useExchangeForm', () => {
 
             act(() => {
                 result.current.setValue('sendAsset', btcAsset);
-                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1Account.key));
                 store.dispatch(
                     tradingExchangeActions.setAmountLimits({
                         minCrypto: '0.0001',
@@ -496,7 +482,7 @@ describe('useExchangeForm', () => {
 
             act(() => {
                 result.current.setValue('sendAsset', btcAsset);
-                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1Account.key));
                 store.dispatch(
                     tradingExchangeActions.setAmountLimits({
                         minCrypto: '0.0001',
@@ -520,7 +506,7 @@ describe('useExchangeForm', () => {
             const { result } = renderUseExchangeForm();
 
             act(() => {
-                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1Account.key));
                 result.current.setValue('sendAsset', btcAsset);
                 result.current.setValue('sendCryptoAmount', '10000');
             });
@@ -539,11 +525,7 @@ describe('useExchangeForm', () => {
             const { result } = renderUseExchangeForm();
 
             act(() => {
-                store.dispatch(
-                    tradingExchangeActions.setTradingAccountKey(
-                        'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                    ),
-                );
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(eth1Account.key));
                 result.current.setValue('sendAsset', usdcAsset);
                 result.current.setValue('sendCryptoAmount', amount);
             });
@@ -558,7 +540,7 @@ describe('useExchangeForm', () => {
         it('should trigger validation once limits are loaded', async () => {
             act(() => {
                 store.dispatch(tradingExchangeActions.setAmountLimits(undefined));
-                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1AccountKey));
+                store.dispatch(tradingExchangeActions.setTradingAccountKey(btc1Account.key));
             });
 
             const { result } = renderUseExchangeForm();

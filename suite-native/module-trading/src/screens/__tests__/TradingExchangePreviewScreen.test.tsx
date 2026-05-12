@@ -1,7 +1,7 @@
 import { type RouteProp } from '@react-navigation/native';
 import type { ExchangeTrade } from 'invity-api';
 
-import { type AccountKey } from '@suite-common/wallet-types';
+import { asAccountDescriptor } from '@suite-common/wallet-types';
 import { events } from '@suite-native/analytics';
 import { getTranslation } from '@suite-native/intl';
 import { type RootStackParamList, RootStackRoutes } from '@suite-native/navigation';
@@ -15,8 +15,12 @@ import {
     createPrecomposedTxFinal,
     exchangeQuotes,
     getBtcAccount,
+    getEthAccount,
     mercuryoFixedWorstQuote,
 } from '@suite-native/trading-fixtures';
+
+const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btc1normal') });
+const eth1Account = getEthAccount({ descriptor: asAccountDescriptor('eth1normal') });
 
 import { createTradingLightStore } from '../../__tests__/tradingTestUtils';
 import {
@@ -89,9 +93,9 @@ const createStore = (quote?: ExchangeTrade) =>
                 trading: {
                     exchange: {
                         quotes: exchangeQuotes,
-                        tradingAccountKey: 'eth-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                        receiveAccountKey: 'btc-account-1' as AccountKey, // Todo: create properly via `createAccountKey()`
-                        receiveAddress: getBtcAccount().addresses?.used[0].address,
+                        tradingAccountKey: eth1Account.key,
+                        receiveAccountKey: btc1Account.key,
+                        receiveAddress: btc1Account.addresses?.used[0].address,
                         selectedQuote: quote ?? mercuryoFixedWorstQuote,
                     },
                 },
