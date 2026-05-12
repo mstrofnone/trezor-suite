@@ -1,7 +1,8 @@
 import { initialSuiteSyncDataState, initialSuiteSyncState } from '@suite-common/suite-sync';
 import { type TrezorDevice } from '@suite-common/suite-types';
 import { type StakeState, stakeInitialState } from '@suite-common/wallet-core';
-import { type Account, type AccountKey, type Timestamp } from '@suite-common/wallet-types';
+import { type Account, type Timestamp } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 
 import {
     selectExpectedRewardsForEpoch,
@@ -18,12 +19,20 @@ import { type NativeStakingRootState } from '../types';
 
 const staticStateString = 'device@state:1';
 
+const sol1Key = mockAccountKey({ symbol: 'sol', descriptor: 'sol1' });
+const sol2Key = mockAccountKey({ symbol: 'sol', descriptor: 'sol2' });
+const sol3Key = mockAccountKey({ symbol: 'sol', descriptor: 'sol3' });
+const sol4Key = mockAccountKey({ symbol: 'sol', descriptor: 'sol4' });
+const etc1Key = mockAccountKey({ descriptor: 'etc1' });
+const nonExistentKey = mockAccountKey({ descriptor: 'nonExistentKey' });
+const nonExistentKey2 = mockAccountKey({ descriptor: 'nonExistent' });
+
 const solAccountWithStaking: Account = {
     symbol: 'sol',
     accountLabel: 'SOL Account #1',
     deviceState: staticStateString,
     addresses: undefined,
-    key: 'sol1',
+    key: sol1Key,
     visible: true,
     networkType: 'solana',
     misc: {
@@ -43,7 +52,7 @@ const solAccountNoStaking: Account = {
     accountLabel: 'SOL Account #2',
     deviceState: staticStateString,
     addresses: undefined,
-    key: 'sol2',
+    key: sol2Key,
     visible: true,
     networkType: 'solana',
     misc: undefined,
@@ -54,7 +63,7 @@ const solAccountWithActivatingStaking: Account = {
     accountLabel: 'SOL Account #3',
     deviceState: staticStateString,
     addresses: undefined,
-    key: 'sol3',
+    key: sol3Key,
     visible: true,
     networkType: 'solana',
     misc: {
@@ -74,7 +83,7 @@ const solAccountWithDeactivatedStaking: Account = {
     accountLabel: 'SOL Account #4',
     deviceState: staticStateString,
     addresses: undefined,
-    key: 'sol4',
+    key: sol4Key,
     visible: true,
     networkType: 'solana',
     misc: {
@@ -94,7 +103,7 @@ const etcAccount: Account = {
     accountLabel: 'ETC Account #1',
     deviceState: staticStateString,
     addresses: undefined,
-    key: 'etc1',
+    key: etc1Key,
     visible: true,
     networkType: 'ethereum',
 } as unknown as Account;
@@ -234,7 +243,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`,
+                    sol1Key,
                 )?.solStakedBalance,
             ).toEqual('1');
         });
@@ -249,7 +258,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`F
+                    sol1Key,
                 ),
             ).toBeNull();
         });
@@ -264,7 +273,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 )?.solPendingStakeBalance,
             ).toEqual('2');
         });
@@ -281,7 +290,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual(true);
         });
@@ -296,7 +305,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual(false);
         });
@@ -314,7 +323,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual(6.21);
         });
@@ -329,7 +338,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual(0);
         });
@@ -346,7 +355,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol1Key,
                 ),
             ).toEqual('1');
         });
@@ -361,7 +370,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'non-existent-key' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    nonExistentKey,
                 ),
             ).toEqual('0');
         });
@@ -379,7 +388,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol1Key,
                 ),
             ).toEqual('0.000340274');
         });
@@ -395,7 +404,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual('0.000000000');
         });
@@ -410,7 +419,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'non-existent-key' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    nonExistentKey,
                 ),
             ).toEqual('0');
         });
@@ -427,7 +436,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol3' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol3Key,
                 ),
             ).toEqual('2');
         });
@@ -442,7 +451,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'non-existent-key' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    nonExistentKey,
                 ),
             ).toEqual('0');
         });
@@ -457,7 +466,7 @@ describe('selectors', () => {
                     {
                         ...testState,
                     },
-                    'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`
+                    sol1Key,
                 ),
             ).toEqual('0');
         });
@@ -469,10 +478,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithStaking],
             });
 
-            const result = selectSolanaClaimableAmountByAccountKey(
-                testState as any,
-                'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaClaimableAmountByAccountKey(testState as any, sol1Key);
 
             expect(result).toBe('0');
         });
@@ -482,10 +488,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithDeactivatedStaking],
             });
 
-            const result = selectSolanaClaimableAmountByAccountKey(
-                testState as any,
-                'sol4' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaClaimableAmountByAccountKey(testState as any, sol4Key);
 
             expect(result).toBe('3');
         });
@@ -495,10 +498,7 @@ describe('selectors', () => {
                 accounts: [solAccountNoStaking],
             });
 
-            const result = selectSolanaClaimableAmountByAccountKey(
-                testState as any,
-                'sol2' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaClaimableAmountByAccountKey(testState as any, sol2Key);
 
             expect(result).toBe('0');
         });
@@ -508,10 +508,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithStaking],
             });
 
-            const result = selectSolanaClaimableAmountByAccountKey(
-                testState,
-                'non-existent' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaClaimableAmountByAccountKey(testState, nonExistentKey2);
 
             expect(result).toBe('0');
         });
@@ -523,10 +520,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithStaking],
             });
 
-            const result = selectSolanaCanClaimByAccountKey(
-                testState as any,
-                'sol1' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaCanClaimByAccountKey(testState as any, sol1Key);
 
             expect(result).toBe(false);
         });
@@ -536,10 +530,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithDeactivatedStaking],
             });
 
-            const result = selectSolanaCanClaimByAccountKey(
-                testState as any,
-                'sol4' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaCanClaimByAccountKey(testState as any, sol4Key);
 
             expect(result).toBe(true);
         });
@@ -549,10 +540,7 @@ describe('selectors', () => {
                 accounts: [solAccountNoStaking],
             });
 
-            const result = selectSolanaCanClaimByAccountKey(
-                testState as any,
-                'sol2' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaCanClaimByAccountKey(testState as any, sol2Key);
 
             expect(result).toBe(false);
         });
@@ -562,10 +550,7 @@ describe('selectors', () => {
                 accounts: [solAccountWithStaking],
             });
 
-            const result = selectSolanaCanClaimByAccountKey(
-                testState as any,
-                'non-existent' as AccountKey, // Todo: create properly via `createAccountKey()`
-            );
+            const result = selectSolanaCanClaimByAccountKey(testState as any, nonExistentKey2);
 
             expect(result).toBe(false);
         });

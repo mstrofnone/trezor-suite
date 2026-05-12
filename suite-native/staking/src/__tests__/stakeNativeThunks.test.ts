@@ -7,10 +7,10 @@ import { configureMockStore, extraDependenciesCommonMock } from '@suite-common/t
 import { prepareSendFormReducer } from '@suite-common/wallet-core';
 import {
     type Account,
-    type AccountKey,
     type FormState,
     type PrecomposedTransactionFinal,
 } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 import { getFormDraftKey } from '@suite-common/wallet-utils';
 import TrezorConnect from '@trezor/connect';
 
@@ -39,8 +39,16 @@ jest.mock('@suite-native/device-mutex', () => ({
 }));
 
 const STATIC_SESSION_ID = '1stTestnetAddress@device_id:0';
-const ETH_ACCOUNT_KEY = 'eth1' as AccountKey;
-const SOL_ACCOUNT_KEY = 'sol1' as AccountKey;
+const ETH_ACCOUNT_KEY = mockAccountKey({
+    symbol: 'eth',
+    descriptor: 'eth1',
+    deviceStaticSessionId: STATIC_SESSION_ID,
+});
+const SOL_ACCOUNT_KEY = mockAccountKey({
+    symbol: 'sol',
+    descriptor: 'sol1',
+    deviceStaticSessionId: STATIC_SESSION_ID,
+});
 const POOL_ADDRESS = '0xD523794C879D9eC028960a231F866758e405bE34';
 
 const ethAccount: Account = {

@@ -17,7 +17,6 @@ import {
 } from '@suite-common/trading';
 import { type AccountsRootState } from '@suite-common/wallet-core';
 import { type Account, asAccountDescriptor } from '@suite-common/wallet-types';
-import { type StaticSessionId } from '@trezor/connect';
 import { FeatureFlag, featureFlagsInitialState } from '@suite-native/feature-flags';
 import { appSettingsInitialState } from '@suite-native/settings';
 import {
@@ -31,6 +30,7 @@ import {
     getWalletState,
 } from '@suite-native/trading-fixtures';
 import { type TradeableAsset } from '@suite-native/trading-types';
+import { type StaticSessionId } from '@trezor/connect';
 import { BigNumber } from '@trezor/utils';
 
 import { type TradingRootState, tradingInitialState } from '../../reducers';
@@ -457,7 +457,7 @@ describe('commonSelectors', () => {
         });
 
         it('should return sections for accounts with positive balance', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const btcAccount = {
                 ...getBtcAccount(),
                 visible: true,
@@ -495,7 +495,7 @@ describe('commonSelectors', () => {
         });
 
         it('should filter out accounts with zero balance', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const zeroBalanceAccount = {
                 ...getBtcAccount(),
                 balance: '0',
@@ -523,7 +523,7 @@ describe('commonSelectors', () => {
         });
 
         it('should handle accounts with tokens and include only tokens with positive balance', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '1000000000000000000', // 1 ETH
@@ -592,7 +592,7 @@ describe('commonSelectors', () => {
         });
 
         it('should handle accounts with zero balance but tokens with positive balance', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '0',
@@ -647,7 +647,7 @@ describe('commonSelectors', () => {
         });
 
         it('should filter out sections with no assets', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '0',
@@ -700,7 +700,7 @@ describe('commonSelectors', () => {
         });
 
         it('should handle accounts with missing token definitions', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '1000000000000000000', // 1 ETH
@@ -745,7 +745,7 @@ describe('commonSelectors', () => {
         });
 
         it('should return empty array for buy trading type', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const btcAccount = {
                 ...getBtcAccount(),
                 balance: '100000000', // 1 BTC
@@ -777,7 +777,7 @@ describe('commonSelectors', () => {
         });
 
         it('should return sections for sell trading type', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const btcAccount = {
                 ...getBtcAccount(),
                 balance: '100000000', // 1 BTC
@@ -818,7 +818,7 @@ describe('commonSelectors', () => {
         });
 
         it('should use network display symbol name for account asset name', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
 
             const stateWithDevice = {
                 featureFlags: featureFlagsInitialState,
@@ -839,7 +839,7 @@ describe('commonSelectors', () => {
         });
 
         it('should filter out Cardano accounts when IsCardanoSendEnabled feature flag is disabled', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const cardanoAccount = {
                 ...getCardanoAccount(),
                 visible: true,
@@ -920,7 +920,7 @@ describe('commonSelectors', () => {
         });
 
         it('should include Cardano accounts when IsCardanoSendEnabled feature flag is enabled', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const cardanoAccount = {
                 ...getCardanoAccount(),
                 visible: true,
@@ -961,7 +961,7 @@ describe('commonSelectors', () => {
         });
 
         it('should handle contractIds as case insensitive', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '1000000000000000000', // 1 ETH
@@ -1019,7 +1019,7 @@ describe('commonSelectors', () => {
 
     describe('selectAccountsWithTokensToSellSectionCondensedListByTradingType', () => {
         it('should group disabled tokens', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '1000000000000000000', // 1 ETH
@@ -1105,7 +1105,7 @@ describe('commonSelectors', () => {
         });
 
         it('should not display empty disabled section', () => {
-            const testDeviceState = 'test-device';
+            const testDeviceState = 'testDevice@x:0';
             const ethAccount = {
                 ...getEthAccount(),
                 balance: '1000000000000000000', // 1 ETH
@@ -1292,7 +1292,7 @@ describe('commonSelectors', () => {
         const eth1Account = getEthAccount({ descriptor: asAccountDescriptor('eth1') });
         const btc0Account = getBtcAccount({
             descriptor: asAccountDescriptor('btc0'),
-            deviceState: 'other-device@test:123' as StaticSessionId,
+            deviceState: 'otherDevice@test:123' as StaticSessionId,
         });
         const btc1Account = getBtcAccount({
             descriptor: asAccountDescriptor('btc1'),

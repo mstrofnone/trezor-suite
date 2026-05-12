@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
 
 import { selectBaseCurrency, selectCurrentFiatRates } from '@suite-common/wallet-core';
-import { type AccountKey, type TokenAddress, type TokenSymbol } from '@suite-common/wallet-types';
+import { type TokenAddress, type TokenSymbol } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 import { useTranslate } from '@suite-native/intl';
 import { renderHookWithBasicProvider } from '@suite-native/test-utils';
 
@@ -23,11 +24,17 @@ const mockUseTranslate = jest.mocked(useTranslate);
 const testContractAddress = 'test-contract-address' as TokenAddress;
 const testTokenSymbol = 'USDC' as TokenSymbol;
 
+const ethAccountKey1 = mockAccountKey({ symbol: 'eth', descriptor: 'ethAccount' });
+const ethAccountKey2 = mockAccountKey({ symbol: 'eth', descriptor: 'ethAccount2' });
+const solAccountKey = mockAccountKey({ symbol: 'sol', descriptor: 'solAccount' });
+const usdcAccountKey = mockAccountKey({ symbol: 'eth', descriptor: 'usdcAccount' });
+const usdcAccountKey2 = mockAccountKey({ symbol: 'eth', descriptor: 'usdcAccount2' });
+
 const stakingActiveItem: StakingEarnItem = {
     id: 'eth-1',
     type: 'staking',
     symbol: 'eth',
-    accountKey: 'eth-account' as AccountKey,
+    accountKey: ethAccountKey1,
     accountLabel: 'Ethereum #1',
     balance: '1',
 };
@@ -36,7 +43,7 @@ const secondStakingActiveItem: StakingEarnItem = {
     id: 'eth-2',
     type: 'staking',
     symbol: 'eth',
-    accountKey: 'eth-account-2' as AccountKey,
+    accountKey: ethAccountKey2,
     accountLabel: 'Ethereum #2',
     balance: '0.2',
 };
@@ -45,7 +52,7 @@ const solStakingActiveItem: StakingEarnItem = {
     id: 'sol-1',
     type: 'staking',
     symbol: 'sol',
-    accountKey: 'sol-account' as AccountKey,
+    accountKey: solAccountKey,
     accountLabel: 'Solana #1',
     balance: '2',
 };
@@ -67,7 +74,7 @@ const stablecoinYieldActiveItem: StablecoinYieldEarnItem = {
     networkSymbol: 'eth',
     contractAddress: testContractAddress,
     tokenContractAddress: testContractAddress,
-    accountKey: 'usdc-account' as AccountKey,
+    accountKey: usdcAccountKey,
     accountLabel: 'Ethereum #3',
     tokenBalance: '400',
     apy: 4,
@@ -81,7 +88,7 @@ const secondStablecoinYieldActiveItem: StablecoinYieldEarnItem = {
     networkSymbol: 'base',
     contractAddress: testContractAddress,
     tokenContractAddress: testContractAddress,
-    accountKey: 'usdc-account-2' as AccountKey,
+    accountKey: usdcAccountKey2,
     accountLabel: 'Base Ethereum #1',
     tokenBalance: '600',
     apy: 3,
@@ -154,7 +161,7 @@ describe('useEarnDepositsCardData', () => {
             type: 'staking',
             title: 'Ethereum #1',
             symbol: 'eth',
-            accountKey: 'eth-account',
+            accountKey: ethAccountKey1,
             balance: '1',
         });
         expect(result.current.stakingRow?.activeItems[0].fiatAmount.toString()).toBe('2000');
@@ -170,7 +177,7 @@ describe('useEarnDepositsCardData', () => {
             tokenSymbol: 'USDC',
             contractAddress: testContractAddress,
             tokenContractAddress: testContractAddress,
-            accountKey: 'usdc-account',
+            accountKey: usdcAccountKey,
             accountLabel: 'Ethereum #3',
             balance: '400',
             apy: 4,

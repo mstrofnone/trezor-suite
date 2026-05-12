@@ -21,7 +21,7 @@ jest.mock('../../../utils/general/utils', () => ({
     getRandomAccountDescriptor: () => 'random_string',
 }));
 
-const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount1') });
+const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btc1normal') });
 const btc2Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount2') });
 const btc3Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount3') });
 

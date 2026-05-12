@@ -1,5 +1,5 @@
 import { tradingExchangeActions } from '@suite-common/trading';
-import { type AccountKey } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 import { type TestStore, renderWithStoreProvider, userEvent } from '@suite-native/test-utils-store';
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
 
@@ -14,6 +14,8 @@ jest.mock('@react-navigation/native', () => ({
         navigate: mockNavigate,
     }),
 }));
+
+const ethAccountKey = mockAccountKey({ symbol: 'eth', descriptor: 'eth1normal' });
 
 describe('ApprovalButton', () => {
     let store: TestStore;
@@ -33,7 +35,7 @@ describe('ApprovalButton', () => {
                     trading: {
                         exchange: {
                             selectedQuote: mercuryoFixedWorstQuote,
-                            tradingAccountKey: 'eth-account-1' as AccountKey,
+                            tradingAccountKey: ethAccountKey,
                         },
                     },
                 },
@@ -59,7 +61,7 @@ describe('ApprovalButton', () => {
         await userEvent.press(getByText('Continue'));
 
         expect(mockNavigate).toHaveBeenCalledWith('TradingExchangeOutputsReview', {
-            accountKey: 'eth-account-1',
+            accountKey: ethAccountKey,
             tokenContract: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
             orderId: 'c2de24a5-b923-42af-b70e-44bda8fa41dd',
             flowType: 'approve',
@@ -72,7 +74,7 @@ describe('ApprovalButton', () => {
         await userEvent.press(getByText('Continue'));
 
         expect(mockNavigate).toHaveBeenCalledWith('TradingExchangeOutputsReview', {
-            accountKey: 'eth-account-1',
+            accountKey: ethAccountKey,
             tokenContract: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
             orderId: 'c2de24a5-b923-42af-b70e-44bda8fa41dd',
             flowType: 'revoke',

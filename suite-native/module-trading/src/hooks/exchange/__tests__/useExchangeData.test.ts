@@ -11,7 +11,7 @@ jest.mock('../../../utils/general/utils', () => ({
     getRandomAccountDescriptor: () => 'random_string',
 }));
 
-const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount1') });
+const btc1Account = getBtcAccount({ descriptor: asAccountDescriptor('btc1normal') });
 const btc2Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount2') });
 const btc3Account = getBtcAccount({ descriptor: asAccountDescriptor('btcAccount3') });
 
@@ -162,7 +162,7 @@ describe('useExchangeData', () => {
         });
 
         it('should dispatch loadInitialDataThunk with random string when descriptor is empty string', async () => {
-            const store = getInitializedStore('btc-account-1');
+            const store = getInitializedStore(btc1Account.key);
             await renderUseExchangeData(0, store);
 
             // Clear the initial call
@@ -185,7 +185,7 @@ describe('useExchangeData', () => {
         });
 
         it('should dispatch loadInitialDataThunk with random string when descriptor is undefined', async () => {
-            const store = getInitializedStore('btc-account-1');
+            const store = getInitializedStore(btc1Account.key);
             await renderUseExchangeData(0, store);
 
             // Clear the initial call

@@ -3,7 +3,7 @@ import { type CryptoId, type ExchangeTrade } from 'invity-api';
 
 import { configureMockStore, extraDependenciesCommonMock } from '@suite-common/test-utils';
 import { getNetwork } from '@suite-common/wallet-config';
-import { type AccountKey } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 
 import { exchangeThunks } from '../';
 import { MIN_MAX_QUOTES_OK } from '../../../__fixtures__/exchangeUtils';
@@ -99,7 +99,7 @@ describe('handleExchangeRequestThunk', () => {
                 displaySymbol: 'BTC',
                 networkName: 'Bitcoin',
                 networkSymbol: 'btc',
-                accountKey: 'descriptor-btc-123' as AccountKey, // Todo: create properly via `createAccountKey()`,
+                accountKey: mockAccountKey({ descriptor: 'descriptor123', symbol: 'btc' }),
             } satisfies TradingAssetSellOption,
             receiveCryptoSelect: {
                 id: 'ethereum' as CryptoId,

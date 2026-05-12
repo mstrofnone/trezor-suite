@@ -1,4 +1,5 @@
 import { asAccountDescriptor } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 import { events } from '@suite-native/analytics';
 import { RootStackRoutes } from '@suite-native/navigation';
 import { type TestStore, act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
@@ -187,8 +188,10 @@ describe('useExchangeFlow', () => {
             const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementationOnce(() => {});
 
             const tradingState = getInitializedTradingStateWithQuotes();
-            tradingState.exchange.tradingAccountKey =
-                'invalid' as typeof tradingState.exchange.tradingAccountKey;
+            tradingState.exchange.tradingAccountKey = mockAccountKey({
+                symbol: 'btc',
+                descriptor: 'unknownAccount',
+            });
             tradingState.exchange.receiveAccountKey = btc2Account.key;
             tradingState.exchange.selectedQuote = tradingState.exchange.quotes[0];
 
@@ -287,8 +290,8 @@ describe('useExchangeFlow', () => {
 
         it('should navigate with flowType revoke when quoteStatus is APPROVAL_PENDING and flowType is revoke', () => {
             const tradingState = getInitializedTradingStateWithQuotes();
-            tradingState.exchange.tradingAccountKey = btc1AccountKey;
-            tradingState.exchange.receiveAccountKey = btc2AccountKey;
+            tradingState.exchange.tradingAccountKey = btc1Account.key;
+            tradingState.exchange.receiveAccountKey = btc2Account.key;
             tradingState.exchange.selectedQuote = {
                 ...tradingState.exchange.quotes[0],
                 status: 'APPROVAL_PENDING',
@@ -313,8 +316,8 @@ describe('useExchangeFlow', () => {
 
         it('should navigate with flowType revoke-and-approve when quoteStatus is APPROVAL_PENDING and flowType is revoke-and-approve', () => {
             const tradingState = getInitializedTradingStateWithQuotes();
-            tradingState.exchange.tradingAccountKey = btc1AccountKey;
-            tradingState.exchange.receiveAccountKey = btc2AccountKey;
+            tradingState.exchange.tradingAccountKey = btc1Account.key;
+            tradingState.exchange.receiveAccountKey = btc2Account.key;
             tradingState.exchange.selectedQuote = {
                 ...tradingState.exchange.quotes[0],
                 status: 'APPROVAL_PENDING',

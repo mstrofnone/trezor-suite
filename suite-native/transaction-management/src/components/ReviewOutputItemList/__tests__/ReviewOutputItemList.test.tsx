@@ -1,7 +1,7 @@
-import { type AccountKey } from '@suite-common/wallet-types';
+import { mockAccountKey } from '@suite-common/wallet-types/mocks';
 import { renderWithStoreProvider } from '@suite-native/test-utils-store';
 
-import { getWalletState } from '../../../__fixtures__/walletState';
+import { ETH_ACCOUNT_KEY, getWalletState } from '../../../__fixtures__/walletState';
 import { type ReviewSummaryOutput, type StatefulReviewOutput } from '../../../types';
 import { ReviewOutputItemList, type ReviewOutputItemListProps } from '../ReviewOutputItemList';
 
@@ -27,13 +27,7 @@ jest.mock('../../../selectors', () => {
 describe('ReviewOutputItemList', () => {
     const renderReviewOutputItemList = (props: Partial<ReviewOutputItemListProps> = {}) =>
         renderWithStoreProvider(
-            <ReviewOutputItemList
-                prefix="send"
-                accountKey={
-                    'eth-account-1' as AccountKey // Todo: create properly via `createAccountKey()`
-                }
-                {...props}
-            />,
+            <ReviewOutputItemList prefix="send" accountKey={ETH_ACCOUNT_KEY} {...props} />,
             { preloadedState: { wallet: getWalletState() } },
         );
 
@@ -56,7 +50,7 @@ describe('ReviewOutputItemList', () => {
 
     it('should render Error when account is not found', () => {
         const { getByText } = renderReviewOutputItemList({
-            accountKey: 'btc-account-3' as AccountKey, // Todo: create properly via `createAccountKey()`
+            accountKey: mockAccountKey({ symbol: 'btc', descriptor: 'btcAccount3' }),
         });
 
         expect(getByText('Error: Account not found.')).toBeOnTheScreen();
