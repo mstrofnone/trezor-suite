@@ -3,7 +3,7 @@ export * from './call';
 export * from './core';
 export * from './device';
 export * from './core-call';
-export * from './management';
+export * from './networks';
 export * from './popup';
 export * from './transport';
 export * from './ui-request';
