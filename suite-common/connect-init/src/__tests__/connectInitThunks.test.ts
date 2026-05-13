@@ -151,6 +151,9 @@ describe('TrezorConnect Actions', () => {
         });
     });
 
+    // 10s timeout — `__info: true` calls the real Connect implementation through the mock,
+    // which spins up an actual Core (init + getFeatures + getAccountInfo + dispose). On
+    // busy CI runners this routinely hovers around 4–5s and tripped the 5s default.
     it('Test that connect mock works with __info parameter', async () => {
         testMocks.setTrezorConnectFixtures();
         await store.dispatch(connectInitThunk());
@@ -176,5 +179,5 @@ describe('TrezorConnect Actions', () => {
                 useDevice: false,
             }),
         });
-    });
+    }, 10_000);
 });
