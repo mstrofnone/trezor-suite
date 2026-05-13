@@ -52,6 +52,11 @@ export interface ConnectSettingsPublic {
     enableFirmwareHashCheck?: boolean;
     firmwareHashCheckTimeouts?: FirmwareHashCheckTimeouts;
     thp?: ThpSettings;
+    // Initial set of enabled network symbols. Drives session-level derivation flags
+    // (today: `'ada'` triggers `derive_cardano: true` on `Initialize`). Equivalent to
+    // calling `TrezorConnect.setEnabledNetworks(...)` after init, but populates the
+    // store before the first device session is created — no race window.
+    enabledNetworks?: string[];
 }
 
 // internal part, not to be accepted from .init()

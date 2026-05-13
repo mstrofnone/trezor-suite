@@ -207,7 +207,16 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             thp.hostName = capitalizeFirstLetter(getBrowserName());
         }
 
+        const hydrated = selectEnabledNetworks(getState());
+        // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
+        console.log('[enabled-networks/suite-init] init with enabledNetworks', { hydrated });
+
         try {
+            // Pass the suite-storage-hydrated set as part of init settings so the store is
+            // populated before any device session is created. The listener registered above
+            // is already wired up to dispatch `changeNetworks` on the canonical event Connect
+            // emits when applying the init-time value — Redux stays in sync without an
+            // additional post-init setter call.
             await TrezorConnect.init({
                 ...connectInitSettings,
                 binFilesBaseUrl,
@@ -217,17 +226,8 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
                 debug: showConnectLogs,
                 firmwareHashCheckTimeouts,
                 firmwareChannel: getEffectiveFirmwareChannel(getState()),
+                enabledNetworks: hydrated,
             });
-
-            // Push the suite-storage-hydrated set into Connect. Connect responds with the
-            // canonical post-validation list via 'enabled-networks-changed', which the
-            // listener registered above writes back into Redux.
-            const hydrated = selectEnabledNetworks(getState());
-            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-            console.log('[enabled-networks/suite-init] boot push setEnabledNetworks', {
-                hydrated,
-            });
-            await TrezorConnect.setEnabledNetworks(hydrated);
         } catch (error) {
             let formattedError: string;
             if (typeof error === 'string') {

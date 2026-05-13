@@ -964,6 +964,18 @@ export class Core extends EventEmitter {
 
         try {
             settingsStore.set(settings);
+            // Apply init-time enabledNetworks before any session can be created so the
+            // first Initialize message carries the correct derive_cardano flag. Emit the
+            // canonical event so listeners (Suite's connect-init) can mirror it into Redux,
+            // same as for runtime SET_ENABLED_NETWORKS mutations.
+            if (settings.enabledNetworks) {
+                const { canonical } = enabledNetworksStore.set(settings.enabledNetworks);
+                this.sendCoreMessage({
+                    event: ENABLED_NETWORKS_CHANGED,
+                    type: ENABLED_NETWORKS_CHANGED,
+                    payload: canonical,
+                });
+            }
             await firmwareReleaseStore.init(
                 settings.firmwareChannel,
                 false,
