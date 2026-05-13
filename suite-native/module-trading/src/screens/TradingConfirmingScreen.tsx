@@ -14,10 +14,14 @@ import {
     RootStackRoutes,
     Screen,
     type StackProps,
+    useNavigateToInitialScreen,
 } from '@suite-native/navigation';
 import { useTransactionStatusOverride } from '@suite-native/trading-debug';
 import { selectExchangeSelectedSendAccount } from '@suite-native/trading-state';
-import { useTransactionDetails } from '@suite-native/transaction-management';
+import {
+    useNavigationRemoveInterceptor,
+    useTransactionDetails,
+} from '@suite-native/transaction-management';
 import { exhaustive } from '@trezor/type-utils';
 
 import { ConfirmationQuoteDebugView } from '../components/exchange/Confirmation/ConfirmationQuoteDebugView';
@@ -70,22 +74,16 @@ export const TradingConfirmingScreen = ({
 
     const { isConfirmed, isFailed, isPending } = status;
 
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('beforeRemove', e => {
-            const { type, payload } = e.data.action as {
-                type: string;
-                payload?: { count?: number };
-            };
-            const isSingleBackPress =
-                type === 'GO_BACK' || (type === 'POP' && (payload?.count ?? 1) <= 1);
+    const navigateToInitialScreen = useNavigateToInitialScreen();
+    const handleRemoveConfirmed = useCallback(() => {
+        dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
+        navigateToInitialScreen();
+    }, [dispatch, navigateToInitialScreen]);
 
-            if (isSingleBackPress) {
-                dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
-            }
-        });
-
-        return unsubscribe;
-    }, [dispatch, navigation]);
+    useNavigationRemoveInterceptor({
+        shouldPrevent: !isFailed,
+        onRemoveConfirmed: handleRemoveConfirmed,
+    });
 
     useFocusEffect(
         useCallback(() => {

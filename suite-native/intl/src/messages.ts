@@ -3338,6 +3338,11 @@ export const messages = {
         },
     },
     transactionManagement: {
+        stayOnScreenAlert: {
+            title: 'Leave this screen?',
+            removeButton: 'Leave',
+            stayButton: 'Stay here',
+        },
         networkReserveBanner: {
             title: 'We’ve reserved {amount} {displaySymbol} to cover any extra network fees.',
             buttonTitle: 'Manage',
