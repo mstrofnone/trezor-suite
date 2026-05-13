@@ -16,6 +16,11 @@ declare namespace globalThis {
         result?: any;
         legacyResults?: LegacyResult[];
         customTimeout?: number;
+        /** Pushed to `TrezorConnect.setEnabledNetworks` before the method call.
+         *  Use for non-cardano* methods that operate on Cardano paths (e.g.
+         *  `getAccountInfo({ coin: 'ada', path: ... })`) — `cardano*` methods
+         *  auto-enable Cardano derivation regardless. */
+        enabledNetworks?: string[];
         setup?: {
             wiped?: boolean;
             mnemonic?: string;
