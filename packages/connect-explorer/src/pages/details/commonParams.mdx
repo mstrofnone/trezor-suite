@@ -48,4 +48,6 @@ In addition to the per-call common parameters above, applications declare which 
 TrezorConnect.setEnabledNetworks(['btc', 'eth', 'ada']);
 ```
 
-This drives session-level derivation flags — today, including `'ada'` makes Connect create the session with Cardano derivation enabled, so non-Cardano methods (`getPublicKey`, `getAccountInfo`, …) called on Cardano paths return Cardano-derived results without a per-call override. `cardano*` methods always derive Cardano regardless. Mutations are broadcast back via the `'enabled-networks-changed'` event; `getEnabledNetworks()` returns the current canonical set.
+Today the only network this affects is Cardano: including `'ada'` makes the device session capable of Cardano-aware operations, by setting `derive_cardano: true` on the next `Initialize` (applies to both THP and pre-THP sessions). The device then derives the Cardano root key alongside the BIP-39 seed, which makes `Initialize` slower — only declare `'ada'` if your app actually uses Cardano. Once enabled, `cardano*` methods work as expected; non-`cardano*` methods that operate on Cardano paths (e.g. `getAccountInfo({ coin: 'ada', path: ... })`) need this declaration because they don't auto-enable derivation by method name. `cardano*` methods always derive Cardano regardless.
+
+Mutations are broadcast via the `'enabled-networks-changed'` event; `getEnabledNetworks()` returns the current canonical set.
