@@ -90,10 +90,10 @@ export const TradingConfirmingScreen = ({
                     id="moduleTrading.tradingConfirmationScreen.stayOnScreenDescription"
                     values={{
                         name:
-                            flowType === 'revoke' ? (
-                                <Translation id="moduleTrading.tradingConfirmationScreen.revocation" />
-                            ) : (
+                            flowType === 'approve' ? (
                                 <Translation id="moduleTrading.tradingConfirmationScreen.approval" />
+                            ) : (
+                                <Translation id="moduleTrading.tradingConfirmationScreen.revocation" />
                             ),
                     }}
                 />
