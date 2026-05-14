@@ -107,9 +107,7 @@ export const TradingExchangeApprovalScreen = ({
     }, [quote, isReady, isRevoked, dispatch, confirmApproval]);
 
     usePreventNavigationRemove({
-        onNavigateBack: action => {
-            if (!action) return;
-
+        onPreventedRemove: action => {
             dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
             navigation.dispatch(action);
         },
