@@ -18,6 +18,7 @@ import {
     Screen,
     ScreenHeader,
     type StackProps,
+    usePreventNavigationRemove,
 } from '@suite-native/navigation';
 
 import { ApprovalButton } from '../components/exchange/Approval/ApprovalButton';
@@ -105,25 +106,14 @@ export const TradingExchangeApprovalScreen = ({
         };
     }, [quote, isReady, isRevoked, dispatch, confirmApproval]);
 
-    useEffect(() => {
-        // Clear the selected quote only when the user navigates backward (back button / swipe back).
-        // popToTop() translates to POP with count > 1 — those removals are programmatic forward
-        // navigation so the quote must remain in Redux for the next screen to read it.
-        const unsubscribe = navigation.addListener('beforeRemove', e => {
-            const { type, payload } = e.data.action as {
-                type: string;
-                payload?: { count?: number };
-            };
-            const isSingleBackPress =
-                type === 'GO_BACK' || (type === 'POP' && (payload?.count ?? 1) <= 1);
+    usePreventNavigationRemove({
+        onNavigateBack: action => {
+            if (!action) return;
 
-            if (isSingleBackPress) {
-                dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
-            }
-        });
-
-        return unsubscribe;
-    }, [dispatch, navigation]);
+            dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
+            navigation.dispatch(action);
+        },
+    });
 
     if (!quote) {
         return (
