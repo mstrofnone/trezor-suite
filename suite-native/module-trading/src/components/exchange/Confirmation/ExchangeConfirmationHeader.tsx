@@ -19,6 +19,8 @@ const HeaderTitle = ({
     flowType: ConfirmingScreenFlowType;
     symbol?: string;
 }) => {
+    if (!symbol) return '';
+
     switch (flowType) {
         case 'approve':
             return (
@@ -35,7 +37,7 @@ const HeaderTitle = ({
                 />
             );
         default:
-            return undefined;
+            return '';
     }
 };
 
