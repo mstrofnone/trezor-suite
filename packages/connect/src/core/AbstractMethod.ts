@@ -42,6 +42,23 @@ export type MethodMessage<Name extends CallMethodPayload['method']> = {
     payload: Payload<Name>;
 };
 
+// Cardano coin symbols recognized for session-derivation auto-detection. Hardcoded today
+// (the only coin that needs derive_cardano); if/when more coins gain session-level
+// quirks, this should move to a coin-info-driven registry alongside `getCoinInfo()`.
+const CARDANO_COIN_SYMBOLS = new Set(['ada', 'tada']);
+
+const referencesCardano = (value: unknown): boolean =>
+    typeof value === 'string' && CARDANO_COIN_SYMBOLS.has(value.toLowerCase());
+
+const payloadReferencesCardanoCoin = (payload: any): boolean => {
+    if (referencesCardano(payload?.coin)) return true;
+    if (Array.isArray(payload?.coins)) {
+        return payload.coins.some((c: any) => referencesCardano(c?.symbol));
+    }
+
+    return false;
+};
+
 function validateStaticSessionId(input: unknown): StaticSessionId {
     if (!isStaticSessionId(input)) {
         throw ERRORS.TypedError(
@@ -170,16 +187,26 @@ export abstract class AbstractMethod<Name extends CallMethodPayload['method'], P
         this.useDevice = true;
         this.useDeviceState = true;
         this.useUi = true;
-        // should derive cardano seed? on for any cardano* method, or when the application has
-        // declared 'ada' in its enabled networks set via TrezorConnect.setEnabledNetworks.
-        // No per-call escape hatch; useCardanoDerivation is no longer part of CommonParams.
+        // should derive cardano seed? Three triggers, any of them flips it on:
+        //   1. `cardano*` method name — the obvious case, always cardano-bound.
+        //   2. `params.coin` / `params.coins[].symbol` references an ada symbol —
+        //      e.g. `getAccountInfo({ coin: 'ada' })`, `discoverAccounts({ coins: [{symbol:'ada'}] })`.
+        //      Without this auto-detect, callers that don't go through `cardano*` methods
+        //      would silently fail (no Cardano root derived in the session) — the per-call
+        //      `useCardanoDerivation` escape hatch that used to handle this was removed
+        //      from `CommonParams`.
+        //   3. The application has declared 'ada' in its enabled networks set via
+        //      `TrezorConnect.setEnabledNetworks(...)` (or via `init({ enabledNetworks })`).
         this.useCardanoDerivation =
-            payload.method.startsWith('cardano') || enabledNetworksStore.has('ada');
+            payload.method.startsWith('cardano') ||
+            payloadReferencesCardanoCoin(payload) ||
+            enabledNetworksStore.has('ada');
         if (this.useCardanoDerivation) {
             // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
             console.log('[enabled-networks/connect-resolver] useCardanoDerivation', {
                 method: payload.method,
                 cardanoMethod: payload.method.startsWith('cardano'),
+                payloadReferencesCardano: payloadReferencesCardanoCoin(payload),
                 hasAdaInStore: enabledNetworksStore.has('ada'),
                 resolved: this.useCardanoDerivation,
             });
