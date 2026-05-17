@@ -24,7 +24,10 @@ import type { EnsureEncryptionKeyDep, MMKVStorageDep } from '@suite-native/stora
 import { createSuiteSyncNativeCompositionRoot } from '@suite-native/suite-sync';
 import { selectTradingEnvironment } from '@suite-native/trading-state';
 import TrezorConnect from '@trezor/connect';
-import { BridgeTransport } from '@trezor/transport';
+// Deep import bypasses the `@trezor/transport` barrel so Metro does not
+// resolve sibling node-only modules (`UdpTransport`/`dgram`,
+// `NodeUsbTransport`/`usb`).
+import { BridgeTransport } from '@trezor/transport/src/transports/bridge';
 import { NativeBluetoothTransport } from '@trezor/transport-native-bluetooth';
 import { NativeUsbTransport } from '@trezor/transport-native-usb';
 import { ok } from '@trezor/type-utils';
@@ -39,7 +42,7 @@ const transportsPerDeviceType = {
         android: [NativeUsbTransport, NativeBluetoothTransport],
     }),
     emulator: [bridgeTransport],
-} as const;
+};
 
 const transports = transportsPerDeviceType[deviceType];
 

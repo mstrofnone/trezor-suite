@@ -17,6 +17,7 @@ import { getBrowserName } from '@suite-common/suite-utils';
 import { deviceConnectThunks, selectEnabledNetworks } from '@suite-common/wallet-core';
 import TrezorConnect, {
     BLOCKCHAIN_EVENT,
+    type ConnectSettings,
     DEVICE,
     DEVICE_EVENT,
     type Device,
@@ -206,7 +207,13 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
                 ...connectInitSettings,
                 binFilesBaseUrl,
                 pendingTransportEvent: selectIsPendingTransportEvent(getState()),
-                transports,
+                // The debug transport switcher stores legacy string identifiers
+                // (`'BridgeTransport'` …) in Redux. They serialize across IPC
+                // to suite-desktop-core, which maps them to DI references
+                // before reaching @trezor/connect's TransportList. The cast is
+                // the renderer-side acknowledgement that strings are an IPC
+                // wire format, not part of connect's pure-DI public surface.
+                transports: transports as unknown as ConnectSettings['transports'],
                 thp,
                 debug: showConnectLogs,
                 firmwareHashCheckTimeouts,

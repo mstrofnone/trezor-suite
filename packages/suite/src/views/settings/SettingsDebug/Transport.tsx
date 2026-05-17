@@ -6,7 +6,7 @@ import {
     suiteSettingsActions,
 } from '@suite/settings';
 import { Checkbox } from '@trezor/components';
-import TrezorConnect from '@trezor/connect';
+import TrezorConnect, { type ConnectSettings } from '@trezor/connect';
 import { isDesktop } from '@trezor/env-utils';
 import { ActionColumn, SectionItem, TextColumn } from '@trezor/product-components';
 import { type ArrayElement } from '@trezor/type-utils';
@@ -85,7 +85,14 @@ export const Transport = () => {
                                         transports: nextTransports,
                                     }),
                                 );
-                                TrezorConnect.updateConnectSettings({ transports: nextTransports });
+                                // String identifiers are a suite-desktop IPC wire format;
+                                // suite-desktop-core's IPC handler maps them to DI references
+                                // before reaching @trezor/connect. See the comment in
+                                // `connectInitThunks.ts` for the rationale.
+                                TrezorConnect.updateConnectSettings({
+                                    transports:
+                                        nextTransports as unknown as ConnectSettings['transports'],
+                                });
                             }}
                         />
                     </ActionColumn>

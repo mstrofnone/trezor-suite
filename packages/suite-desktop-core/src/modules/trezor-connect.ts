@@ -7,6 +7,11 @@ import TrezorConnect, {
     UI_REQUEST,
     UI_RESPONSE,
 } from '@trezor/connect';
+// Deep import: @trezor/connect's barrel intentionally exposes only TrezorConnect
+// and types. The dual-port Bridge factory is temporary (see comment in
+// `defaultTransports.ts`) — once the legacy 21325 port is retired, this import
+// collapses into a single `new BridgeTransport(params)` at the call site.
+import { createBridgeTransports } from '@trezor/connect/src/defaultTransports';
 import { type IpcProxyHandlerOptions, createIpcProxyHandler } from '@trezor/ipc-proxy';
 import { parseElectrumUrl } from '@trezor/utils';
 
@@ -60,8 +65,9 @@ const getTransportsParam = (
         return [...transports, bluetooth];
     }
 
-    // we don't want to break fallback in https://github.com/trezor/trezor-suite/blob/develop/packages/connect/src/device/TransportList.ts#L70
-    return [bluetooth, 'BridgeTransport'];
+    // If the caller did not pass any transports, restore the Bridge default
+    // explicitly so we don't end up with a Bluetooth-only list.
+    return [bluetooth, createBridgeTransports];
 };
 
 export const initBackground: ModuleInitBackground = ({ mainThreadEmitter, store }) => {
