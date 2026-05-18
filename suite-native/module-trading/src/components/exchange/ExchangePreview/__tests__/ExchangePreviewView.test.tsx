@@ -62,20 +62,28 @@ describe('ExchangePreviewView', () => {
         expect(queryByText('Transaction fee')).toBeNull();
     });
 
-    it('should render 1Inch Fusion+ info when exchange is 1inchfusionplus', () => {
+    it('should render Fusion info with provider name when exchange is 1inchfusionplus', () => {
         const { getByText } = renderExchangePreviewView({
             quote: oneInchFusionPlusQuote,
         });
 
-        expect(getByText('You are swapping with 1Inch Fusion+')).toBeOnTheScreen();
+        expect(getByText(/^You are swapping with /)).toBeOnTheScreen();
     });
 
-    it('should not render 1Inch Fusion+ info when exchange is not 1inchfusionplus', () => {
+    it('should not render transaction fee for Fusion quotes', () => {
+        const { queryByText } = renderExchangePreviewView({
+            quote: oneInchFusionPlusQuote,
+        });
+
+        expect(queryByText('Transaction fee')).toBeNull();
+    });
+
+    it('should not render Fusion info when exchange is not a Fusion variant', () => {
         const { queryByText } = renderExchangePreviewView({
             quote: mercuryoFixedWorstQuote,
         });
 
-        expect(queryByText('You are swapping with 1Inch Fusion+')).toBeNull();
+        expect(queryByText(/^You are swapping with /)).toBeNull();
     });
 
     it('should render KYC warning for provider with "KYC-required"', () => {

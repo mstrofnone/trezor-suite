@@ -4,7 +4,11 @@ import { useSelector } from 'react-redux';
 
 import type { ExchangeTrade } from 'invity-api';
 
-import { type TradingRootState, selectTradingProviderKycPolicy } from '@suite-common/trading';
+import {
+    type TradingRootState,
+    isFusionQuote,
+    selectTradingProviderKycPolicy,
+} from '@suite-common/trading';
 import { AnimatedVStack, InlineAlertBox, VStack } from '@suite-native/atoms';
 import { Translation, useTranslate } from '@suite-native/intl';
 
@@ -31,7 +35,7 @@ export const ExchangePreviewView = memo(
         );
 
         const isTxnError = !!txnErrorString;
-        const isFusionPlus = quote?.exchange === '1inchfusionplus';
+        const isFusion = isFusionQuote(quote);
 
         const kycWarning = getKycPolicyWarningTranslation(kycPolicy);
 
@@ -55,8 +59,8 @@ export const ExchangePreviewView = memo(
                     <ExchangeFromAccountTradePreviewCard quote={quote} />
                     <ExchangeToAccountTradePreviewCard quote={quote} />
                     <ExchangeFiatDeviationWarning quote={quote} />
-                    <ExchangeFeePickerCard quote={quote} isTxnError={isTxnError} />
-                    {isFusionPlus && <ExchangeFusionPlusInfo />}
+                    {!isFusion && <ExchangeFeePickerCard quote={quote} isTxnError={isTxnError} />}
+                    {isFusion && <ExchangeFusionPlusInfo exchange={quote?.exchange} />}
                     {kycWarning && (
                         <InlineAlertBox
                             iconName="identificationCard"

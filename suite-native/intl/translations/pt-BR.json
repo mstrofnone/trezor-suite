@@ -1554,7 +1554,7 @@
     "moduleTrading.tradingExchangePreviewScreen.providerReceiveAddressLabel": "Endereço de recebimento do {providerName}",
     "moduleTrading.tradingExchangePreviewScreen.confirmationAlertTitle": "Falha ao confirmar oferta.",
     "moduleTrading.tradingExchangePreviewScreen.approvalSuccessAlert": "Aprovação de gasto confirmada.",
-    "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title": "Você está trocando com 1Inch Fusion+",
+    "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title": "Você está trocando com {providerName}",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet1": "Basta assinar o pedido - não é necessário enviar transações manualmente",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet2": "Sem taxas de gás - o contrato inteligente cuida de tudo por você",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet3": "Sua troca pode ser parcialmente preenchida conforme o mercado",

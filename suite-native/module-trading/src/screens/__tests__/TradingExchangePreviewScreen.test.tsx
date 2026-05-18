@@ -72,6 +72,7 @@ jest.mock('../../hooks/exchange/useExchangeFlow', () => ({
         confirmTrade: mockConfirmTrade,
         fetchFeesAndCompose: mockFetchFeesAndCompose,
         signAndSendTransaction: mockSignAndSendTransaction,
+        signDataAndConfirm: jest.fn(),
         isConsentRequested: false,
         resolveConsent: mockResolveConsent,
         get txnErrorString() {

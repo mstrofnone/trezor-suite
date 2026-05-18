@@ -14,9 +14,11 @@ import {
 } from '../TradingOutputsReviewScreen';
 
 const mockSignAndSendTransaction = jest.fn();
+const mockSignDataAndConfirm = jest.fn();
 const mockResolveTransactionSendConsent = jest.fn();
 const mockUseExchangeFlow = {
     signAndSendTransaction: mockSignAndSendTransaction,
+    signDataAndConfirm: mockSignDataAndConfirm,
     isTransactionSendConsentRequested: false,
     resolveTransactionSendConsent: mockResolveTransactionSendConsent,
 };
@@ -97,11 +99,11 @@ const createSellRouteParams = (tokenContract?: TokenAddress) => ({
 });
 
 // Helper function to create route params for exchange
-const createExchangeRouteParams = (tokenContract?: TokenAddress) => ({
+const createExchangeRouteParams = (tokenContract?: TokenAddress, flowType: string = 'swap') => ({
     accountKey: TEST_ACCOUNT_KEY,
     tokenContract,
     orderId: TEST_ORDER_ID,
-    flowType: 'swap',
+    flowType,
 });
 
 // Helper function to create route for sell
@@ -208,6 +210,32 @@ describe('TradingSellOutputsReviewScreen', () => {
                     orderId: TEST_ORDER_ID,
                     accountKey: TEST_ACCOUNT_KEY,
                     reportToAnalytics: mockReportToAnalyticsExchange,
+                }),
+            );
+        });
+
+        it('should pass signDataAndConfirm when flowType is sign-data', () => {
+            const params = createExchangeRouteParams(undefined, 'sign-data');
+            const route = createExchangeRoute(params);
+
+            renderScreen(route);
+
+            expect(mockUseTradingOutputsReviewScreenControls).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    signAndSendTransaction: mockSignDataAndConfirm,
+                }),
+            );
+        });
+
+        it('should pass signAndSendTransaction when flowType is swap', () => {
+            const params = createExchangeRouteParams(undefined, 'swap');
+            const route = createExchangeRoute(params);
+
+            renderScreen(route);
+
+            expect(mockUseTradingOutputsReviewScreenControls).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    signAndSendTransaction: mockSignAndSendTransaction,
                 }),
             );
         });

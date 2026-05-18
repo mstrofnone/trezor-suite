@@ -1,25 +1,101 @@
-import { renderWithBasicProvider } from '@suite-native/test-utils';
+import type { ExchangeProviderInfo } from 'invity-api';
 
+import { getTranslation } from '@suite-native/intl';
+
+import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import { ExchangeFusionPlusInfo } from '../ExchangeFusionPlusInfo';
 
 describe('ExchangeFusionPlusInfo', () => {
-    it('should render the Fusion+ card with header', () => {
-        const { getByText } = renderWithBasicProvider(<ExchangeFusionPlusInfo />);
+    const fusionProviderInfos = {
+        ['1inchfusionplus']: {
+            name: '1inchfusionplus',
+            companyName: '1inch Fusion+',
+            logo: '1inch.svg',
+            isActive: true,
+            buyTickers: [],
+            sellTickers: [],
+            statusUrl: '',
+            supportUrl: '',
+            termsUrl: '',
+            isDex: true,
+            isFixedRate: false,
+            kycPolicyType: 'DEX',
+            addressFormats: {},
+        },
+        ['1inchfusion']: {
+            name: '1inchfusion',
+            companyName: '1inch Fusion',
+            logo: '1inch.svg',
+            isActive: true,
+            buyTickers: [],
+            sellTickers: [],
+            statusUrl: '',
+            supportUrl: '',
+            termsUrl: '',
+            isDex: true,
+            isFixedRate: false,
+            kycPolicyType: 'DEX',
+            addressFormats: {},
+        },
+    } satisfies Record<string, ExchangeProviderInfo>;
 
-        expect(getByText('You are swapping with 1Inch Fusion+')).toBeOnTheScreen();
+    const renderExchangeFusionPlusInfo = (exchange: string) =>
+        renderWithTradingProvider(<ExchangeFusionPlusInfo exchange={exchange} />, {
+            tradeType: 'exchange',
+            overrides: {
+                wallet: {
+                    trading: {
+                        exchange: {
+                            exchangeInfo: {
+                                providerInfos: fusionProviderInfos,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+    it('should render the canonical Fusion+ name when exchange is 1inchfusionplus', () => {
+        const { getByText } = renderExchangeFusionPlusInfo('1inchfusionplus');
+
+        expect(
+            getByText(
+                getTranslation('moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title', {
+                    providerName: '1inch Fusion+',
+                }),
+            ),
+        ).toBeOnTheScreen();
+    });
+
+    it('should render the canonical Fusion name (without +) when exchange is 1inchfusion', () => {
+        const { getByText } = renderExchangeFusionPlusInfo('1inchfusion');
+
+        expect(
+            getByText(
+                getTranslation('moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title', {
+                    providerName: '1inch Fusion',
+                }),
+            ),
+        ).toBeOnTheScreen();
     });
 
     it('should render all three bullet points', () => {
-        const { getByText } = renderWithBasicProvider(<ExchangeFusionPlusInfo />);
+        const { getByText } = renderExchangeFusionPlusInfo('1inchfusionplus');
 
         expect(
-            getByText('Simply sign the order - no need to send transactions manually'),
+            getByText(
+                getTranslation('moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet1'),
+            ),
         ).toBeOnTheScreen();
         expect(
-            getByText('No gas fees - the smart contract handles everything for you'),
+            getByText(
+                getTranslation('moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet2'),
+            ),
         ).toBeOnTheScreen();
         expect(
-            getByText('Your swap might be partially filled based on the market conditions'),
+            getByText(
+                getTranslation('moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet3'),
+            ),
         ).toBeOnTheScreen();
     });
 });

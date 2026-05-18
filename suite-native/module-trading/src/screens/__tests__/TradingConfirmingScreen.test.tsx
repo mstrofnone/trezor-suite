@@ -257,7 +257,9 @@ describe('TradingConfirmingScreen', () => {
 
         const [, listener] =
             mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
-        listener?.({ data: { action: { type: 'GO_BACK' } } });
+        act(() => {
+            listener?.({ data: { action: { type: 'GO_BACK' } } });
+        });
 
         expect(selectTradingExchangeSelectedQuote(store.getState())).toBeUndefined();
     });
@@ -267,7 +269,9 @@ describe('TradingConfirmingScreen', () => {
 
         const [, listener] =
             mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
-        listener?.({ data: { action: { type: 'POP', payload: { count: 3 } } } });
+        act(() => {
+            listener?.({ data: { action: { type: 'POP', payload: { count: 3 } } } });
+        });
 
         expect(selectTradingExchangeSelectedQuote(store.getState())).toEqual(testQuote);
     });

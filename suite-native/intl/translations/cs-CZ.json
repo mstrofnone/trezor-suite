@@ -1554,7 +1554,7 @@
     "moduleTrading.tradingExchangePreviewScreen.providerReceiveAddressLabel": "Přijímací adresa {providerName}",
     "moduleTrading.tradingExchangePreviewScreen.confirmationAlertTitle": "Nepovedlo se potvrdit nabídku.",
     "moduleTrading.tradingExchangePreviewScreen.approvalSuccessAlert": "Schválení útraty potvrzeno.",
-    "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title": "Provádíte směnu přes 1Inch Fusion+",
+    "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.title": "Provádíte směnu přes {providerName}",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet1": "Stačí podepsat objednávku - není nutné transakce odesílat ručně",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet2": "Žádné poplatky za gas - chytrý kontrakt se o všechno postará za vás",
     "moduleTrading.tradingExchangePreviewScreen.fusionPlusInfo.bullet3": "Vaše směna může být v závislosti na tržních podmínkách vyřízena jen částečně",
