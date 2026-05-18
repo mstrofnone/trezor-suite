@@ -119,8 +119,17 @@ export type ApprovalStatus =
     | 'not_needed'
     | null;
 
+// 1inch Fusion and Fusion+ handle approval via Permit2 signed permits baked into the
+// EIP-712 typed data the user signs; no on-chain ERC20 approval transaction is needed.
+export const isFusionQuote = (quote?: ExchangeTrade) =>
+    !!quote && ['1inchfusionplus', '1inchfusion'].includes(quote.exchange || '');
+
 export const requiresTokenApproval = (quote?: ExchangeTrade): boolean =>
-    !!quote && !!quote.isDex && !!quote.send && !isSendingEvmNativeToken(quote.send);
+    !!quote &&
+    !!quote.isDex &&
+    !!quote.send &&
+    !isSendingEvmNativeToken(quote.send) &&
+    !(isFusionQuote(quote) && quote.status === 'SIGN_DATA');
 
 export const getApprovalStatus = (candidateQuote?: ExchangeTrade): ApprovalStatus => {
     if (!candidateQuote) {

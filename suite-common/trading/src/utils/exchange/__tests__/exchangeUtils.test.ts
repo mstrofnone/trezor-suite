@@ -2,6 +2,7 @@ import { type CryptoId } from 'invity-api';
 
 import {
     getApprovalStatus,
+    isFusionQuote,
     requiresTokenApproval,
     tokenSupportsIncreasingAllowance,
 } from '../exchangeUtils';
@@ -49,6 +50,41 @@ describe('requiresTokenApproval', () => {
         };
         const result = requiresTokenApproval(quote);
         expect(result).toBe(true);
+    });
+
+    it('should return true for Fusion+ quotes with ERC-20 tokens when status is not SIGN_DATA', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusionplus',
+            send: 'ethereum--0xdac17f958d2ee523a2206206994597c13d831ec7' as CryptoId,
+        };
+        const result = requiresTokenApproval(quote);
+        expect(result).toBe(true);
+    });
+
+    it('should return false for Fusion+ quotes with ERC-20 tokens when status is SIGN_DATA', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusionplus',
+            send: 'ethereum--0xdac17f958d2ee523a2206206994597c13d831ec7' as CryptoId,
+            status: 'SIGN_DATA' as const,
+        };
+        const result = requiresTokenApproval(quote);
+        expect(result).toBe(false);
+    });
+
+    it('should return false for 1inch Fusion quotes with ERC-20 tokens when status is SIGN_DATA', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusion',
+            send: 'ethereum--0xdac17f958d2ee523a2206206994597c13d831ec7' as CryptoId,
+            status: 'SIGN_DATA' as const,
+        };
+        const result = requiresTokenApproval(quote);
+        expect(result).toBe(false);
     });
 });
 
@@ -137,6 +173,62 @@ describe('getApprovalStatus', () => {
         };
         const result = getApprovalStatus(quote);
         expect(result).toBe('not_needed');
+    });
+
+    it('should return "not_needed" for Fusion+ quote with SIGN_DATA status', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusionplus',
+            send: dexTokenSend,
+            status: 'SIGN_DATA' as const,
+        };
+        const result = getApprovalStatus(quote);
+        expect(result).toBe('not_needed');
+    });
+
+    it('should return "not_needed" for 1inch Fusion quote with SIGN_DATA status', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusion',
+            send: dexTokenSend,
+            status: 'SIGN_DATA' as const,
+        };
+        const result = getApprovalStatus(quote);
+        expect(result).toBe('not_needed');
+    });
+
+    it('should return "needs_approval" for Fusion+ quote without SIGN_DATA status', () => {
+        const quote = {
+            orderId: 'test-order',
+            isDex: true,
+            exchange: '1inchfusionplus',
+            send: dexTokenSend,
+        };
+        const result = getApprovalStatus(quote);
+        expect(result).toBe('needs_approval');
+    });
+});
+
+describe('isFusionQuote', () => {
+    it('should return true for 1inchfusionplus', () => {
+        const quote = { orderId: 'test', exchange: '1inchfusionplus' };
+        expect(isFusionQuote(quote)).toBe(true);
+    });
+
+    it('should return true for 1inchfusion', () => {
+        const quote = { orderId: 'test', exchange: '1inchfusion' };
+        expect(isFusionQuote(quote)).toBe(true);
+    });
+
+    it('should return false for regular exchanges', () => {
+        const quote = { orderId: 'test', exchange: '1inch' };
+        expect(isFusionQuote(quote)).toBe(false);
+    });
+
+    it('should return false for undefined quote', () => {
+        expect(isFusionQuote(undefined)).toBe(false);
     });
 });
 
