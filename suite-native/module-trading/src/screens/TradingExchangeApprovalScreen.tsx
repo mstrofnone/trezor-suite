@@ -18,7 +18,7 @@ import {
     Screen,
     ScreenHeader,
     type StackProps,
-    usePreventNavigationRemove,
+    useNavigationRemoveActionInterceptor,
 } from '@suite-native/navigation';
 
 import { ApprovalButton } from '../components/exchange/Approval/ApprovalButton';
@@ -106,8 +106,8 @@ export const TradingExchangeApprovalScreen = ({
         };
     }, [quote, isReady, isRevoked, dispatch, confirmApproval]);
 
-    usePreventNavigationRemove({
-        onPreventedRemove: action => {
+    useNavigationRemoveActionInterceptor({
+        onInterceptedAction: action => {
             dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
             navigation.dispatch(action);
         },
