@@ -112,6 +112,7 @@ describe('useExchangeFlow', () => {
         mockSignDataAndConfirmThunk = jest.fn((payload: unknown) => ({
             type: 'signDataAndConfirmThunkMock',
             payload,
+            unwrap: () => Promise.resolve(true),
         }));
 
         jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -263,22 +264,24 @@ describe('useExchangeFlow', () => {
 
             expect(signResult).toBe(true);
             expect(mockOnError).not.toHaveBeenCalled();
-            expect(dispatchSpy).toHaveBeenCalledWith({
-                type: 'signDataAndConfirmThunkMock',
-                payload: {
-                    account: expect.objectContaining({
-                        key: 'btc1',
-                        symbol: 'btc',
-                    }),
-                    device: expect.objectContaining({
-                        path: 'device-path',
-                    }),
-                    returnUrl: expect.any(String),
-                    triggerAnalyticsTradeConfirmation: expect.any(Function),
-                    processResponseData: expect.any(Function),
-                    nextStep: mockNextStep,
-                },
-            });
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'signDataAndConfirmThunkMock',
+                    payload: {
+                        account: expect.objectContaining({
+                            key: 'btc1',
+                            symbol: 'btc',
+                        }),
+                        device: expect.objectContaining({
+                            path: 'device-path',
+                        }),
+                        returnUrl: expect.any(String),
+                        triggerAnalyticsTradeConfirmation: expect.any(Function),
+                        processResponseData: expect.any(Function),
+                        nextStep: mockNextStep,
+                    },
+                }),
+            );
         });
 
         it('should return false when device is missing', async () => {

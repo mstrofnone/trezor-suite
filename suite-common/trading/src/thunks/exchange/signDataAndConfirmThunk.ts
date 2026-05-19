@@ -127,6 +127,6 @@ export const signDataAndConfirmThunk = createThunk(
                 processResponseData,
                 nextStep,
             }),
-        );
+        ).unwrap();
     },
 );

@@ -1,7 +1,12 @@
 import { type RouteProp } from '@react-navigation/native';
 
 import { type TokenAddress } from '@suite-common/wallet-types';
-import type { RootStackParamList, RootStackRoutes, StackProps } from '@suite-native/navigation';
+import type {
+    ExchangeFlowType,
+    RootStackParamList,
+    RootStackRoutes,
+    StackProps,
+} from '@suite-native/navigation';
 import { type TestStore } from '@suite-native/test-utils-store';
 
 import {
@@ -99,7 +104,10 @@ const createSellRouteParams = (tokenContract?: TokenAddress) => ({
 });
 
 // Helper function to create route params for exchange
-const createExchangeRouteParams = (tokenContract?: TokenAddress, flowType: string = 'swap') => ({
+const createExchangeRouteParams = (
+    tokenContract?: TokenAddress,
+    flowType: ExchangeFlowType = 'swap',
+) => ({
     accountKey: TEST_ACCOUNT_KEY,
     tokenContract,
     orderId: TEST_ORDER_ID,

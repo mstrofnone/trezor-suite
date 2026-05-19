@@ -3049,7 +3049,6 @@ export const messages = {
             title: 'Confirm on Trezor',
             submitButton: 'Send transaction',
             signData: {
-                // Mirrors desktop SignMessageModal (TR_SIGN_EIP712_TYPED_DATA / TR_ADDRESS / TR_DOMAIN / TR_MESSAGE).
                 heading: 'Sign EIP-712 typed data',
                 address: 'Address',
                 domain: 'Domain',

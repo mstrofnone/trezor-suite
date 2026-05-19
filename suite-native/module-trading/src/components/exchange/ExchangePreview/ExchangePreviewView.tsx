@@ -59,8 +59,11 @@ export const ExchangePreviewView = memo(
                     <ExchangeFromAccountTradePreviewCard quote={quote} />
                     <ExchangeToAccountTradePreviewCard quote={quote} />
                     <ExchangeFiatDeviationWarning quote={quote} />
-                    {!isFusion && <ExchangeFeePickerCard quote={quote} isTxnError={isTxnError} />}
-                    {isFusion && <ExchangeFusionPlusInfo exchange={quote?.exchange} />}
+                    {isFusion ? (
+                        <ExchangeFusionPlusInfo exchange={quote?.exchange} />
+                    ) : (
+                        <ExchangeFeePickerCard quote={quote} isTxnError={isTxnError} />
+                    )}
                     {kycWarning && (
                         <InlineAlertBox
                             iconName="identificationCard"

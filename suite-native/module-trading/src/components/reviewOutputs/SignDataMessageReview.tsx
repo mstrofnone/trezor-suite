@@ -2,8 +2,10 @@ import { type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-    getUnusedAddressFromAccount,
+    formatMessageValue,
+    getSignerAddress,
     selectTradingExchangeSelectedQuote,
+    simplifyJSON,
 } from '@suite-common/trading';
 import { Card, Text, VStack } from '@suite-native/atoms';
 import { AddressFormatter } from '@suite-native/formatters';
@@ -22,41 +24,6 @@ type TypedDataPayload = {
     domain?: TypedDataDomain;
     primaryType?: string;
     message?: Record<string, unknown>;
-};
-
-// Ported verbatim from packages/suite SignMessageModal.simplifyJSON so the mobile
-// review presents EIP-712 data in the same flattened form as desktop. JSON.stringify
-// can't serialize bigints natively, so they're stringified via a reviver.
-const simplifyJSON = (object: unknown): string => {
-    if (object === undefined || object === null) {
-        return '';
-    }
-
-    return JSON.stringify(
-        object,
-        (_key, value) => (typeof value === 'bigint' ? value.toString() : value),
-        2,
-    )
-        .replace(/[{}",[\]]/g, '')
-        .replace(/^\s{2}/gm, '')
-        .replace(/\n\s*\n/gm, '\n')
-        .trim();
-};
-
-const formatMessageValue = (value: unknown): string => {
-    if (value === undefined || value === null) {
-        return '';
-    }
-
-    if (typeof value === 'bigint') {
-        return value.toString();
-    }
-
-    if (typeof value === 'object') {
-        return simplifyJSON(value);
-    }
-
-    return String(value);
 };
 
 type SignDataCardProps = {
@@ -120,16 +87,7 @@ export const SignDataMessageReview = () => {
             ? (signData.data as TypedDataPayload)
             : {};
     const { domain, message } = data;
-    const signerAddress = (() => {
-        if (!sendAccount) return undefined;
-        try {
-            return getUnusedAddressFromAccount(sendAccount).address;
-        } catch (error) {
-            console.warn('Failed to get signer address:', error);
-
-            return undefined;
-        }
-    })();
+    const signerAddress = getSignerAddress(sendAccount);
 
     return (
         <VStack spacing="sp12">

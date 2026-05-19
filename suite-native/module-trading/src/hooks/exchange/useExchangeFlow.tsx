@@ -209,7 +209,7 @@ export const useExchangeFlow = ({ flowType }: UseExchangeFlowProps = {}) => {
                         processResponseData,
                         nextStep,
                     }),
-                );
+                ).unwrap();
 
                 return true;
             } catch (e) {
