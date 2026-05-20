@@ -288,8 +288,9 @@ export const signRippleStellarSendFormTransactionThunk = createThunk<
                   }))(token.contract.split('-'))
                 : { type: StellarAssetType.NATIVE };
 
-            const { buildSendTransaction, transformTransaction } = await stellar();
+            const { buildSendTransaction } = await stellar();
 
+            const testnet = isTestnet(selectedAccount.symbol);
             const transaction = buildSendTransaction({
                 descriptor: selectedAccount.descriptor,
                 sequence: selectedAccount.misc.stellarSequence,
@@ -299,10 +300,10 @@ export const signRippleStellarSendFormTransactionThunk = createThunk<
                 amount: formState.outputs[0].amount,
                 asset,
                 destinationTag: formState.destinationTag,
-                isTestnet: isTestnet(selectedAccount.symbol),
+                isTestnet: testnet,
             });
 
-            const transformed = transformTransaction(transaction);
+            const xdrBase64 = transaction.toXDR();
 
             response = await TrezorConnect.stellarSignTransaction({
                 device: {
@@ -313,8 +314,8 @@ export const signRippleStellarSendFormTransactionThunk = createThunk<
                 },
                 payment_req: paymentRequests?.[0],
                 path: selectedAccount.path,
-                transaction: transformed,
-                networkPassphrase: transaction.networkPassphrase,
+                xdrBase64,
+                testnet,
             });
 
             if (response.success) {
