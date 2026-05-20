@@ -1,6 +1,7 @@
 import { decodeParameters } from 'web3-eth-abi';
 import { sha3 } from 'web3-utils';
 
+import { isAddressValid } from '@suite-common/address';
 import { UINT256_MAX } from '@suite-common/suite-constants';
 import { type EvmTransactionPurpose } from '@suite-common/wallet-types';
 import { type TokenInfo } from '@trezor/blockchain-link-types';
@@ -9,7 +10,6 @@ import { BigNumber } from '@trezor/utils';
 
 import { asAmountSubunit, asAmountUnit } from './AmountTypes';
 import { unitsToSubunits } from './amountUtils';
-import { isAddressValid } from './validationUtils';
 
 export const isEip1559 = (
     tx: Record<string, any> | null | undefined,

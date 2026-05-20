@@ -2,7 +2,8 @@ import { type ChangeEvent, useCallback, useEffect, useState } from 'react';
 
 import { events } from '@suite/analytics';
 import { Translation, useTranslation } from '@suite/intl';
-import { isAddressValid, tryGetAccountIdentity } from '@suite-common/wallet-utils';
+import { isAddressValid } from '@suite-common/address';
+import { tryGetAccountIdentity } from '@suite-common/wallet-utils';
 import { Input, Modal } from '@trezor/components';
 import TrezorConnect, { type TokenInfo } from '@trezor/connect';
 
