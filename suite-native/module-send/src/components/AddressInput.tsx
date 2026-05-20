@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { autocorrectAddress, isAddressValid } from '@suite-common/address';
 import { parseErc681TransferUri } from '@suite-common/suite-utils';
 import { formInputsMaxLength } from '@suite-common/validators';
 import {
@@ -10,13 +11,7 @@ import {
     selectAccountNetworkSymbol,
 } from '@suite-common/wallet-core';
 import { type AccountKey } from '@suite-common/wallet-types';
-import {
-    convertAmountSubunitsToUnits,
-    hasBitcoinCashAddressPrefix,
-    isAddressValid,
-    isBech32AddressUppercase,
-    isBitcoinCashAddressUppercase,
-} from '@suite-common/wallet-utils';
+import { convertAmountSubunitsToUnits } from '@suite-common/wallet-utils';
 import { type NativeAccountsRootState, selectFreshAccountAddress } from '@suite-native/accounts';
 import { events } from '@suite-native/analytics';
 import { Button, HStack, Text, VStack } from '@suite-native/atoms';
@@ -86,27 +81,21 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
         [],
     );
 
-    // Mirror desktop behavior by silently autocorrecting addresses that Trezor would otherwise
-    // reject: bech32/CashAddr addresses must be lowercase, and BCH addresses must include the
-    // `bitcoincash:` prefix.
-    const autocorrectAddress = (newValue: string): string => {
-        if (isBitcoinCashAddressUppercase(newValue) || isBech32AddressUppercase(newValue)) {
-            showAutocorrectMessage('moduleSend.outputs.recipients.address.convertedToLowercase');
+    const correctAddress = (value: string): string => {
+        if (!symbol) return value;
 
-            return newValue.toLowerCase();
+        const correction = autocorrectAddress(value, symbol);
+        if (correction) {
+            showAutocorrectMessage(
+                correction.type === 'lowercase'
+                    ? 'moduleSend.outputs.recipients.address.convertedToLowercase'
+                    : 'moduleSend.outputs.recipients.address.addedBitcoincashPrefix',
+            );
+
+            return correction.corrected;
         }
 
-        if (
-            symbol === 'bch' &&
-            !hasBitcoinCashAddressPrefix(newValue) &&
-            isAddressValid(`bitcoincash:${newValue}`, symbol)
-        ) {
-            showAutocorrectMessage('moduleSend.outputs.recipients.address.addedBitcoincashPrefix');
-
-            return `bitcoincash:${newValue}`;
-        }
-
-        return newValue;
+        return value;
     };
 
     const handleScanAddressQRCode = (qrCodeData: string) => {
@@ -135,7 +124,7 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
             return;
         }
 
-        const corrected = autocorrectAddress(qrCodeData);
+        const corrected = correctAddress(qrCodeData);
         setValue(addressFieldName, corrected, { shouldValidate: true });
         if (symbol && isAddressValid(corrected, symbol)) {
             analytics.report({
@@ -146,7 +135,7 @@ export const AddressInput = ({ index, accountKey }: AddressInputProps) => {
     };
 
     const handleChangeValue = (newValue: string) => {
-        const corrected = autocorrectAddress(newValue);
+        const corrected = correctAddress(newValue);
         if (corrected !== newValue) {
             setValue(addressFieldName, corrected, { shouldValidate: true });
         }

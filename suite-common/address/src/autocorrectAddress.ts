@@ -1,11 +1,9 @@
 import { type NetworkSymbol } from '@suite-common/wallet-config';
 
-import {
-    hasBitcoinCashAddressPrefix,
-    isAddressValid,
-    isBech32AddressUppercase,
-    isBitcoinCashAddressUppercase,
-} from './addressValidation';
+import { hasBitcoinCashAddressPrefix } from './hasBitcoinCashAddressPrefix';
+import { isAddressValid } from './isAddressValid';
+import { isBech32AddressUppercase } from './isBech32AddressUppercase';
+import { isBitcoinCashAddressUppercase } from './isBitcoinCashAddressUppercase';
 
 export type AddressCorrection =
     | { corrected: string; type: 'lowercase' }
