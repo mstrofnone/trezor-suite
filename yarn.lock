@@ -15343,6 +15343,7 @@ __metadata:
     "@trezor/blockchain-link-types": "workspace:*"
     "@trezor/coins-solana": "workspace:*"
     "@trezor/coins-stellar": "workspace:*"
+    "@trezor/coins-xrpl": "workspace:*"
     "@trezor/env-utils": "workspace:*"
     "@trezor/eslint": "workspace:*"
     "@trezor/type-utils": "workspace:*"
@@ -15361,6 +15362,7 @@ __metadata:
     "@trezor/blockchain-link-utils": "workspace:*"
     "@trezor/coins-solana": "workspace:*"
     "@trezor/coins-stellar": "workspace:*"
+    "@trezor/coins-xrpl": "workspace:*"
     "@trezor/e2e-utils": "workspace:*"
     "@trezor/env-utils": "workspace:*"
     "@trezor/eslint": "workspace:*"
@@ -15439,7 +15441,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@trezor/coins-xrpl@workspace:coins/coins-xrpl":
+"@trezor/coins-xrpl@workspace:*, @trezor/coins-xrpl@workspace:coins/coins-xrpl":
   version: 0.0.0-use.local
   resolution: "@trezor/coins-xrpl@workspace:coins/coins-xrpl"
   dependencies:
