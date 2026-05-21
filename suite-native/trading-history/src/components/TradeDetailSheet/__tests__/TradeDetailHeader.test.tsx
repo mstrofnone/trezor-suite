@@ -5,8 +5,8 @@ import {
     getInitializedTradingStateWithQuotes,
     getSellTrade,
 } from '@suite-native/trading-fixtures';
-
 import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
+
 import { TradeDetailHeader } from '../TradeDetailHeader';
 
 const createOverrides = (trades: TradingTransaction[]) => ({

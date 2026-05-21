@@ -3,13 +3,13 @@ import { type RouteProp } from '@react-navigation/native';
 import { type RootStackParamList, type RootStackRoutes } from '@suite-native/navigation';
 import { fireEvent } from '@suite-native/test-utils-store';
 import { accounts, getBuyTrade } from '@suite-native/trading-fixtures';
+import { TradingHistoryScreen } from '@suite-native/trading-history';
 
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
 } from '../../__tests__/tradingTestUtils';
-import { TradingHistoryScreen } from '../TradingHistoryScreen';
 
 const mockShowSheet = jest.fn();
 

@@ -13,11 +13,11 @@ import {
 } from '@suite-common/trading';
 import { type AccountsRootState, selectAccountByKey } from '@suite-common/wallet-core';
 import { type AccountKey } from '@suite-common/wallet-types';
-import { type NativeAnalyticsDep, events } from '@suite-native/analytics';
+import { events } from '@suite-native/analytics';
+import { getTradeStatusStep } from '@suite-native/trading-common';
 import { type TradingRootState } from '@suite-native/trading-state';
 
 import { useReloadTimer } from './useReloadTimer';
-import { getTradeStatusStep } from '../../utils/general/utils';
 
 export type TradingTradeMapProps = {
     buy: TradingTransactionBuy;

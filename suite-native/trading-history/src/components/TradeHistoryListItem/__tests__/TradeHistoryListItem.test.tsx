@@ -1,7 +1,7 @@
 import { type TradingTransaction } from '@suite-common/trading';
 import { getBuyTrade, getInitializedTradingState } from '@suite-native/trading-fixtures';
-
 import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
+
 import { TradeHistoryListItem } from '../TradeHistoryListItem';
 
 describe('TradeHistoryListItem', () => {
