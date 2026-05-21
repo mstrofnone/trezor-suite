@@ -18,6 +18,7 @@ import { deviceConnectThunks, selectEnabledNetworks } from '@suite-common/wallet
 import TrezorConnect, {
     BLOCKCHAIN_EVENT,
     type ConnectSettings,
+    type ConnectSettingsTransport,
     DEVICE,
     DEVICE_EVENT,
     type Device,
@@ -26,6 +27,11 @@ import TrezorConnect, {
     UI_REQUEST,
 } from '@trezor/connect';
 import { isDesktop, isWeb } from '@trezor/env-utils';
+// Deep import bypasses the `@trezor/transport` barrel so browser bundlers
+// don't pull in node-only sibling modules (`UdpTransport`/`dgram`,
+// `NodeUsbTransport`/`usb`) when this file is loaded on web.
+import { BridgeTransport } from '@trezor/transport/src/transports/bridge';
+import { WebUsbTransport } from '@trezor/transport-web';
 import { DATA_URL } from '@trezor/urls';
 import { capitalizeFirstLetter, getSynchronize, isArrayMember } from '@trezor/utils';
 
@@ -33,6 +39,24 @@ import { blacklist } from './blacklist';
 import { type ConnectKey } from './types';
 
 const CONNECT_INIT_MODULE = '@common/connect-init';
+
+// Web counterpart to suite-desktop-core's IPC-side mapping. Web has no IPC
+// boundary — `TrezorConnect.init` runs in-process — so we must translate the
+// debug switcher's string identifiers to DI references in the renderer itself
+// before they reach @trezor/connect's TransportList (which only accepts
+// Transport instances or classes). Only Bridge and WebUSB are reachable on
+// the web debug switcher; unknown strings (e.g. NodeUsbTransport from stale
+// persisted state) are dropped.
+const mapWebDebugTransport = (t: string): ConnectSettingsTransport | undefined => {
+    switch (t) {
+        case 'BridgeTransport':
+            return BridgeTransport;
+        case 'WebUsbTransport':
+            return WebUsbTransport;
+        default:
+            return undefined;
+    }
+};
 
 // If you are looking where connectInitSettings is defined, it is defined in packages/suite/src/support/extraDependencies.ts
 // or in suite-native/state/src/extraDependencies.ts depends on which platform this connectInitThunk runs.
@@ -195,25 +219,41 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             ...firmwareHashCheckTimeoutsOverride,
         };
 
-        const { transports, showConnectLogs } = selectDebugSettings(getState());
+        const { transports: debugTransports, showConnectLogs } = selectDebugSettings(getState());
         const thp = selectThpSettings(getState());
         // desktop thp appName/hostName enhanced in ./packages/suite-desktop-core/src/modules/trezor-connect.ts
         if (isWeb()) {
             thp.hostName = capitalizeFirstLetter(getBrowserName());
         }
 
+        // The debug transport switcher writes legacy string identifiers
+        // (`'BridgeTransport'` …) to Redux. They are not part of @trezor/connect's
+        // pure-DI public type surface and must be translated to a Transport
+        // instance / class / factory before reaching its TransportList runtime.
+        //
+        // - Desktop: pass strings through; the IPC proxy serializes them to
+        //   suite-desktop-core's main process, which maps them in its IPC
+        //   handler (`packages/suite-desktop-core/src/modules/trezor-connect.ts`).
+        //   The cast is the renderer-side acknowledgement of this wire format.
+        // - Web: there is no IPC. `TrezorConnect.init` runs in-process, so we
+        //   map locally before the call (`mapWebDebugTransport` above).
+        // selectDebugSettings is typed as `any` (see SuiteCompatibleSelector<any>
+        // in extraDependenciesType.ts) so we have to narrow `debugTransports` to
+        // a concrete shape here — otherwise the filter callback below becomes
+        // implicitly-any and fails strict type-check on CI.
+        const stringTransports = debugTransports as string[] | undefined;
+        const transports = isWeb()
+            ? stringTransports
+                  ?.map(mapWebDebugTransport)
+                  .filter((t): t is ConnectSettingsTransport => t !== undefined)
+            : (stringTransports as unknown as ConnectSettings['transports']);
+
         try {
             await TrezorConnect.init({
                 ...connectInitSettings,
                 binFilesBaseUrl,
                 pendingTransportEvent: selectIsPendingTransportEvent(getState()),
-                // The debug transport switcher stores legacy string identifiers
-                // (`'BridgeTransport'` …) in Redux. They serialize across IPC
-                // to suite-desktop-core, which maps them to DI references
-                // before reaching @trezor/connect's TransportList. The cast is
-                // the renderer-side acknowledgement that strings are an IPC
-                // wire format, not part of connect's pure-DI public surface.
-                transports: transports as unknown as ConnectSettings['transports'],
+                transports,
                 thp,
                 debug: showConnectLogs,
                 firmwareHashCheckTimeouts,

@@ -13,6 +13,10 @@
         { "path": "../wallet-core" },
         { "path": "../../packages/connect" },
         { "path": "../../packages/env-utils" },
+        { "path": "../../packages/transport" },
+        {
+            "path": "../../packages/transport-web"
+        },
         { "path": "../../packages/urls" },
         { "path": "../../packages/utils" }
     ]

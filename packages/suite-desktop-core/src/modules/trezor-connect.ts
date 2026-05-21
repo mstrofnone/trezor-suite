@@ -2,17 +2,14 @@ import { ipcMain } from 'electron';
 
 import TrezorConnect, {
     type ConnectSettings,
+    type ConnectSettingsTransport,
     type LocalFirmwares,
     UI_EVENT,
     UI_REQUEST,
     UI_RESPONSE,
 } from '@trezor/connect';
-// Deep import: @trezor/connect's barrel intentionally exposes only TrezorConnect
-// and types. The dual-port Bridge factory is temporary (see comment in
-// `defaultTransports.ts`) — once the legacy 21325 port is retired, this import
-// collapses into a single `new BridgeTransport(params)` at the call site.
-import { createBridgeTransports } from '@trezor/connect/src/defaultTransports';
 import { type IpcProxyHandlerOptions, createIpcProxyHandler } from '@trezor/ipc-proxy';
+import { BridgeTransport, NodeUsbTransport, UdpTransport } from '@trezor/transport';
 import { parseElectrumUrl } from '@trezor/utils';
 
 import { bluetoothModuleState } from './bluetooth';
@@ -53,11 +50,42 @@ const emitOnSetCustomBackendToMainThreadToAllowDomains = ({
     }
 };
 
-// override TrezorConnect.init and TrezorConnect.updateConnectSettings params
-// add BluetoothTransport if bluetooth module is enabled
+// The Suite renderer's debug transport switcher writes string identifiers to
+// Redux (`debug.transports`) and forwards them through IPC to this process.
+// Strings serialize cleanly across IPC; classes don't — so the renderer
+// cannot send DI references directly. We translate the legacy string
+// names to the equivalent DI references here, below the IPC boundary, before
+// they reach @trezor/connect.
+//
+// The renderer casts string transports through `ConnectSettings['transports']`
+// (which is pure DI in connect's public type surface), so at this point the
+// types claim no strings are present. The runtime knows better — we accept
+// `unknown` here and narrow at runtime.
+//
+// 'WebUsbTransport' is intentionally not mapped — desktop never uses WebUSB,
+// and if a string slips through unmapped, downstream handling falls back
+// gracefully.
+const mapStringTransport = (t: unknown): ConnectSettingsTransport => {
+    if (typeof t !== 'string') return t as ConnectSettingsTransport;
+    switch (t) {
+        case 'BridgeTransport':
+            return BridgeTransport;
+        case 'NodeUsbTransport':
+            return NodeUsbTransport;
+        case 'UdpTransport':
+            return UdpTransport;
+        default:
+            return t as unknown as ConnectSettingsTransport;
+    }
+};
+
+// override TrezorConnect.init and TrezorConnect.updateConnectSettings params:
+// 1) translate legacy string transports to DI references (see above)
+// 2) add BluetoothTransport if the bluetooth module is enabled
 const getTransportsParam = (
-    transports?: ConnectSettings['transports'],
+    rawTransports?: ConnectSettings['transports'],
 ): ConnectSettings['transports'] => {
+    const transports = rawTransports?.map(mapStringTransport);
     const bluetooth = bluetoothModuleState.getTransport();
     if (!bluetooth) return transports;
 
@@ -67,7 +95,7 @@ const getTransportsParam = (
 
     // If the caller did not pass any transports, restore the Bridge default
     // explicitly so we don't end up with a Bluetooth-only list.
-    return [bluetooth, createBridgeTransports];
+    return [bluetooth, BridgeTransport];
 };
 
 export const initBackground: ModuleInitBackground = ({ mainThreadEmitter, store }) => {
