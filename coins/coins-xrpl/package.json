@@ -44,5 +44,7 @@
         "type-check": "yarn g:tsc --build tsconfig.json",
         "build:lib": "yarn g:rimraf ./libESM && yarn g:tsc --build tsconfig.libESM.json && ../../scripts/publish/replace-imports.sh ./libESM esm"
     },
-    "dependencies": {}
+    "dependencies": {
+        "xrpl": "4.6.0"
+    }
 }
