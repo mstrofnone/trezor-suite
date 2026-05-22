@@ -81,11 +81,15 @@ export const createIpcProxyHandler = <Api extends EventEmitterApi>(
     { onCreateInstance, debug }: IpcProxyHandlerOptions<Api>,
 ) => {
     debug?.info(SERVICE_NAME, `Init ipc interface ${channel}`);
+
+    const instancePrefixes: string[] = [];
+
     // Handle creation event from proxy-generator and creates actual interface instance
     ipcMain.handle(`${channel}/create`, async (ipcEvent, [instancePrefix, constructorParams]) => {
         validateIpcMessage({ ipcEvent });
 
         debug?.info(SERVICE_NAME, `Create ipc chanel ${instancePrefix}`);
+        instancePrefixes.push(instancePrefix);
         const { onRequest, onAddListener, onRemoveListener } = await onCreateInstance(
             ...constructorParams,
         );
@@ -148,7 +152,6 @@ export const createIpcProxyHandler = <Api extends EventEmitterApi>(
     });
 
     return () => {
-        // TODO: walk thru all instances, disable, remove listeners, remove references
         ipcMain.eventNames().forEach(name => {
             if (typeof name === 'string' && name.startsWith(`${channel}/`)) {
                 ipcMain.removeAllListeners(name);
@@ -156,7 +159,9 @@ export const createIpcProxyHandler = <Api extends EventEmitterApi>(
         });
 
         ipcMain.removeHandler(`${channel}/create`);
-        // ipcMain.removeHandler(`${instancePrefix}/invoke`); // TODO: filter unregistered to get instancePrefix
-        // TODO remove all invoke handlers
+        instancePrefixes.forEach(prefix => {
+            ipcMain.removeHandler(`${prefix}/invoke`);
+        });
+        instancePrefixes.length = 0;
     };
 };

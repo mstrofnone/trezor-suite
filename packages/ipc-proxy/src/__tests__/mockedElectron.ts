@@ -64,7 +64,9 @@ class IpcMainMock extends EventEmitter {
         this.invokes[event] = listener;
     }
 
-    removeHandler() {}
+    removeHandler(event: string) {
+        delete this.invokes[event];
+    }
 
     on(event: string, listener: any) {
         this.setup();

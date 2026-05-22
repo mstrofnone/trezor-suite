@@ -190,50 +190,44 @@ describe('proxy', () => {
         expect(ipcMain.eventNames().length).toEqual(0);
     });
 
-    // CURRENTLY LEAKS — see PR #27978 for the fix.
-    //
-    // ipcMain.handle() registers invoke handlers under per-instance prefixes
-    // (`<prefix>/invoke`). The unregister() function returned by createIpcProxyHandler
-    // currently iterates ipcMain.eventNames() and removes 'on' listeners, then calls
-    // removeHandler() for the channel-level `<channel>/create` only. Per-instance
-    // `<prefix>/invoke` handlers leak — they're not on eventNames() and the handler does
-    // not track instance prefixes.
-    //
-    // Note: the existing 'unregister proxy handler' test above passes because
-    // mockedElectron's removeHandler() is a no-op and the test only asserts on
-    // eventNames() (which lists 'on' channels, not 'invoke' handlers). This test instead
-    // spies on ipcMain.removeHandler to observe call patterns directly.
-    //
-    // When the fix lands, unregister() must track instance prefixes and call
-    // removeHandler(`${prefix}/invoke`) for each, plus removeHandler(`${channel}/create`).
-    it('unregister does not call removeHandler for per-instance invoke prefixes (TODO: fix in #27978)', async () => {
+    // Previously this test pinned the leak (see #27981): `unregister()` did not call
+    // removeHandler for per-instance `<prefix>/invoke` handlers — only for the
+    // channel-level `<channel>/create`. The fix in this PR makes `unregister()` track
+    // instance prefixes and remove each one. Test now asserts the fixed behavior.
+    it('unregister removes per-instance invoke handlers (not just on listeners)', async () => {
+        // ipcMain.handle() registers an invoke handler that ipcMain.eventNames() does NOT list,
+        // so a missing removeHandler per instancePrefix only manifests as a leak in `invokes`.
+        // Loop 15 cycles to also surface any 'on' listener accumulation as MaxListenersExceededWarning.
         exposeInMainWorld(
             ...exposeIpcProxy(ipcRenderer, ['LeakApi'], { proxyName: 'leakIpcProxy' }),
         );
 
-        const api = new TestApi();
-        const unregister = createIpcProxyHandler<TestApi>(ipcMain, 'LeakApi', {
-            onCreateInstance: () => ({
-                onRequest: (method, params) => (api[method] as any)(...params),
-            }),
-        });
+        for (let i = 0; i < 15; i++) {
+            const api = new TestApi();
+            const unregister = createIpcProxyHandler<TestApi>(ipcMain, 'LeakApi', {
+                onCreateInstance: () => ({
+                    onRequest: (method, params) => (api[method] as any)(...params),
+                }),
+            });
 
-        // Two instances → two `<prefix>/invoke` handlers registered via ipcMain.handle()
-        await createIpcProxy<TestApi>('LeakApi', { proxyName: 'leakIpcProxy' });
-        await createIpcProxy<TestApi>('LeakApi', { proxyName: 'leakIpcProxy' });
+            // Each createIpcProxy triggers a `<channel>/create` invoke which adds `<prefix>/invoke`
+            // to ipcMain.invokes. Two instances per cycle to ensure the prefix array is non-trivial.
+            await createIpcProxy<TestApi>('LeakApi', { proxyName: 'leakIpcProxy' });
+            await createIpcProxy<TestApi>('LeakApi', { proxyName: 'leakIpcProxy' });
 
-        const removeHandlerSpy = jest.spyOn(ipcMain, 'removeHandler');
-        unregister();
+            // `LeakApi/create` plus two `<prefix>/invoke` handlers must all be registered
+            const allKeys = () => Object.keys((ipcMain as any).invokes);
+            const leakApiInvokeKeys = () =>
+                allKeys().filter(k => k.startsWith('LeakApi/') && k.endsWith('/invoke'));
+            expect(leakApiInvokeKeys().length).toBe(2);
+            expect(allKeys()).toContain('LeakApi/create');
 
-        // TODO(#27978): after the fix lands, removeHandler must be called 3 times:
-        //   once with 'LeakApi/create' (already done today)
-        //   plus once with each '<prefix>/invoke' (currently missing)
-        //
-        // Current broken behavior: only 'LeakApi/create' is cleaned up.
-        expect(removeHandlerSpy).toHaveBeenCalledTimes(1);
-        expect(removeHandlerSpy).toHaveBeenCalledWith('LeakApi/create');
-        expect(removeHandlerSpy).not.toHaveBeenCalledWith(expect.stringMatching(/\/invoke$/));
+            unregister();
 
-        removeHandlerSpy.mockRestore();
+            // After unregister, no `LeakApi/...` invoke handlers should remain.
+            // Other channels' handlers (from earlier tests) are out of scope.
+            expect(leakApiInvokeKeys()).toEqual([]);
+            expect(allKeys()).not.toContain('LeakApi/create');
+        }
     });
 });
