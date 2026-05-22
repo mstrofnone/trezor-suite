@@ -510,40 +510,25 @@ describe('HttpServer', () => {
         await server.stop();
     });
 
-    // CURRENTLY LEAKS — see PR #27978 for the fix.
-    //
-    // HttpServer.start() registers 'connection' and 'error' listeners on the underlying
-    // http.Server instance. HttpServer.stop() calls removeAllListeners() on the
-    // TypedEmitter wrapper (this.emitter) but does not touch listeners on the underlying
-    // http.Server itself. Because the same http.Server is reused across start/stop cycles
-    // (created once in the constructor), every cycle accumulates one fresh listener per
-    // event. On the multi-port retry path each accumulated 'error' listener triggers a
-    // parallel stop().then(start()) chain — a quadratic blow-up in flight.
-    //
-    // When the fix lands, stop() must call this.server.removeAllListeners('connection')
-    // and ('error') so each cycle nets zero accumulation.
-    test('stop() leaks connection/error listeners on the underlying http.Server (TODO: fix in #27978)', async () => {
+    // Previously this test pinned the leak (see #27981): `HttpServer.stop()` did not
+    // remove 'connection'/'error' listeners from the underlying `http.Server`, only from
+    // the TypedEmitter wrapper. The fix in this PR now removes them on stop. Test now
+    // asserts the fixed behavior across 15 cycles.
+    test('repeated start()/stop() does not leak listeners on the underlying http.Server', async () => {
         const underlyingServer = (server as any).server;
 
-        // Node's http.Server keeps one built-in 'connection' listener by default; start()
-        // adds one more, error starts at 0 and start() adds one.
-        const connectionBaseline = underlyingServer.listenerCount('connection');
-        const errorBaseline = underlyingServer.listenerCount('error');
+        for (let i = 0; i < 15; i++) {
+            await server.start();
+            // Each start adds exactly one 'connection' and one 'error' listener.
+            // (Node's http.Server may keep a small number of built-in listeners on 'connection';
+            // bound the assertion loosely rather than match the exact baseline.)
+            expect(underlyingServer.listenerCount('connection')).toBeLessThanOrEqual(2);
+            expect(underlyingServer.listenerCount('error')).toBe(1);
 
-        await server.start();
-        expect(underlyingServer.listenerCount('connection')).toBe(connectionBaseline + 1);
-        expect(underlyingServer.listenerCount('error')).toBe(errorBaseline + 1);
-
-        await server.stop();
-
-        // TODO(#27978): after the fix lands, the assertions below must be:
-        //   listenerCount('connection') === 0   (PR removes all 'connection' listeners,
-        //       including the built-in baseline)
-        //   listenerCount('error')      === 0
-        //
-        // Current broken behavior: stop() leaves both listeners attached to the underlying server.
-        expect(underlyingServer.listenerCount('connection')).toBe(connectionBaseline + 1);
-        expect(underlyingServer.listenerCount('error')).toBe(errorBaseline + 1);
+            await server.stop();
+            expect(underlyingServer.listenerCount('connection')).toBe(0);
+            expect(underlyingServer.listenerCount('error')).toBe(0);
+        }
     });
 
     test('port negotiation - even when started using random port, the resulting port is stored for future use', async () => {

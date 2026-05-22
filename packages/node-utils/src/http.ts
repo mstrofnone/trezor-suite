@@ -241,6 +241,8 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
     public stop() {
         // note that this method only stops listening but keeps existing connections open and thus port blocked
         this.emitter.removeAllListeners();
+        this.server.removeAllListeners('connection');
+        this.server.removeAllListeners('error');
 
         return new Promise<void>(resolve => {
             this.emitter.emit('server/closing');
