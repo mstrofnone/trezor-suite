@@ -63,6 +63,8 @@ import type { moneroGetAddress } from './moneroGetAddress';
 import type { moneroGetWatchKey } from './moneroGetWatchKey';
 import type { moneroKeyImageSync } from './moneroKeyImageSync';
 import type { moneroSignTransaction } from './moneroSignTransaction';
+import type { nostrGetPublicKey } from './nostrGetPublicKey';
+import type { nostrSignEvent } from './nostrSignEvent';
 import type { off } from './off';
 import type { on } from './on';
 import type { pingDevice } from './pingDevice';
@@ -441,6 +443,16 @@ export const TrezorConnectEvolu = Type.Object({
 });
 export type TrezorConnectEvolu = Static<typeof TrezorConnectEvolu>;
 
+// Nostr protocol operations
+export const TrezorConnectNostr = Type.Object({
+    // For internal use, no public documentation.
+    nostrGetPublicKey: Type.Unsafe<typeof nostrGetPublicKey>(),
+
+    // For internal use, no public documentation.
+    nostrSignEvent: Type.Unsafe<typeof nostrSignEvent>(),
+});
+export type TrezorConnectNostr = Static<typeof TrezorConnectNostr>;
+
 // Runtime schema for key access
 export const TrezorConnectSchema = Type.Composite([
     TrezorConnectManagement,
@@ -457,6 +469,7 @@ export const TrezorConnectSchema = Type.Composite([
     TrezorConnectTezos,
     TrezorConnectTron,
     TrezorConnectEvolu,
+    TrezorConnectNostr,
 ]);
 
 // Type-level interface for precise function types.
@@ -475,4 +488,5 @@ export interface TrezorConnect
         TrezorConnectStellar,
         TrezorConnectTezos,
         TrezorConnectTron,
-        TrezorConnectEvolu {}
+        TrezorConnectEvolu,
+        TrezorConnectNostr {}
