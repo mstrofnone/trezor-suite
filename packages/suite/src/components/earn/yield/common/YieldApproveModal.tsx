@@ -152,6 +152,7 @@ export const YieldApproveModal = ({
                 provider={provider}
                 spender={spender}
                 logoSourceType="url"
+                preapprovedAmount={preapprovedAmount}
                 onCancel={handleOnApproveCancel}
                 onConfirm={handleOnApproveConfirm}
             />

@@ -1,27 +1,39 @@
 import { FormProvider } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 
 import { type CryptoId } from 'invity-api';
 
 import { useDevice } from '@suite/device';
 import { Translation } from '@suite/intl';
+import { selectIsDebugModeActive } from '@suite/settings';
+import { tokenSupportsIncreasingAllowance } from '@suite-common/trading';
 import { getDisplaySymbol } from '@suite-common/wallet-config';
 import { type Account } from '@suite-common/wallet-types';
 import { isAllowanceUnlimited } from '@suite-common/wallet-utils';
-import { Banner, Box, Column, Icon, Modal, Row, Text } from '@trezor/components';
-import { CoinLogo } from '@trezor/product-components';
+import {
+    Banner,
+    Box,
+    CardList,
+    CollapsibleBox,
+    Column,
+    Icon,
+    Modal,
+    Row,
+    Text,
+} from '@trezor/components';
+import { NetworkIcon } from '@trezor/product-components';
 import { useAsyncClickHandler } from '@trezor/react-utils';
 import { borders } from '@trezor/theme';
 
+import { DebugOnlyBadge } from 'src/components/suite/DebugOnlyBadge';
 import { AccountLabeling } from 'src/components/suite/labeling';
 import { Fees } from 'src/components/wallet/Fees/Fees';
 import { useAllowanceModal } from 'src/hooks/wallet/allowance';
 import { TradingCoinLogo } from 'src/views/wallet/trading/common/TradingCoinLogo';
+import { TradingUtilsProvider } from 'src/views/wallet/trading/common/TradingUtils/TradingUtilsProvider';
+import { toTradingUtilsProviders } from 'src/views/wallet/trading/common/TradingUtils/toTradingUtilsProviders';
 
-import {
-    type AllowanceModalProvider,
-    AllowanceModalProviderInfo,
-    type ProviderLogoSourceType,
-} from './AllowanceModalProviderInfo';
+import type { AllowanceModalProvider, ProviderLogoSourceType } from './AllowanceModalProviderInfo';
 
 interface RevokeModalProps {
     cryptoId: CryptoId;
@@ -35,9 +47,10 @@ interface RevokeModalProps {
 }
 
 export const RevokeModal = (props: RevokeModalProps) => {
-    const { account, provider, spender, cryptoId, logoSourceType, preapprovedAmount } = props;
+    const { account, provider, cryptoId, preapprovedAmount } = props;
     const { device } = useDevice();
     const { handleClick, disabled: isConfirmInProgress } = useAsyncClickHandler();
+    const isDebug = useSelector(selectIsDebugModeActive);
 
     const context = useAllowanceModal({
         ...props,
@@ -52,6 +65,7 @@ export const RevokeModal = (props: RevokeModalProps) => {
         composedLevels,
         composedLevelsError,
         canSubmit,
+        data,
         methods,
         handleClose,
         handleFeeChange,
@@ -61,20 +75,34 @@ export const RevokeModal = (props: RevokeModalProps) => {
     if (!token?.symbol) return null;
 
     const displaySymbol = getDisplaySymbol(token.symbol, token.contract);
+    const hasPreapprovedAmount = !!preapprovedAmount && preapprovedAmount !== '0';
     const isPreapprovedAmountUnlimited =
         !!preapprovedAmount && isAllowanceUnlimited(preapprovedAmount, token.decimals);
+    const isIncreasingAllowanceSupported = tokenSupportsIncreasingAllowance(token.contract);
+    const showRevokeBanner = hasPreapprovedAmount && !isIncreasingAllowanceSupported;
 
     return (
         <FormProvider {...methods}>
             <Modal
                 onCancel={handleClose}
                 intent="brand"
-                width={600}
+                width={480}
                 heading={
                     <Translation
                         id="TR_EXCHANGE_APPROVAL_REVOKE_TOKEN_SPENDING"
                         values={{ displaySymbol }}
                     />
+                }
+                description={
+                    !showRevokeBanner && (
+                        <Translation
+                            id="TR_EXCHANGE_APPROVAL_REVOKE_TOKEN_SPENDING_DESCRIPTION"
+                            values={{
+                                displaySymbol,
+                                provider: provider.companyName,
+                            }}
+                        />
+                    )
                 }
                 bottomContent={
                     <>
@@ -91,69 +119,89 @@ export const RevokeModal = (props: RevokeModalProps) => {
                         </Modal.Button>
                     </>
                 }
-                description={
-                    <Row margin={{ top: 8 }} gap={4}>
-                        <CoinLogo size={20} symbol={account.symbol} />
-                        <AccountLabeling
-                            account={account}
-                            showAccountTypeBadge
-                            accountTypeBadgeSize="small"
-                        />
-                    </Row>
-                }
                 shadowBottom={false}
             >
-                <Column gap={12}>
-                    <AllowanceModalProviderInfo
-                        spender={spender}
-                        provider={provider}
-                        logoSourceType={logoSourceType}
-                    />
-
-                    <Box
-                        borderWidth={borders.widths.large}
-                        padding={12}
-                        borderRadius={borders.radii.sm}
-                    >
-                        <Column gap={12}>
-                            <Row alignItems="flex-start" gap={48}>
-                                <Column gap={12} flex="1" overflow="hidden">
-                                    <Text>
-                                        <Translation id="TR_EXCHANGE_APPROVAL_CURRENT_LIMIT" />
-                                    </Text>
-                                    <Row gap={12}>
-                                        <TradingCoinLogo cryptoId={cryptoId} size={24} />
-                                        <Text>
-                                            {isPreapprovedAmountUnlimited ? (
-                                                <Translation id="TR_APPROVE_AMOUNT_UNLIMITED" />
-                                            ) : (
-                                                `${preapprovedAmount ?? '∞'} ${displaySymbol}`
-                                            )}
-                                        </Text>
-                                    </Row>
-                                </Column>
-
-                                <Column alignSelf="center">
-                                    <Icon name="arrowRight" />
-                                </Column>
-
-                                <Column gap={12} flex="1">
-                                    <Text>
-                                        <Translation id="TR_EXCHANGE_APPROVAL_NEW_LIMIT" />
-                                    </Text>
-                                    <Row gap={12}>
-                                        <TradingCoinLogo cryptoId={cryptoId} size={24} />
-                                        <Text>0 {displaySymbol}</Text>
-                                    </Row>
-                                </Column>
+                <Column gap={8}>
+                    {showRevokeBanner && (
+                        <Banner
+                            intent="warning"
+                            icon="warning"
+                            description={
+                                <Translation id="TR_EXCHANGE_APPROVAL_MODAL_REVOKE_BANNER" />
+                            }
+                        />
+                    )}
+                    <CardList borderRadius={borders.radii.sm}>
+                        <CardList.Item isDisabled>
+                            <Text typographyStyle="body-sm">
+                                <Translation id="TR_ACCOUNT" />
+                            </Text>
+                            <Row gap={8}>
+                                <NetworkIcon networkSymbol={account.symbol} size={20} />
+                                <AccountLabeling
+                                    account={account}
+                                    showAccountTypeBadge
+                                    accountTypeBadgeSize="small"
+                                    typographyStyle="body-sm"
+                                />
                             </Row>
-                        </Column>
-                    </Box>
+                        </CardList.Item>
+                        <CardList.Item isDisabled>
+                            <Text typographyStyle="body-sm">
+                                <Translation id="TR_TRADING_PROVIDER" />
+                            </Text>
+                            <TradingUtilsProvider
+                                exchange={provider.name}
+                                providers={toTradingUtilsProviders(provider)}
+                                typographyStyle="body-sm"
+                            />
+                        </CardList.Item>
+                        {hasPreapprovedAmount && (
+                            <CardList.Item>
+                                <Text typographyStyle="body-sm">
+                                    <Translation id="TR_EXCHANGE_APPROVAL_LIMIT" />
+                                </Text>
+                                <Row gap={8}>
+                                    <TradingCoinLogo cryptoId={cryptoId} size={20} />
+                                    <Text typographyStyle="body-sm-strong">
+                                        {isPreapprovedAmountUnlimited ? (
+                                            <Translation id="TR_APPROVE_AMOUNT_UNLIMITED" />
+                                        ) : (
+                                            `${preapprovedAmount} ${displaySymbol}`
+                                        )}
+                                    </Text>
+                                    <Column alignSelf="center">
+                                        <Icon name="arrowRight" size={16} />
+                                    </Column>
+                                    <Text typographyStyle="body-sm-strong">0 {displaySymbol}</Text>
+                                </Row>
+                            </CardList.Item>
+                        )}
+                    </CardList>
+
+                    {isDebug && (
+                        <CollapsibleBox
+                            heading={
+                                <Text typographyStyle="body-sm">
+                                    <DebugOnlyBadge>
+                                        <Translation id="TR_EXCHANGE_APPROVAL_DATA" />
+                                    </DebugOnlyBadge>
+                                </Text>
+                            }
+                            toggleIconName="caretDown"
+                            toggleIconSize={20}
+                        >
+                            <Text wordBreak="break-all" isMonospaced>
+                                {data}
+                            </Text>
+                        </CollapsibleBox>
+                    )}
 
                     <Box
-                        padding={12}
-                        borderWidth={borders.widths.large}
+                        padding={{ top: 12, right: 20, bottom: 12, left: 20 }}
+                        borderWidth={borders.widths.small}
                         borderRadius={borders.radii.sm}
+                        backgroundColor="surfaceFillRaised"
                     >
                         <Fees
                             label="TR_TX_FEE"
@@ -161,6 +209,7 @@ export const RevokeModal = (props: RevokeModalProps) => {
                             account={account}
                             composedLevels={composedLevels}
                             changeFeeLevel={handleFeeChange}
+                            headerTypographyStyle="body-sm"
                         />
                     </Box>
 

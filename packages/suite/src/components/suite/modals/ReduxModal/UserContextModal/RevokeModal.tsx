@@ -204,12 +204,7 @@ export const RevokeModal = ({ setIsWaitingForDevice, onCancel }: RevokeModalProp
                     <Banner
                         intent="info"
                         icon="info"
-                        description={
-                            <Translation
-                                id="TR_EXCHANGE_APPROVAL_MODAL_REVOKE_BANNER"
-                                values={{ displaySymbol }}
-                            />
-                        }
+                        description={<Translation id="TR_EXCHANGE_APPROVAL_MODAL_REVOKE_BANNER" />}
                     />
                 )}
 

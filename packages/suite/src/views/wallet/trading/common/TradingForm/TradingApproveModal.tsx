@@ -93,11 +93,12 @@ export const TradingApproveModal = ({ amount, cryptoId }: TradingApproveModalPro
 
         const approvalData = Calldata.evm.erc20.approve.decode(selectedQuote?.dexTx?.data);
         const spender = approvalData?.spender ?? null;
+        const preapprovedAmount = selectedQuote?.preapprovedStringAmount;
 
-        return provider && spender ? { provider, spender } : null;
+        return provider && spender ? { provider, spender, preapprovedAmount } : null;
     }, [selectedQuote, contextRef]);
 
-    const { provider, spender } =
+    const { provider, spender, preapprovedAmount } =
         useModalLastValidParams(approveParams, state.isApproveModalOpen) ?? {};
 
     if (!state.isApproveModalOpen || !provider || !spender) return null;
@@ -109,6 +110,7 @@ export const TradingApproveModal = ({ amount, cryptoId }: TradingApproveModalPro
             account={context.account}
             provider={provider}
             spender={spender}
+            preapprovedAmount={preapprovedAmount}
             onSelectApprovalType={onSelectApprovalType}
             onConfirm={onConfirm}
             onCancel={handleCancel}
