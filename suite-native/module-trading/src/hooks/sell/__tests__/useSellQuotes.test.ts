@@ -12,9 +12,9 @@ import {
     sellQuotes,
     usdcAsset,
 } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type SellFormValues } from '@suite-native/trading-types';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useSellForm } from '../useSellForm';
 import { useSellQuotes } from '../useSellQuotes';
 

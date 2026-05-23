@@ -1,13 +1,13 @@
 import { Form } from '@suite-native/forms';
 import { act, userEvent } from '@suite-native/test-utils-store';
-import { type BuyFormType } from '@suite-native/trading-types';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type BuyFormType } from '@suite-native/trading-types';
+
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyFiatAmountInput } from '../BuyFiatAmountInput';
 

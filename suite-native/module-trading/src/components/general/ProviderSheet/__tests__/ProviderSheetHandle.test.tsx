@@ -1,10 +1,10 @@
 import { fireEvent } from '@suite-native/test-utils-store';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ProviderSheetHandle, type ProviderSheetHandleProps } from '../ProviderSheetHandle';
 
 jest.mock('@suite-common/message-system', () => {

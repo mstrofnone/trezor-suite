@@ -2,15 +2,15 @@ import { type Account, type AccountKey, type TokenAddress } from '@suite-common/
 import { Form } from '@suite-native/forms';
 import { act, userEvent } from '@suite-native/test-utils-store';
 import { btcAsset, usdcAsset } from '@suite-native/trading-fixtures';
-import { type SellFormType } from '@suite-native/trading-types';
-import { PROTO } from '@trezor/connect';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type SellFormType } from '@suite-native/trading-types';
+import { PROTO } from '@trezor/connect';
+
 import { useSellForm } from '../../../../hooks/sell/useSellForm';
 import { SellSendAmountInput, type SellSendAmountInputProps } from '../SellSendAmountInput';
 

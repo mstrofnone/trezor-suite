@@ -6,8 +6,8 @@ import {
     getBtcAccount,
     getInitializedTradingStateWithQuotes,
 } from '@suite-native/trading-fixtures';
+import { createTradingTestStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingTestStore } from '../../../__tests__/tradingTestUtils';
 import { type UseExchangeFlowProps, useExchangeFlow } from '../useExchangeFlow';
 
 const mockNavigate = jest.fn();

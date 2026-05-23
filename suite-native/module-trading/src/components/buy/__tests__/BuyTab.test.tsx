@@ -1,11 +1,11 @@
 import { act, screen, userEvent } from '@suite-native/test-utils-store';
 import { selectIsTradingBuyEnabled } from '@suite-native/trading-state';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { BuyTab } from '../BuyTab';
 
 let mockUseTradingBuyData: jest.Mock;

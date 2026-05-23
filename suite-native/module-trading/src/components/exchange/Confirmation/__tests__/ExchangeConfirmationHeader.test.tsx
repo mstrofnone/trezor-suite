@@ -4,8 +4,8 @@ import { tradingExchangeActions } from '@suite-common/trading';
 import { getTranslation } from '@suite-native/intl';
 import { type TestStore, renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { exchangeQuotes } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../../__tests__/tradingTestUtils';
 import {
     ExchangeConfirmationHeader,
     type ExchangeConfirmationHeaderProps,

@@ -8,13 +8,13 @@ import {
     screen,
 } from '@suite-native/test-utils-store';
 import { banxaCreditCardSellQuote, sellQuotes } from '@suite-native/trading-fixtures';
-import { type SellFormType } from '@suite-native/trading-types';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingPreloadedState,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type SellFormType } from '@suite-native/trading-types';
+
 import { useSellForm } from '../../../../hooks/sell/useSellForm';
 import { SellProviderPicker } from '../SellProviderPicker';
 

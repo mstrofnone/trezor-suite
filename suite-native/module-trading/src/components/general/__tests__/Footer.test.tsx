@@ -3,12 +3,11 @@ import { Linking } from 'react-native';
 import { getTranslation } from '@suite-native/intl';
 import { userEvent } from '@suite-native/test-utils-store';
 import { exchangeCexdirect } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
 import { Footer } from '../Footer';
 
 const mockOpenModal = jest.fn();

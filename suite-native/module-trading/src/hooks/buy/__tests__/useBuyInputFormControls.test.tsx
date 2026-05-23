@@ -1,8 +1,8 @@
 import { Form } from '@suite-native/forms';
 import { renderHookWithBasicProvider } from '@suite-native/test-utils';
+import { renderHookWithTradingProvider } from '@suite-native/trading-state/testUtils';
 import { type BuyFormType } from '@suite-native/trading-types';
 
-import { renderHookWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { useBuyForm } from '../useBuyForm';
 import { useBuyInputFormControls } from '../useBuyInputFormControls';
 

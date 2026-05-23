@@ -2,9 +2,9 @@ import { tradingSellActions } from '@suite-common/trading';
 import { type AccountKey } from '@suite-common/wallet-types';
 import { type TestStore, act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 import { banxaCreditCardSellQuote } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type SellFormType } from '@suite-native/trading-types';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useSellForm } from '../useSellForm';
 import { useSellSelectQuote } from '../useSellSelectQuote';
 

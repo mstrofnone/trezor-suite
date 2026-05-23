@@ -1,11 +1,11 @@
 import { type TradingAmountLimitProps } from '@suite-common/trading';
 import { act } from '@suite-native/test-utils-store';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useContextForTradingForm } from '../useContextForTradingForm';
 
 describe('useContextForTradingForm', () => {

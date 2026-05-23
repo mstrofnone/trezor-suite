@@ -2,12 +2,12 @@ import type { CryptoId } from 'invity-api';
 
 import { getTranslation } from '@suite-native/intl';
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { UnlimitedAllowanceLabel } from '../UnlimitedAllowanceLabel';
 
 describe('UnlimitedAllowanceLabel', () => {

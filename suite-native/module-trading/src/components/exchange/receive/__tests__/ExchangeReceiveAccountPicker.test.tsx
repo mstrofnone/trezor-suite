@@ -2,19 +2,19 @@ import { Form } from '@suite-native/forms';
 import { act, fireEvent } from '@suite-native/test-utils-store';
 import { btc1NormalAccount, btcAsset } from '@suite-native/trading-fixtures';
 import {
+    type PreloadedStatePartial,
+    type TradingTestPreloadedState,
+    createTradingFeatureFlags,
+    renderHookWithTradingProvider,
+    renderWithTradingProvider,
+} from '@suite-native/trading-state/testUtils';
+import {
     type ExchangeFormType,
     type ReceiveAccount,
     type TradeableAsset,
 } from '@suite-native/trading-types';
 import { mergeDeepObject } from '@trezor/utils';
 
-import {
-    type PreloadedStatePartial,
-    type TradingTestPreloadedState,
-    createTradingFeatureFlags,
-    renderHookWithTradingProvider,
-    renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import { ExchangeReceiveAccountPicker } from '../ExchangeReceiveAccountPicker';
 

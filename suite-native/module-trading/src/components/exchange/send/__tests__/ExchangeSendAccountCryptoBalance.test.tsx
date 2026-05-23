@@ -1,12 +1,12 @@
 import { Form } from '@suite-native/forms';
 import { act } from '@suite-native/test-utils-store';
 import { btcAsset, getBtcAccount } from '@suite-native/trading-fixtures';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-
 import {
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import {
     ExchangeSendAccountCryptoBalance,

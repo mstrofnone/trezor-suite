@@ -8,13 +8,13 @@ import {
     waitFor,
 } from '@suite-native/test-utils-store';
 import { invityDexQuote } from '@suite-native/trading-fixtures';
-import { mergeDeepObject } from '@trezor/utils';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingLightStore,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { mergeDeepObject } from '@trezor/utils';
+
 import { useEvmApprovalFees } from '../useEvmApprovalFees';
 
 const mockComposeEvmApprovalFeeLevelsThunk = jest.fn();

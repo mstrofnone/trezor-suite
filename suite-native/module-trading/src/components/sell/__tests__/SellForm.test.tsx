@@ -8,14 +8,14 @@ import {
     residenceCheckDisabledState,
     sellQuotes,
 } from '@suite-native/trading-fixtures';
-import { type SellFormType } from '@suite-native/trading-types';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type SellFormType } from '@suite-native/trading-types';
+
 import { useSellForm } from '../../../hooks/sell/useSellForm';
 import { SellForm } from '../SellForm';
 

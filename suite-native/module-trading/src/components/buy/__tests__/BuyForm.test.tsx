@@ -1,15 +1,15 @@
 import { Form } from '@suite-native/forms';
 import { act, screen } from '@suite-native/test-utils-store';
 import { btcAsset, getInitializedTradingState } from '@suite-native/trading-fixtures';
-import { type BuyFormType } from '@suite-native/trading-types';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingFeatureFlags,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type BuyFormType } from '@suite-native/trading-types';
+
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyForm } from '../BuyForm';
 

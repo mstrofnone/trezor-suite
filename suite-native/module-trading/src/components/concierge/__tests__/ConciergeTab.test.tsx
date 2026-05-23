@@ -1,6 +1,6 @@
 import { selectIsTradingConciergeEnabled } from '@suite-native/trading-state';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { ConciergeTab } from '../ConciergeTab';
 
 jest.mock('@suite-native/trading-state', () => ({

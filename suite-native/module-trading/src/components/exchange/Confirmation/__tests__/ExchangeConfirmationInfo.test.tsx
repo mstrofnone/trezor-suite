@@ -4,8 +4,8 @@ import { tradingExchangeActions } from '@suite-common/trading';
 import { type TestStore, renderWithStoreProvider, screen } from '@suite-native/test-utils-store';
 import { mockTransaction } from '@suite-native/tokens';
 import { exchangeQuotes } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../../__tests__/tradingTestUtils';
 import {
     ExchangeConfirmationInfo,
     type ExchangeConfirmationInfoCardProps,

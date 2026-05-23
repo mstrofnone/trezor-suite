@@ -1,7 +1,7 @@
 import { getTranslation } from '@suite-native/intl';
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../../../__tests__/tradingTestUtils';
 import { ExchangeApprovalLimitSheet } from '../ExchangeApprovalLimitSheet';
 
 const mockOnDismiss = jest.fn();

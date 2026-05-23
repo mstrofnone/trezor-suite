@@ -1,13 +1,13 @@
 import { Form } from '@suite-native/forms';
 import { type TestStore, fireEvent, screen } from '@suite-native/test-utils-store';
-import { type BuyFormType } from '@suite-native/trading-types';
-import { FirmwareType } from '@trezor/connect';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type BuyFormType } from '@suite-native/trading-types';
+import { FirmwareType } from '@trezor/connect';
+
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyTradeableAssetPicker } from '../BuyTradeableAssetPicker';
 

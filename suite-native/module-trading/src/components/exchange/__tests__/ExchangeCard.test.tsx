@@ -7,9 +7,9 @@ import {
     within,
 } from '@suite-native/test-utils-store';
 import { ethOnBaseAsset, usdcAsset } from '@suite-native/trading-fixtures';
+import { createTradingPreloadedState } from '@suite-native/trading-state/testUtils';
 import { type ExchangeFormType } from '@suite-native/trading-types';
 
-import { createTradingPreloadedState } from '../../../__tests__/tradingTestUtils';
 import { useExchangeForm } from '../../../hooks/exchange/useExchangeForm';
 import { ExchangeCard } from '../ExchangeCard';
 

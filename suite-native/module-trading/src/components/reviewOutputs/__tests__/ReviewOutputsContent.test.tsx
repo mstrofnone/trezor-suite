@@ -1,6 +1,6 @@
 import { type AccountKey, type TokenAddress } from '@suite-common/wallet-types';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { ReviewOutputsContent, type ReviewOutputsContentProps } from '../ReviewOutputsContent';
 
 jest.mock('@suite-native/confirm-on-trezor', () => ({

@@ -1,13 +1,13 @@
 import { Form } from '@suite-native/forms';
 import { getTranslation } from '@suite-native/intl';
 import { getInitializedTradingState } from '@suite-native/trading-fixtures';
-import { type BuyFormType } from '@suite-native/trading-types';
-
 import {
     createTradingFeatureFlags,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type BuyFormType } from '@suite-native/trading-types';
+
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyCard } from '../BuyCard';
 

@@ -2,13 +2,13 @@ import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-sy
 import { events } from '@suite-native/analytics';
 import { FeatureFlag, featureFlagsInitialState } from '@suite-native/feature-flags';
 import { type TestStore, fireEvent } from '@suite-native/test-utils-store';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingLightStore,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { Header } from '../Header';
 
 describe('Header', () => {

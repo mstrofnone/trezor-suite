@@ -1,14 +1,14 @@
 import { featureFlagsInitialState } from '@suite-native/feature-flags';
 import { Form } from '@suite-native/forms';
 import { type TestStore, screen } from '@suite-native/test-utils-store';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-import { FirmwareType } from '@trezor/connect';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+import { FirmwareType } from '@trezor/connect';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import { ExchangeTradeableAssetPicker } from '../ExchangeTradeableAssetPicker';
 

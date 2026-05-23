@@ -8,11 +8,11 @@ import {
     getSellTrade,
     sol1normalAccount,
 } from '@suite-native/trading-fixtures';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useAllTradesReloadTimer } from '../useAllTradesReloadTimer';
 
 // Mock the useReloadTimer hook

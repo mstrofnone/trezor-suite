@@ -2,8 +2,8 @@ import { Text } from 'react-native';
 
 import { getTranslation } from '@suite-native/intl';
 import { type TestStore, renderWithStoreProvider } from '@suite-native/test-utils-store';
+import { createTradingTestStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingTestStore } from '../../../__tests__/tradingTestUtils';
 import { TradingDeviceConnectionGuard } from '../TradingDeviceConnectionGuard';
 
 const mockNavigation = {

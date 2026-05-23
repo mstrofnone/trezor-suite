@@ -6,12 +6,12 @@ import {
     renderWithStoreProvider,
 } from '@suite-native/test-utils-store';
 import { mercuryoFixedWorstQuote, usdcAsset } from '@suite-native/trading-fixtures';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-
 import {
     createTradingFeatureFlags,
     createTradingPreloadedState,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import { ExchangeReceiveContent } from '../ExchangeReceiveContent';
 

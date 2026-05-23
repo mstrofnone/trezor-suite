@@ -14,9 +14,9 @@ import {
     jupOnSolanaAsset,
     usdcAsset,
 } from '@suite-native/trading-fixtures';
+import { renderHookWithTradingProvider } from '@suite-native/trading-state/testUtils';
 import { type ExchangeFormType, type ReceiveAccount } from '@suite-native/trading-types';
 
-import { renderHookWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { useExchangeForm } from '../../../hooks/exchange/useExchangeForm';
 import { hasPreapprovedLimit, tradingExchangeFormToTradingExchangeFormProps } from '../quotesUtils';
 

@@ -9,14 +9,13 @@ import {
     mockWalletFiatRatesAndSettings,
     usdcAsset,
 } from '@suite-native/trading-fixtures';
-import { PROTO } from '@trezor/connect';
-import { BigNumber } from '@trezor/utils';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { PROTO } from '@trezor/connect';
+import { BigNumber } from '@trezor/utils';
 import { useTradingFiatValues } from '../useTradingFiatValues';
 
 jest.mock('@suite-common/fiat-services', () => ({

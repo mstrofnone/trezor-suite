@@ -13,9 +13,9 @@ import {
     invityDexQuote,
     mercuryoFixedBestQuote,
 } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type ExchangeFormType } from '@suite-native/trading-types';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useExchangeForm } from '../useExchangeForm';
 import { useExchangeSelectQuote } from '../useExchangeSelectQuote';
 

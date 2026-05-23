@@ -1,8 +1,8 @@
 import { type TradingOTC, nonSanctionedRegional, type useFetchOtc } from '@suite-common/trading';
 import { type useFormContext } from '@suite-native/forms';
 import { getTranslation } from '@suite-native/intl';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import {
     CRYPTO_MAX_FORM_TYPE,
     CRYPTO_MIN_FORM_TYPE,

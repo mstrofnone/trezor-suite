@@ -1,13 +1,13 @@
 import { type AccountKey } from '@suite-common/wallet-types';
 import { userEvent } from '@suite-native/test-utils-store';
 import { banxaCreditCardSellQuote, createPrecomposedTxFinal } from '@suite-native/trading-fixtures';
-import { mergeDeepObject } from '@trezor/utils';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { mergeDeepObject } from '@trezor/utils';
+
 import {
     SellPreviewContinueButton,
     type SellPreviewContinueButtonProps,

@@ -14,10 +14,10 @@ import {
     getInitializedTradingState,
 } from '@suite-native/trading-fixtures';
 import { selectAccountsWithTokensToSellSectionCondensedListByTradingType } from '@suite-native/trading-state';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type MyAssetTradeable, type SellFormType } from '@suite-native/trading-types';
 import { BigNumber } from '@trezor/utils';
 
-import { createTradingLightStore } from '../../../../__tests__/tradingTestUtils';
 import { useSellForm } from '../../../../hooks/sell/useSellForm';
 import { SellSendAssetPicker } from '../SellSendAssetPicker';
 

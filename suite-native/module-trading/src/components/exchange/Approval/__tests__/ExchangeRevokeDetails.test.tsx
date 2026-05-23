@@ -1,12 +1,12 @@
 import type { AccountKey } from '@suite-common/wallet-types';
 import { getTranslation } from '@suite-native/intl';
 import { eth1NormalAccount, mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ExchangeRevokeDetails } from '../ExchangeRevokeDetails';
 
 describe('ExchangeRevokeDetails', () => {

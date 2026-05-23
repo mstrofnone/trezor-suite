@@ -7,9 +7,9 @@ import {
     waitFor,
 } from '@suite-native/test-utils-store';
 import { adaAsset, btcAsset, usdcAsset } from '@suite-native/trading-fixtures';
+import { type TradingTestPreloadedState } from '@suite-native/trading-state/testUtils';
 import { type TradeableAsset } from '@suite-native/trading-types';
 
-import { type TradingTestPreloadedState } from '../../../__tests__/tradingTestUtils';
 import { useFavouriteAssetsSectionList } from '../useFavouriteAssetsSectionList';
 
 describe('useFavouriteAssetsSectionList', () => {

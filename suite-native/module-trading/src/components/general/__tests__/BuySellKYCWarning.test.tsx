@@ -1,12 +1,12 @@
 import { getTranslation } from '@suite-native/intl';
 import { renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { buyQuotes, sellQuotes } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingPreloadedState,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { BuySellKYCWarning } from '../BuySellKYCWarning';
 
 const KYC_REQUIRED_TEXT = getTranslation('moduleTrading.tradingScreen.kycRequired');

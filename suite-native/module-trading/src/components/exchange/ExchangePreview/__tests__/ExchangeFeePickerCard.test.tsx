@@ -1,8 +1,8 @@
 import { type AccountKey } from '@suite-common/wallet-types';
 import { getTranslation } from '@suite-native/intl';
 import { btc1NormalAccount, mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import { ExchangeFeePickerCard, type ExchangeFeePickerCardProps } from '../ExchangeFeePickerCard';
 
 // Mock FeeSelector to avoid deep dependency chain

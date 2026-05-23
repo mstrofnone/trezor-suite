@@ -9,10 +9,10 @@ import {
     getInitializedTradingState,
 } from '@suite-native/trading-fixtures';
 import { selectAccountsWithTokensToSellSectionCondensedListByTradingType } from '@suite-native/trading-state';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 import { type MyAssetTradeable } from '@suite-native/trading-types';
 import { BigNumber } from '@trezor/utils';
 
-import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import { TEST_ID_ACCOUNT_TYPE_BADGE } from '../MyAssetListSectionHeader';
 import { MyAssetSheet, type MyAssetSheetProps } from '../MyAssetSheet';
 

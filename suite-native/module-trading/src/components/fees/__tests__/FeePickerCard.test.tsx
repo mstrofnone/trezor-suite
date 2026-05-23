@@ -3,8 +3,8 @@ import React from 'react';
 import { type TradingExchangeType, type TradingSellType } from '@suite-common/trading';
 import { type AccountKey } from '@suite-common/wallet-types';
 import { getTranslation } from '@suite-native/intl';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { FeePickerCard } from '../FeePickerCard';
 
 // Mock FeeSelector to avoid deep dependency chain (useFeesManagement, etc.)

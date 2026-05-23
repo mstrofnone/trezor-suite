@@ -1,10 +1,10 @@
 import { type TradingTypeWithConcierge } from '@suite-common/trading';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ActiveTab } from '../ActiveTab';
 
 // for the sake of easier testing, we mock the flags to return false

@@ -1,13 +1,13 @@
 import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { FeatureFlag } from '@suite-native/feature-flags';
 import { screen } from '@suite-native/test-utils-store';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     createTradingFeatureFlags,
     renderWithTradingProvider,
-} from '../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { TradingScreen } from '../TradingScreen';
 
 jest.mock('@trezor/react-utils', () => ({

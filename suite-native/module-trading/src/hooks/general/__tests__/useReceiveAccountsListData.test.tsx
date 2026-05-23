@@ -8,12 +8,12 @@ import {
     eth1NormalAccount,
     eth2legacyAccount,
 } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import {
     type ReceiveAccountsListMode,
     useReceiveAccountsListData,

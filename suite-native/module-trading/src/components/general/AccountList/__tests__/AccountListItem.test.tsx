@@ -1,10 +1,10 @@
 import { asAccountDescriptor } from '@suite-common/wallet-types';
 import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
 import { type TestStore, fireEvent, renderWithStoreProvider } from '@suite-native/test-utils-store';
+import { createTradingTestStore } from '@suite-native/trading-state/testUtils';
 import { type ReceiveAccount } from '@suite-native/trading-types';
 import { type StaticSessionId } from '@trezor/connect';
 
-import { createTradingTestStore } from '../../../../__tests__/tradingTestUtils';
 import { AccountListItem } from '../AccountListItem';
 
 const DEVICE_SESSION_ID: StaticSessionId = '1@2:3';

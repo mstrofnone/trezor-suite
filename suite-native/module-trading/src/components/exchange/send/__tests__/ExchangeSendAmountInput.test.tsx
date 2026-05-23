@@ -3,16 +3,16 @@ import { featureFlagsInitialState } from '@suite-native/feature-flags';
 import { Form } from '@suite-native/forms';
 import { act, userEvent } from '@suite-native/test-utils-store';
 import { btcAsset, usdcAsset } from '@suite-native/trading-fixtures';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-import { PROTO } from '@trezor/connect';
-import { mergeDeepObject } from '@trezor/utils';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+import { PROTO } from '@trezor/connect';
+import { mergeDeepObject } from '@trezor/utils';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import {
     ExchangeSendAmountInput,

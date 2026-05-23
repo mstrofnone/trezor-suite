@@ -4,12 +4,12 @@ import { type NetworkSymbol } from '@suite-common/wallet-config';
 import { type Account } from '@suite-common/wallet-types';
 import { type RootStackParamList, type RootStackRoutes } from '@suite-native/navigation';
 import { accounts } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { TradingReceiveAccountsPickerScreen } from '../TradingReceiveAccountsPickerScreen';
 
 let mockRouteParams: {

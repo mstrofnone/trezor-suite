@@ -1,11 +1,11 @@
 import { selectTradingProviderMetadata } from '@suite-common/trading';
 import { type TestStore } from '@suite-native/test-utils-store';
 import { buyMercuryo } from '@suite-native/trading-fixtures';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import {
     type QuoteProviderFormWatch,
     useProviderMetadataChangeEffect,

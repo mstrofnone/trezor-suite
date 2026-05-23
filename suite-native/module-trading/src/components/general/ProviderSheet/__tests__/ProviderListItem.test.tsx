@@ -7,12 +7,12 @@ import {
     mercuryoApplePayBuyQuote,
     mockWalletFiatRatesAndSettings,
 } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ProviderListItem, type ProviderListItemProps } from '../ProviderListItem';
 
 const baseOverrides: PreloadedStatePartial<TradingTestPreloadedState> = {

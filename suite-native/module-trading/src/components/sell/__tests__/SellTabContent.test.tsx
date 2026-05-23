@@ -1,6 +1,6 @@
 import { act, screen, userEvent } from '@suite-native/test-utils-store';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { SellTabContent } from '../SellTabContent';
 
 let mockUseSellData: jest.Mock;

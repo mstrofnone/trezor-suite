@@ -2,17 +2,17 @@ import { Form } from '@suite-native/forms';
 import { act, fireEvent } from '@suite-native/test-utils-store';
 import { btc1NormalAccount, btcAsset } from '@suite-native/trading-fixtures';
 import {
+    type PreloadedStatePartial,
+    type TradingTestPreloadedState,
+    renderHookWithTradingProvider,
+    renderWithTradingProvider,
+} from '@suite-native/trading-state/testUtils';
+import {
     type BuyFormType,
     type ReceiveAccount,
     type TradeableAsset,
 } from '@suite-native/trading-types';
 
-import {
-    type PreloadedStatePartial,
-    type TradingTestPreloadedState,
-    renderHookWithTradingProvider,
-    renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyReceiveAccountPicker } from '../BuyReceiveAccountPicker';
 

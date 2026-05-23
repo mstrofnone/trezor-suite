@@ -2,8 +2,8 @@ import { tradingSellActions, tradingThunks } from '@suite-common/trading';
 import { type AccountKey, asAccountDescriptor } from '@suite-common/wallet-types';
 import { type TestStore, act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 import { getBtcAccount, getInitializedTradingState } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useSellData } from '../useSellData';
 
 jest.mock('../../../utils/general/utils', () => ({

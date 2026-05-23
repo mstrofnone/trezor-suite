@@ -2,14 +2,14 @@ import { FeatureFlag, featureFlagsInitialState } from '@suite-native/feature-fla
 import { Form } from '@suite-native/forms';
 import { act, fireEvent } from '@suite-native/test-utils-store';
 import { mercuryoFixedWorstQuote, usdcAsset } from '@suite-native/trading-fixtures';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import {
     ExchangeReceiveAmountInput,

@@ -5,12 +5,12 @@ import {
 } from '@suite-common/trading';
 import { screen } from '@suite-native/test-utils-store';
 import { mercuryoApplePayBuyQuote } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ProviderSheet, type ProviderSheetProps } from '../ProviderSheet';
 
 describe('ProviderSheet', () => {

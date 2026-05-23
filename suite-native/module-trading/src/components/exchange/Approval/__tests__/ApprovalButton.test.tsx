@@ -2,8 +2,8 @@ import { tradingExchangeActions } from '@suite-common/trading';
 import { type AccountKey } from '@suite-common/wallet-types';
 import { type TestStore, renderWithStoreProvider, userEvent } from '@suite-native/test-utils-store';
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../../__tests__/tradingTestUtils';
 import { ApprovalButton, type ApprovalButtonProps } from '../ApprovalButton';
 
 const mockNavigate = jest.fn();

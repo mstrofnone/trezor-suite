@@ -5,11 +5,11 @@ import { type AccountKey } from '@suite-common/wallet-types';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { type TestStore } from '@suite-native/test-utils-store';
 import { getBuyTrade } from '@suite-native/trading-fixtures';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useWatchTrade } from '../useWatchTrade';
 
 jest.mock('../useReloadTimer', () => ({

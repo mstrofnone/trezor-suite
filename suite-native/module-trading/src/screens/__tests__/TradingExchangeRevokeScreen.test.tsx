@@ -5,11 +5,11 @@ import { getTranslation } from '@suite-native/intl';
 import { type RootStackParamList, RootStackRoutes } from '@suite-native/navigation';
 import { type TestStore } from '@suite-native/test-utils-store';
 import { eth1NormalAccount, mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
-
 import {
     createTradingLightStore,
     renderWithTradingProvider,
-} from '../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { TradingExchangeRevokeScreen } from '../TradingExchangeRevokeScreen';
 
 const mockShowSheet = jest.fn();

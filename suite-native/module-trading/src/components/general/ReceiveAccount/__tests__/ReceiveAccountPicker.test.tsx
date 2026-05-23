@@ -1,7 +1,7 @@
 import { type TestStore, fireEvent, renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { btc1NormalAccount } from '@suite-native/trading-fixtures';
+import { createTradingTestStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingTestStore } from '../../../../__tests__/tradingTestUtils';
 import { ReceiveAccountPicker, type ReceiveAccountPickerProps } from '../ReceiveAccountPicker';
 
 const defaultOverrides = {

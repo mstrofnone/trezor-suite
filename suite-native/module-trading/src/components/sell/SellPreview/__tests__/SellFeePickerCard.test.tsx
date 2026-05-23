@@ -1,9 +1,9 @@
 import { type AccountKey } from '@suite-common/wallet-types';
 import { getTranslation } from '@suite-native/intl';
 import { banxaCreditCardSellQuote, eth1NormalAccount } from '@suite-native/trading-fixtures';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 import type { ProviderConfirmationStatus } from '@suite-native/trading-types';
 
-import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import { SellFeePickerCard, type SellFeePickerCardProps } from '../SellFeePickerCard';
 
 // Mock FeeSelector to avoid deep dependency chain

@@ -2,15 +2,15 @@ import { featureFlagsInitialState } from '@suite-native/feature-flags';
 import { Form } from '@suite-native/forms';
 import { act } from '@suite-native/test-utils-store';
 import { btcAsset } from '@suite-native/trading-fixtures';
-import { type ExchangeFormType } from '@suite-native/trading-types';
-import { PROTO } from '@trezor/connect';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type ExchangeFormType } from '@suite-native/trading-types';
+import { PROTO } from '@trezor/connect';
+
 import { useExchangeForm } from '../../../../hooks/exchange/useExchangeForm';
 import { ExchangeSendAmountBadge } from '../ExchangeSendAmountBadge';
 

@@ -1,7 +1,7 @@
 import { type AccountKey } from '@suite-common/wallet-types';
 import { banxaCreditCardSellQuote, eth1NormalAccount } from '@suite-native/trading-fixtures';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import {
     SellFromAccountTradePreviewCard,
     type SellFromAccountTradePreviewCardProps,

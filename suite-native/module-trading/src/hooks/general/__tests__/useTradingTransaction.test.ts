@@ -4,11 +4,11 @@ import {
     getBtcAccount,
     getInitializedTradingStateWithQuotes,
 } from '@suite-native/trading-fixtures';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useTradingTransaction } from '../useTradingTransaction';
 
 // Mock TrezorConnect to prevent errors during cleanup

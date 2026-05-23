@@ -8,15 +8,15 @@ import {
     cexdirectCreditCardBuyQuote,
     getInitializedTradingStateWithQuotes,
 } from '@suite-native/trading-fixtures';
-import { type BuyFormType } from '@suite-native/trading-types';
-import { mergeDeepObject } from '@trezor/utils';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type BuyFormType } from '@suite-native/trading-types';
+import { mergeDeepObject } from '@trezor/utils';
+
 import { useBuyForm } from '../../../hooks/buy/useBuyForm';
 import { BuyProviderPicker } from '../BuyProviderPicker';
 

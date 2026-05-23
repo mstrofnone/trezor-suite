@@ -17,10 +17,10 @@ import {
     getInitializedTradingState,
     usdtAsset,
 } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type ExchangeFormValues, type ReceiveAccount } from '@suite-native/trading-types';
 import { PROTO } from '@trezor/connect';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useExchangeForm } from '../useExchangeForm';
 import { useExchangeQuotes } from '../useExchangeQuotes';
 

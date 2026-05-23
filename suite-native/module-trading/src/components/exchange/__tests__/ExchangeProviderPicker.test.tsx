@@ -1,8 +1,8 @@
 import { renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { type PreloadedStatePartial } from '@suite-native/test-utils-store';
 import { getWalletState, mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
+import { type TradingTestPreloadedState } from '@suite-native/trading-state/testUtils';
 
-import { type TradingTestPreloadedState } from '../../../__tests__/tradingTestUtils';
 import {
     ExchangeProviderPicker,
     type ExchangeProviderPickerProps,

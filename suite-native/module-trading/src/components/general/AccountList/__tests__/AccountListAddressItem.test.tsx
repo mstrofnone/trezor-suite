@@ -1,8 +1,8 @@
 import { type Account, type AccountKey, asAccountDescriptor } from '@suite-common/wallet-types';
 import { fireEvent } from '@suite-native/test-utils-store';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 import { type ReceiveAccount } from '@suite-native/trading-types';
 
-import { renderWithTradingProvider } from '../../../../__tests__/tradingTestUtils';
 import { AccountListAddressItem } from '../AccountListAddressItem';
 
 jest.mock('@suite-common/wallet-core', () => {

@@ -7,12 +7,12 @@ import {
     getSellTrade,
     moonpayCreditCardSellQuote,
 } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { TradingSellPreviewScreen } from '../TradingSellPreviewScreen';
 
 jest.mock('@react-navigation/native', () => ({

@@ -24,10 +24,10 @@ import {
     usdcAsset,
 } from '@suite-native/trading-fixtures';
 import { buyActions, selectTradingResidenceCountry } from '@suite-native/trading-state';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { type BuyFormType, type TradeableAsset } from '@suite-native/trading-types';
 import { PROTO } from '@trezor/connect';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { clearBuyFormQuoteData, useBuyForm } from '../useBuyForm';
 
 jest.mock('@trezor/react-utils', () => {

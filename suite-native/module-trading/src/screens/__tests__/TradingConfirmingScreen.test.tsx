@@ -9,9 +9,9 @@ import { type RootStackParamList, RootStackRoutes } from '@suite-native/navigati
 import { type TestStore, act, renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { mockTransaction } from '@suite-native/tokens';
 import { exchangeQuotes } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 import { useTransactionDetails } from '@suite-native/transaction-management';
 
-import { createTradingLightStore } from '../../__tests__/tradingTestUtils';
 import { TradingConfirmingScreen } from '../TradingConfirmingScreen';
 
 const mockOpenInBlockchain = jest.fn();

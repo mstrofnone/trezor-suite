@@ -1,9 +1,9 @@
 import { type TestStore, act } from '@suite-native/test-utils-store';
-
 import {
     createTradingTestStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useMaxSlippageForm } from '../useMaxSlippageForm';
 
 describe('useMaxSlippageForm', () => {

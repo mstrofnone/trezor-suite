@@ -1,8 +1,8 @@
 import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { screen } from '@suite-native/test-utils-store';
 import { tradingInitialState } from '@suite-native/trading-state';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { TradingTabContent } from '../TradingTabContent';
 
 let mockIsInternetReachable: boolean | null = true;

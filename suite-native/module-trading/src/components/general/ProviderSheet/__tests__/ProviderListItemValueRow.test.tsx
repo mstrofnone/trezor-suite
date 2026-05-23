@@ -5,12 +5,12 @@ import {
     invityErrorBuyQuote,
     mercuryoApplePayBuyQuote,
 } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ProviderListItemValueRow } from '../ProviderListItemValueRow';
 
 const overridesWithQuotes: PreloadedStatePartial<TradingTestPreloadedState> = {

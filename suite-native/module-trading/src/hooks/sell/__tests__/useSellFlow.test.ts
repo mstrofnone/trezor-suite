@@ -5,8 +5,8 @@ import type { sellThunks } from '@suite-common/trading';
 import { type AccountKey } from '@suite-common/wallet-types';
 import { type TestStore, act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 import { banxaCreditCardSellQuote, verifiedBankAccount } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../__tests__/tradingTestUtils';
 import { useSellFlow } from '../useSellFlow';
 
 // Store captured arguments for testing side effects (processResponseData callback)

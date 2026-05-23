@@ -6,9 +6,9 @@ import {
     screen,
 } from '@suite-native/test-utils-store';
 import { banxaCreditCardSellQuote, sellQuotes, usdcAsset } from '@suite-native/trading-fixtures';
+import { createTradingPreloadedState } from '@suite-native/trading-state/testUtils';
 import { type SellFormType } from '@suite-native/trading-types';
 
-import { createTradingPreloadedState } from '../../../__tests__/tradingTestUtils';
 import { useSellForm } from '../../../hooks/sell/useSellForm';
 import { SellCard } from '../SellCard';
 

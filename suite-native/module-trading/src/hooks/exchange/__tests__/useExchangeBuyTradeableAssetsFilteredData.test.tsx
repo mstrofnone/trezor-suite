@@ -1,7 +1,7 @@
 import { act } from '@suite-native/test-utils-store';
 import { btcAsset, ethAsset, usdcAsset } from '@suite-native/trading-fixtures';
+import { renderHookWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderHookWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { useExchangeBuyTradeableAssetsFilteredData } from '../useExchangeBuyTradeableAssetsFilteredData';
 
 const mockWatch = jest.fn();

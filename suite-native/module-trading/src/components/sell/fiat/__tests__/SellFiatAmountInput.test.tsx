@@ -1,11 +1,11 @@
 import { Form } from '@suite-native/forms';
 import { userEvent } from '@suite-native/test-utils-store';
-import { type SellFormType } from '@suite-native/trading-types';
-
 import {
     renderHookWithTradingProvider,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type SellFormType } from '@suite-native/trading-types';
+
 import { useSellForm } from '../../../../hooks/sell/useSellForm';
 import { SellFiatAmountInput } from '../SellFiatAmountInput';
 

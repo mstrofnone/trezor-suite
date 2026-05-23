@@ -1,10 +1,10 @@
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { RevokeLimitInfoRow } from '../RevokeLimitInfoRow';
 
 describe('RevokeLimitInfoRow', () => {

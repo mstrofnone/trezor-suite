@@ -1,11 +1,11 @@
 import { type AccountKey } from '@suite-common/wallet-types';
 import { getTranslation } from '@suite-native/intl';
 import { type TestStore, act } from '@suite-native/test-utils-store';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { useTradingOutputsReviewErrorAlert } from '../useTradingOutputsReviewErrorAlert';
 
 const mockShowAlert = jest.fn();

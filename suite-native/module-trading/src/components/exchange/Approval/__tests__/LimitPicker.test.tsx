@@ -7,8 +7,8 @@ import {
     within,
 } from '@suite-native/test-utils-store';
 import { mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
+import { createTradingLightStore } from '@suite-native/trading-state/testUtils';
 
-import { createTradingLightStore } from '../../../../__tests__/tradingTestUtils';
 import { LimitPicker } from '../LimitPicker';
 
 describe('LimitPicker', () => {

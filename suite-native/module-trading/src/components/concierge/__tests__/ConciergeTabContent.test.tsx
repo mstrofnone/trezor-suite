@@ -2,12 +2,12 @@ import { type TradingOTC, type useFetchOtc } from '@suite-common/trading';
 import { getTranslation } from '@suite-native/intl';
 import { fireEvent, screen, userEvent, waitFor } from '@suite-native/test-utils-store';
 import { residenceCheckDisabledState } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { ConciergeTabContent } from '../ConciergeTabContent';
 
 const mockUseFetchOtc = jest.fn();

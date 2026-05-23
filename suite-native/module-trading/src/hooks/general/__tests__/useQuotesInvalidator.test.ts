@@ -1,12 +1,12 @@
 import { type ActionCreatorWithoutPayload } from '@reduxjs/toolkit';
 
 import { type TestStore } from '@suite-native/test-utils-store';
-import { type AbortablePromise } from '@suite-native/trading-types';
-
 import {
     createTradingLightStore,
     renderHookWithTradingProvider,
-} from '../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+import { type AbortablePromise } from '@suite-native/trading-types';
+
 import { type UseQuotesInvalidatorProps, useQuotesInvalidator } from '../useQuotesInvalidator';
 
 describe('useQuotesInvalidator', () => {

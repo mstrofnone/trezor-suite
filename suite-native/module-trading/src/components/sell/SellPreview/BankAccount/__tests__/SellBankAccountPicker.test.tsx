@@ -2,12 +2,12 @@ import React from 'react';
 
 import { type TradingTransaction } from '@suite-common/trading';
 import { bankAccounts, eth1NormalAccount } from '@suite-native/trading-fixtures';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../../../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
 import { SellBankAccountPicker } from '../SellBankAccountPicker';
 
 // Mock the SellBankAccountSheet component to isolate the picker component

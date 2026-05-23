@@ -2,8 +2,8 @@ import { type TradingTransactionStatus } from '@suite-common/trading';
 import { type BadgeIntent } from '@suite-native/atoms';
 import { getTranslation } from '@suite-native/intl';
 import { getBuyTrade, getExchangeTrade, getSellTrade } from '@suite-native/trading-fixtures';
+import { renderWithTradingProvider } from '@suite-native/trading-state/testUtils';
 
-import { renderWithTradingProvider } from '../../../__tests__/tradingTestUtils';
 import { TradeStatusBadge, getBadgeIconName, getBadgeVariant } from '../TradeStatusBadge';
 
 describe('TradeStatusBadge', () => {
