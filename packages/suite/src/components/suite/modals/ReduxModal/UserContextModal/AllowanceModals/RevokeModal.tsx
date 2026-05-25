@@ -47,7 +47,7 @@ interface RevokeModalProps {
 }
 
 export const RevokeModal = (props: RevokeModalProps) => {
-    const { account, provider, cryptoId, preapprovedAmount } = props;
+    const { account, provider, spender, cryptoId, preapprovedAmount, logoSourceType } = props;
     const { device } = useDevice();
     const { handleClick, disabled: isConfirmInProgress } = useAsyncClickHandler();
     const isDebug = useSelector(selectIsDebugModeActive);
@@ -148,13 +148,26 @@ export const RevokeModal = (props: RevokeModalProps) => {
                         </CardList.Item>
                         <CardList.Item isDisabled>
                             <Text typographyStyle="body-sm">
-                                <Translation id="TR_TRADING_PROVIDER" />
+                                <Translation id={provider.label ?? 'TR_TRADING_PROVIDER'} />
                             </Text>
-                            <TradingUtilsProvider
-                                exchange={provider.name}
-                                providers={toTradingUtilsProviders(provider)}
-                                typographyStyle="body-sm"
-                            />
+                            <Column alignItems="flex-end" gap={2}>
+                                <TradingUtilsProvider
+                                    exchange={provider.name}
+                                    providers={toTradingUtilsProviders(provider)}
+                                    typographyStyle="body-sm"
+                                    logoSourceType={logoSourceType}
+                                />
+                                {logoSourceType === 'url' && (
+                                    <Text
+                                        typographyStyle="body-xs"
+                                        intent="neutral"
+                                        priority="secondary"
+                                        wordBreak="break-all"
+                                    >
+                                        {spender}
+                                    </Text>
+                                )}
+                            </Column>
                         </CardList.Item>
                         {hasPreapprovedAmount && (
                             <CardList.Item>

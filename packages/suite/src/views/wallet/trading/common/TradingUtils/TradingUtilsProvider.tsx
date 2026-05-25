@@ -12,6 +12,9 @@ interface TradingUtilsProviderProps {
     className?: string;
     providers?: TradingUtilsProvidersProps;
     typographyStyle?: TypographyStyle;
+    // 'invity-api-path' (default) wraps provider.logo with invityAPI.getProviderLogoUrl;
+    // 'url' uses provider.logo verbatim (for non-Invity providers like yield vaults).
+    logoSourceType?: 'invity-api-path' | 'url';
 }
 
 const Wrapper = styled.div`
@@ -25,18 +28,26 @@ export const TradingUtilsProvider = ({
     providers,
     className,
     typographyStyle,
+    logoSourceType = 'invity-api-path',
 }: TradingUtilsProviderProps) => {
     const provider = providers && exchange ? providers[exchange] : null;
     const providerName = provider?.brandName ?? provider?.companyName;
+    const getProviderLogoUrl = () => {
+        if (!provider?.logo) return null;
+        if (logoSourceType === 'url') return provider.logo;
+
+        return invityAPI.getProviderLogoUrl(provider.logo);
+    };
+    const providerLogoUrl = getProviderLogoUrl();
 
     return (
         <Wrapper className={className} data-testid="@trading/offers/quote/provider">
             {provider ? (
                 <>
-                    {provider.logo && (
+                    {providerLogoUrl && (
                         <Row alignItems="center" justifyContent="center">
                             <TradingIcon
-                                iconUrl={invityAPI.getProviderLogoUrl(provider.logo)}
+                                iconUrl={providerLogoUrl}
                                 maxHeight={typographyStyle === 'body-sm' ? 20 : undefined}
                             />
                         </Row>
