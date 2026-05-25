@@ -118,7 +118,9 @@ export function p2tr(a: Payment, opts?: PaymentOpts): Payment {
     lazy.prop(o, 'output', () => {
         if (!o.hash) return;
 
-        return bscript.compile([OPS.OP_1, o.hash]);
+        const op1: number = OPS.OP_1;
+
+        return bscript.compile([op1, o.hash]);
     });
 
     // extended validation

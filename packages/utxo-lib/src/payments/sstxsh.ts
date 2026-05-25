@@ -44,7 +44,11 @@ export function sstxsh(a: Payment, opts?: PaymentOpts): Payment {
     lazy.prop(o, 'output', () => {
         if (!o.hash) return;
 
-        return bscript.compile([OPS.OP_SSTX, OPS.OP_HASH160, o.hash, OPS.OP_EQUAL]);
+        const opSstx: number = OPS.OP_SSTX;
+        const opHash160: number = OPS.OP_HASH160;
+        const opEqual: number = OPS.OP_EQUAL;
+
+        return bscript.compile([opSstx, opHash160, o.hash, opEqual]);
     });
 
     // extended validation

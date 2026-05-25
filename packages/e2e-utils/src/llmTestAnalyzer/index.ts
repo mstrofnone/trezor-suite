@@ -295,15 +295,18 @@ const main = async () => {
 
     const excludePatterns: string[] = [];
     for (let i = 0; i < args.length; i++) {
-        if (args[i] === '--exclude' && args[i + 1]) {
-            excludePatterns.push(args[++i]);
+        const nextArg = args[i + 1];
+        if (args[i] === '--exclude' && nextArg) {
+            excludePatterns.push(nextArg);
+            i++;
         }
     }
 
     let cacheFile = DEFAULT_CACHE_FILE;
     const cacheFileIdx = args.indexOf('--cache-file');
-    if (cacheFileIdx !== -1 && args[cacheFileIdx + 1]) {
-        cacheFile = args[cacheFileIdx + 1];
+    const cacheFileArg = args[cacheFileIdx + 1];
+    if (cacheFileIdx !== -1 && cacheFileArg) {
+        cacheFile = cacheFileArg;
     }
 
     let apiKey: string | undefined;
@@ -367,6 +370,10 @@ const main = async () => {
     }
 
     const inputPath = positionalArgs[0];
+    if (!inputPath) {
+        error('No input path provided.');
+        process.exit(1);
+    }
     let testFiles: string[];
     try {
         testFiles = findTestFiles(inputPath, excludePatterns);
@@ -381,7 +388,9 @@ const main = async () => {
     }
 
     if (buildCache) {
-        const gitRoot = getGitRoot(path.dirname(testFiles[0]));
+        // @ts-expect-error noUncheckedIndexedAccess
+        const firstTestFile: string = testFiles[0];
+        const gitRoot = getGitRoot(path.dirname(firstTestFile));
         const cache = readCache(cacheFile);
         let failed = 0;
         for (const testFile of testFiles) {
@@ -405,12 +414,15 @@ const main = async () => {
         reportUsageTotals(apiKey);
         if (failed > 0) process.exit(1);
     } else {
-        if (testFiles.length === 1) {
-            const analysis = await analyzeTestFile(testFiles[0], apiKey);
+        const firstTestFile = testFiles[0];
+        if (testFiles.length === 1 && firstTestFile) {
+            const analysis = await analyzeTestFile(firstTestFile, apiKey);
             output(JSON.stringify(analysis, null, 2));
         } else {
             const results: Record<string, TestAnalysis> = {};
-            const gitRoot = getGitRoot(path.dirname(testFiles[0]));
+            // @ts-expect-error noUncheckedIndexedAccess
+            const elseTestFile: string = testFiles[0];
+            const gitRoot = getGitRoot(path.dirname(elseTestFile));
             let failed = 0;
             for (const testFile of testFiles) {
                 try {

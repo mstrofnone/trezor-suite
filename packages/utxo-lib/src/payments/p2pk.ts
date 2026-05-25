@@ -44,7 +44,9 @@ export function p2pk(a: Payment, opts?: PaymentOpts): Payment {
     lazy.prop(o, 'output', () => {
         if (!a.pubkey) return;
 
-        return bscript.compile([a.pubkey, OPS.OP_CHECKSIG]);
+        const opChecksig: number = OPS.OP_CHECKSIG;
+
+        return bscript.compile([a.pubkey, opChecksig]);
     });
     lazy.prop(o, 'pubkey', () => {
         if (!a.output) return;

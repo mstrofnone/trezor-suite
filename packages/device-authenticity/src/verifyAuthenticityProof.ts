@@ -262,14 +262,18 @@ export const verifyAuthenticityProof = async ({
     const parsedCertificates = certificates.map(c =>
         parseCertificate(new Uint8Array(Buffer.from(c, 'hex'))),
     );
+    // @ts-expect-error: indexing with noUncheckedIndexedAccess
+    const firstParsedCertificate: ParsedCertificate = parsedCertificates[0];
     // For both signing schemes, the 1st certificate is the one expected to be signed by rootPubKey (checked by matchRootPubKeyToCertificate)
-    const firstCertAlgName = parsedCertificates[0].signatureAlgorithm.algorithmName;
+    const firstCertAlgName = firstParsedCertificate.signatureAlgorithm.algorithmName;
 
     if (firstCertAlgName === 'MLDSA44') {
         if (parsedCertificates.length !== 1) {
             return { valid: false, error: 'RESPONSE_MALFORMED' };
         }
-        const [deviceCert] = parsedCertificates;
+
+        // @ts-expect-error: indexing with noUncheckedIndexedAccess
+        const deviceCert: (typeof parsedCertificates)[number] = parsedCertificates[0];
 
         return await verifyOnlyDeviceCertificate({
             deviceCert,
@@ -283,7 +287,10 @@ export const verifyAuthenticityProof = async ({
         if (parsedCertificates.length !== 2) {
             return { valid: false, error: 'RESPONSE_MALFORMED' };
         }
-        const [deviceCert, caCert] = parsedCertificates;
+        // @ts-expect-error: indexing with noUncheckedIndexedAccess
+        const deviceCert: (typeof parsedCertificates)[number] = parsedCertificates[0];
+        // @ts-expect-error: indexing with noUncheckedIndexedAccess
+        const caCert: (typeof parsedCertificates)[number] = parsedCertificates[1];
 
         return await verifyDeviceAndCACertificates({
             deviceCert,

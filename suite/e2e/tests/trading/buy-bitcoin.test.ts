@@ -5,9 +5,9 @@ import { buyQuotesBTC, buyTradeBTC, invityEndpoint, invityRequest } from '../../
 import { expect, test } from '../../support/fixtures';
 
 // Expected values based on our mocked responses
-const fiatAmount = buyQuotesBTC[0].fiatStringAmount;
-const bestBuyProvider = capitalizeFirstLetter(buyQuotesBTC[0].exchange);
-const bestBuyCryptoAmount = `${buyQuotesBTC[0].receiveStringAmount} BTC`;
+const fiatAmount = buyQuotesBTC[0]?.fiatStringAmount ?? '';
+const bestBuyProvider = capitalizeFirstLetter(buyQuotesBTC[0]?.exchange ?? '');
+const bestBuyCryptoAmount = `${buyQuotesBTC[0]?.receiveStringAmount} BTC`;
 const formattedFiatAmount = `CZK ${localizeNumber(fiatAmount, 'en-US', 2)}`;
 const { receiveAddress } = buyTradeBTC.trade;
 const secondOfferQuote = buyQuotesBTC[5];
@@ -39,7 +39,7 @@ test.describe('Trading - Buy BTC', { tag: ['@webOnly', '@T3W1', '@T3T1'] }, () =
         await test.step('Select second offer from modal', async () => {
             const tradeRequestPromise = page.waitForRequest(invityEndpoint.buyTrade);
             await tradingPage.quotes.selectQuoteByProvider(
-                capitalizeFirstLetter(secondOfferQuote.exchange),
+                capitalizeFirstLetter(secondOfferQuote?.exchange ?? ''),
             );
             await tradingPage.buyBestOfferButton.click();
             await expect(tradeRequestPromise).toHavePayload(
