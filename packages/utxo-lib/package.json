@@ -54,7 +54,6 @@
         "@sinclair/typebox": "^0.34.49",
         "@trezor/utils": "workspace:*",
         "bitcoin-ops": "^1.4.1",
-        "bn.js": "5.2.3",
         "cashaddrjs": "0.4.4",
         "int64-buffer": "^1.1.0",
         "pushdata-bitcoin": "^1.0.1",
@@ -63,7 +62,6 @@
     },
     "devDependencies": {
         "@trezor/eslint": "workspace:*",
-        "@types/bn.js": "^5.2.0",
         "minimaldata": "^1.0.2"
     },
     "peerDependencies": {
