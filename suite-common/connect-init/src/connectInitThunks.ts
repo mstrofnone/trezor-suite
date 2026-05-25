@@ -155,10 +155,6 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
         // push, UI toggle, future device-driven changes) reaches Redux through this single
         // entry point — there is no optimistic dispatch elsewhere.
         TrezorConnect.on(ENABLED_NETWORKS_CHANGED, networks => {
-            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-            console.log('[enabled-networks/suite-listener] enabled-networks-changed', {
-                incoming: networks,
-            });
             dispatch(changeNetworks(networks as NetworkSymbol[]));
         });
 
@@ -208,8 +204,6 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
         }
 
         const hydrated = selectEnabledNetworks(getState());
-        // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-        console.log('[enabled-networks/suite-init] init with enabledNetworks', { hydrated });
 
         try {
             // Pass the suite-storage-hydrated set as part of init settings so the store is

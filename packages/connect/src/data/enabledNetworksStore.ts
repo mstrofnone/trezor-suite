@@ -14,17 +14,10 @@ export const get = (): string[] => [...networks];
 export const has = (symbol: string): boolean => networks.has(symbol);
 
 export const set = (next: string[]): { canonical: string[]; changed: boolean } => {
-    const prev = [...networks];
     const nextSet = new Set(next);
     const changed =
         nextSet.size !== networks.size || [...nextSet].some(symbol => !networks.has(symbol));
     networks = nextSet;
-    // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-    console.log('[enabled-networks/connect-store] set', {
-        prev,
-        next: [...nextSet],
-        changed,
-    });
 
     return { canonical: [...nextSet], changed };
 };

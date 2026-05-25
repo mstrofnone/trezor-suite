@@ -27,12 +27,6 @@ export const changeCoinVisibility = createThunk<
         } else if (!isAlreadyHidden) {
             enabledNetworks = [...enabledNetworks, symbol];
         }
-        // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-        console.log('[enabled-networks/suite-thunk] changeCoinVisibility', {
-            symbol,
-            shouldBeVisible,
-            next: enabledNetworks,
-        });
         // Connect is the runtime source of truth. The setter triggers a canonical
         // 'enabled-networks-changed' event; the connect-init listener writes it back to
         // Redux. By the time await resolves, Redux is up-to-date (in-module IPC is sync).
