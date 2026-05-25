@@ -48,7 +48,13 @@ export const TradingBalance = ({
         if (Number(balance) === 0 || isNaN(Number(balance))) return null;
 
         return (
-            <Text intent="neutral" priority="secondary" typographyStyle="body-xs">
+            <Text
+                intent="neutral"
+                priority="secondary"
+                typographyStyle="body-xs"
+                minWidth={0}
+                overflow="hidden"
+            >
                 {!amountInCrypto ? (
                     <HiddenPlaceholder>
                         &asymp; {formattedBalance} {balanceCurrency}
@@ -63,6 +69,7 @@ export const TradingBalance = ({
                             tokenAddress={tokenAddress}
                             rateType="current"
                             showApproximationIndicator
+                            middleTruncate={6}
                         />
                     )
                 )}

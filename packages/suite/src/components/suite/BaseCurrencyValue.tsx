@@ -20,6 +20,7 @@ import type { UseFiatFromCryptoValueParams } from 'src/hooks/suite/useFiatFromCr
 import { useFiatFromCryptoValue } from 'src/hooks/suite/useFiatFromCryptoValue';
 
 import { type HiddenPlaceholderProps } from './HiddenPlaceholder';
+import { TruncatedBaseCurrencyAmount } from './TruncatedBaseCurrencyAmount';
 
 // Do NOT use any prop from <HiddenPlaceholderProps>, its here just to fix types
 const SameWidthNums = styled.span<HiddenPlaceholderProps>`
@@ -43,6 +44,11 @@ export type BaseCurrencyValueProps = UseFiatFromCryptoValueParams & {
     className?: string;
     isLoading?: boolean;
     rateType?: RateTypeWithoutHistoric;
+    /**
+     * Keeps the last N characters visible while truncating the fiat amount in the middle.
+     * Parent flex/grid items must allow shrinking, e.g. `minWidth={0}`.
+     */
+    middleTruncate?: number;
 };
 
 /**
@@ -75,6 +81,7 @@ export const BaseCurrencyValue = ({
     showLoadingSkeleton,
     isLoading,
     rateType,
+    middleTruncate,
 }: BaseCurrencyValueProps) => {
     const { shouldAnimate } = useLoadingSkeleton();
     const isNativeToken = !tokenAddress || tokenAddress === CONTRACT_ADDRESS_FOR_NATIVE_TOKEN;
@@ -115,12 +122,24 @@ export const BaseCurrencyValue = ({
     if (value) {
         const fiatValueComponent = (
             <WrapperComponent className={className}>
-                {showApproximationIndicator && <>≈&nbsp;</>}
-                <BaseCurrencyAmountFormatter
-                    currency={baseCurrencyCode.toUpperCase()}
-                    value={value}
-                    {...fiatAmountFormatterOptions}
-                />
+                {middleTruncate !== undefined ? (
+                    <TruncatedBaseCurrencyAmount
+                        value={value}
+                        currency={baseCurrencyCode.toUpperCase()}
+                        tailChars={middleTruncate}
+                        prefix={showApproximationIndicator ? '≈ ' : undefined}
+                        fiatAmountFormatterOptions={fiatAmountFormatterOptions}
+                    />
+                ) : (
+                    <>
+                        {showApproximationIndicator && <>≈&nbsp;</>}
+                        <BaseCurrencyAmountFormatter
+                            currency={baseCurrencyCode.toUpperCase()}
+                            value={value}
+                            {...fiatAmountFormatterOptions}
+                        />
+                    </>
+                )}
             </WrapperComponent>
         );
 

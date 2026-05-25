@@ -210,6 +210,7 @@ export const StakeInputs = () => {
                         amount={amount}
                         symbol={account.symbol}
                         showApproximationIndicator
+                        middleTruncate={6}
                     >
                         {({ value }) =>
                             value ? (
@@ -217,6 +218,8 @@ export const StakeInputs = () => {
                                     typographyStyle="body-xs"
                                     intent="neutral"
                                     priority="secondary"
+                                    minWidth={0}
+                                    overflow="hidden"
                                 >
                                     {value}
                                 </Text>

@@ -111,7 +111,7 @@ export const TradingSellFormInputs = () => {
                             cryptoCurrencyLabel={sendCryptoSelect?.id}
                         />
                         {amountInCrypto && (
-                            <Row justifyContent="space-between" alignItems="flex-start">
+                            <Row justifyContent="space-between" alignItems="center" gap={8}>
                                 <Row gap={8} data-testid="@trading/form/fraction-buttons">
                                     {generateFractionButtons(helpers).map(button => {
                                         const { percentValue, ...buttonProps } = button;
