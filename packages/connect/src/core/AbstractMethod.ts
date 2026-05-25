@@ -201,16 +201,6 @@ export abstract class AbstractMethod<Name extends CallMethodPayload['method'], P
             payload.method.startsWith('cardano') ||
             payloadReferencesCardanoCoin(payload) ||
             enabledNetworksStore.has('ada');
-        if (this.useCardanoDerivation) {
-            // eslint-disable-next-line no-console -- manual data-flow trace, revert before merge
-            console.log('[enabled-networks/connect-resolver] useCardanoDerivation', {
-                method: payload.method,
-                cardanoMethod: payload.method.startsWith('cardano'),
-                payloadReferencesCardano: payloadReferencesCardanoCoin(payload),
-                hasAdaInStore: enabledNetworksStore.has('ada'),
-                resolved: this.useCardanoDerivation,
-            });
-        }
         this.confirmMissingBackup = false;
     }
 
