@@ -215,7 +215,7 @@ export const ApproveModal = (props: ApproveModalProps) => {
 
                     <Column gap={12}>
                         <Box
-                            padding={{ top: 12, right: 20, bottom: 12, left: 20 }}
+                            padding={{ horizontal: 20, vertical: 12 }}
                             borderWidth={borders.widths.small}
                             borderRadius={borders.radii.sm}
                             backgroundColor="surfaceFillRaised"
