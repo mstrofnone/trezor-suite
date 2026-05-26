@@ -38,10 +38,16 @@ describe('useExchangeAnalyticReportCallback', () => {
         candidateQuote?: Parameters<typeof useExchangeAnalyticReportCallback>[0];
         preloadedState?: ExchangeAnalyticsPreloadedState;
     } = {}) =>
-        renderHookWithStoreProvider(() => useExchangeAnalyticReportCallback(candidateQuote), {
-            preloadedState,
-            services,
-        });
+        renderHookWithStoreProvider(
+            ({ initialCandidateQuote }) => useExchangeAnalyticReportCallback(initialCandidateQuote),
+            {
+                preloadedState,
+                services,
+                initialProps: {
+                    initialCandidateQuote: candidateQuote,
+                },
+            },
+        );
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -129,5 +135,16 @@ describe('useExchangeAnalyticReportCallback', () => {
                 action: 'continue',
             },
         });
+    });
+
+    it('should be stable even when quote changes', () => {
+        const { result, rerender } = renderUseExchangeAnalyticReportCallback({
+            candidateQuote: mercuryoFixedWorstQuote,
+        });
+        const firstCallback = result.current;
+
+        rerender({ candidateQuote: invityDexQuote });
+
+        expect(result.current).toBe(firstCallback);
     });
 });
