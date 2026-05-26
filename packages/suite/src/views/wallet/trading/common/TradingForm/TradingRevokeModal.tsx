@@ -87,6 +87,7 @@ export const TradingRevokeModal = ({ cryptoId }: TradingRevokeModalProps) => {
             provider={provider}
             spender={spender}
             preapprovedAmount={preapprovedAmount}
+            precedesApproval
             onConfirm={onConfirm}
             onCancel={handleCancel}
         />

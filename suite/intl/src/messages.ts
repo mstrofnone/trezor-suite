@@ -10121,6 +10121,10 @@ export const messages = defineMessages({
         id: 'TR_EARN_YIELD_APPROVE_SPENDING_TRANSACTION',
         defaultMessage: 'Set {supplySymbol} spending limit',
     },
+    TR_EARN_YIELD_APPROVE_TOKEN_SPENDING_DESCRIPTION: {
+        id: 'TR_EARN_YIELD_APPROVE_TOKEN_SPENDING_DESCRIPTION',
+        defaultMessage: 'Approve {provider} to spend your {displaySymbol} to deposit.',
+    },
     TR_EARN_SIGN_SUPPLYING_TRANSACTION: {
         id: 'TR_EARN_SIGN_SUPPLYING_TRANSACTION',
         defaultMessage: 'Sign deposit transaction',

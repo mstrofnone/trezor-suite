@@ -42,12 +42,21 @@ interface RevokeModalProps {
     spender: string;
     logoSourceType?: ProviderLogoSourceType;
     preapprovedAmount?: string;
+    precedesApproval?: boolean;
     onConfirm?: () => void;
     onCancel?: () => void;
 }
 
 export const RevokeModal = (props: RevokeModalProps) => {
-    const { account, provider, spender, cryptoId, preapprovedAmount, logoSourceType } = props;
+    const {
+        account,
+        provider,
+        spender,
+        cryptoId,
+        preapprovedAmount,
+        logoSourceType,
+        precedesApproval,
+    } = props;
     const { device } = useDevice();
     const { handleClick, disabled: isConfirmInProgress } = useAsyncClickHandler();
     const isDebug = useSelector(selectIsDebugModeActive);
@@ -79,7 +88,8 @@ export const RevokeModal = (props: RevokeModalProps) => {
     const isPreapprovedAmountUnlimited =
         !!preapprovedAmount && isAllowanceUnlimited(preapprovedAmount, token.decimals);
     const isIncreasingAllowanceSupported = tokenSupportsIncreasingAllowance(token.contract);
-    const showRevokeBanner = hasPreapprovedAmount && !isIncreasingAllowanceSupported;
+    const showRevokeBanner =
+        precedesApproval && hasPreapprovedAmount && !isIncreasingAllowanceSupported;
 
     return (
         <FormProvider {...methods}>

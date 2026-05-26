@@ -154,7 +154,7 @@ export const ApproveModalTypeSelector = ({
             zIndex={zIndices.modal + 1}
             popoverOffset={-60}
             content={
-                <CardList width={550}>
+                <CardList width={420}>
                     {renderOption('MINIMAL')}
                     {renderOption('INFINITE')}
                 </CardList>

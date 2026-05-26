@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
@@ -42,13 +43,22 @@ interface ApproveModalProps {
     spender: string;
     logoSourceType?: ProviderLogoSourceType;
     preapprovedAmount?: string;
+    renderDescription: (ctx: { displaySymbol: string }) => ReactNode;
     onSelectApprovalType?: (type: DexApprovalType) => void;
     onConfirm?: (approvalType: DexApprovalType) => void;
     onCancel?: () => void;
 }
 
 export const ApproveModal = (props: ApproveModalProps) => {
-    const { account, provider, spender, cryptoId, preapprovedAmount, logoSourceType } = props;
+    const {
+        account,
+        provider,
+        spender,
+        cryptoId,
+        preapprovedAmount,
+        logoSourceType,
+        renderDescription,
+    } = props;
     const { device } = useDevice();
     const { handleClick, disabled: isConfirmInProgress } = useAsyncClickHandler();
     const context = useAllowanceModal({ ...props, type: 'APPROVE' });
@@ -90,15 +100,7 @@ export const ApproveModal = (props: ApproveModalProps) => {
                         values={{ displaySymbol: getDisplaySymbol(token.symbol, token.contract) }}
                     />
                 }
-                description={
-                    <Translation
-                        id="TR_EXCHANGE_APPROVAL_APPROVE_TOKEN_SPENDING_DESCRIPTION"
-                        values={{
-                            displaySymbol: getDisplaySymbol(token.symbol, token.contract),
-                            provider: provider.companyName,
-                        }}
-                    />
-                }
+                description={renderDescription({ displaySymbol })}
                 bottomContent={
                     <>
                         <Modal.Button

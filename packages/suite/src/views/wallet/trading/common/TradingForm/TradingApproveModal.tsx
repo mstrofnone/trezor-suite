@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { type CryptoId, type DexApprovalType } from 'invity-api';
 
 import { type DesktopAnalyticsDep, events } from '@suite/analytics';
+import { Translation } from '@suite/intl';
 import { Calldata } from '@suite-common/calldata';
 import { useServices } from '@suite-common/dependency-injection';
 import { useCurrentRef } from '@trezor/react-utils';
@@ -111,6 +112,12 @@ export const TradingApproveModal = ({ amount, cryptoId }: TradingApproveModalPro
             provider={provider}
             spender={spender}
             preapprovedAmount={preapprovedAmount}
+            renderDescription={({ displaySymbol }) => (
+                <Translation
+                    id="TR_EXCHANGE_APPROVAL_APPROVE_TOKEN_SPENDING_DESCRIPTION"
+                    values={{ displaySymbol, provider: provider.companyName }}
+                />
+            )}
             onSelectApprovalType={onSelectApprovalType}
             onConfirm={onConfirm}
             onCancel={handleCancel}
