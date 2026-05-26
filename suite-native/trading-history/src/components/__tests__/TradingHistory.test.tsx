@@ -3,13 +3,13 @@ import { type RouteProp } from '@react-navigation/native';
 import { type RootStackParamList, type RootStackRoutes } from '@suite-native/navigation';
 import { fireEvent } from '@suite-native/test-utils-store';
 import { accounts, getBuyTrade } from '@suite-native/trading-fixtures';
-import { TradingHistoryScreen } from '@suite-native/trading-history';
-
 import {
     type PreloadedStatePartial,
     type TradingTestPreloadedState,
     renderWithTradingProvider,
-} from '../../__tests__/tradingTestUtils';
+} from '@suite-native/trading-state/testUtils';
+
+import { TradingHistory } from '../TradingHistory';
 
 const mockShowSheet = jest.fn();
 
@@ -60,8 +60,8 @@ const overrides: PreloadedStatePartial<TradingTestPreloadedState> = {
 describe('TradingHistoryScreen', () => {
     let unmount: (() => void) | undefined;
 
-    const renderScreen = () => {
-        const result = renderWithTradingProvider(<TradingHistoryScreen />, { overrides });
+    const renderTradingHistory = () => {
+        const result = renderWithTradingProvider(<TradingHistory />, { overrides });
 
         ({ unmount } = result);
 
@@ -79,7 +79,7 @@ describe('TradingHistoryScreen', () => {
     });
 
     it('should render list of trades', () => {
-        const { getByText } = renderScreen();
+        const { getByText } = renderTradingHistory();
 
         expect(getByText('Mercuryo')).toBeTruthy();
         expect(getByText('$1,234.00')).toBeTruthy();
@@ -87,7 +87,7 @@ describe('TradingHistoryScreen', () => {
     });
 
     it('should show bottom sheet when trade item is clicked', () => {
-        const { getByText, queryAllByText } = renderScreen();
+        const { getByText, queryAllByText } = renderTradingHistory();
 
         fireEvent.press(getByText('Trans. ID: d3ef3451-8f68-4250-9e08-580ece5e7d12'));
 
