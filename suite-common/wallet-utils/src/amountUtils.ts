@@ -1,5 +1,8 @@
+import { fromWei, toWei } from 'web3-utils';
+
 import { type NetworkSymbol, getNetworkDisplaySymbol, networks } from '@suite-common/wallet-config';
 import type { TokenTransfer } from '@trezor/connect';
+import type { Branded } from '@trezor/type-utils';
 import { BigNumber, type BigNumberValue } from '@trezor/utils';
 
 import { type AmountSubunit, type AmountUnit, asAmountSubunit, asAmountUnit } from './AmountTypes';
@@ -138,3 +141,19 @@ export const formatTokenAmount = (tokenTransfer: TokenTransfer) => {
 
     return tokenTransfer.symbol ? `${formattedAmount} ${tokenTransfer.symbol}` : formattedAmount;
 };
+
+type HexString = `0x${string}`;
+type BigIntString = `${bigint}`;
+type WeiString = BigIntString & Branded<'wei'>;
+type DecimalString = `${bigint}` | `${bigint}.${bigint}`;
+type GweiString = DecimalString & Branded<'gwei'>;
+type EtherString = DecimalString & Branded<'ether'>;
+
+export const bigIntStringToHex = (value: string): HexString => `0x${BigInt(value).toString(16)}`;
+export const hexToBigIntString = (hex: HexString) => BigInt(hex).toString() as BigIntString;
+export const hexToWei = (hex: HexString) => hexToBigIntString(hex) as WeiString;
+export const weiToHex = (wei: string) => bigIntStringToHex(wei);
+export const gweiToWei = (gwei: string) => toWei(gwei, 'gwei') as WeiString;
+export const weiToGwei = (wei: string) => fromWei(wei, 'gwei') as GweiString;
+export const etherToWei = (ether: string) => toWei(ether, 'ether') as WeiString;
+export const weiToEther = (wei: string) => fromWei(wei, 'ether') as EtherString;
