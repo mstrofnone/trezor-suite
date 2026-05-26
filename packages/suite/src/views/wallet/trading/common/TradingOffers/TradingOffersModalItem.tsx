@@ -64,13 +64,15 @@ export const TradingOffersModalItem = ({ quote, onSelect }: TradingOffersModalIt
                 <Row justifyContent="space-between" alignItems="center" width="100%">
                     <ProviderWrapper>
                         <TradingUtilsProvider providers={providers} exchange={exchange} />
-                        {exchangeComparatorProps && (
+                        {exchangeComparatorProps ? (
                             <TradingUtilsKyc
                                 exchange={exchange}
                                 providers={exchangeComparatorProps.providers}
                                 isForComparator
                                 isDex={exchangeComparatorProps.isDex}
                             />
+                        ) : (
+                            <TradingUtilsKyc isForComparator isBuySell />
                         )}
                     </ProviderWrapper>
 

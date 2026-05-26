@@ -50,8 +50,7 @@ export const TradingFormOfferExchangeActions = () => {
         quote,
         quoteAmounts,
         areFeesLoading,
-        isConfirmButtonLoading,
-        confirmButtonTranslationId,
+        confirmButton,
         selectedAssetCryptoId,
         isBaseButtonDisabled,
     } = useTradingFormOfferCommon<'exchange'>();
@@ -146,10 +145,9 @@ export const TradingFormOfferExchangeActions = () => {
 
         return (
             <TradingFormOfferConfirmButton
+                {...confirmButton}
                 onClick={onSelectQuote}
                 isDisabled={isButtonDisabled}
-                isLoading={isConfirmButtonLoading}
-                translationId={confirmButtonTranslationId}
                 testId="@trading/form/exchange-button"
             />
         );

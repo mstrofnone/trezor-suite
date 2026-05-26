@@ -136,12 +136,11 @@ export const TradingOfferExchangeDetails = ({
                         </Tooltip>
                     </Text>
                 </InfoItem>
+                <TradingUtilsKyc
+                    exchange={exchange}
+                    providers={providers as TradingExchangeProvidersInfoProps}
+                />
             </Column>
-
-            <TradingUtilsKyc
-                exchange={exchange}
-                providers={providers as TradingExchangeProvidersInfoProps}
-            />
 
             {formStep === 'SIGN_DATA' && (
                 <Card>

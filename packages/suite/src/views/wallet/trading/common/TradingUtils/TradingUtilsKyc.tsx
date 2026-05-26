@@ -22,6 +22,7 @@ interface TradingUtilsProviderProps {
     providers?: TradingExchangeProvidersInfoProps;
     isForComparator?: boolean;
     isDex?: boolean;
+    isBuySell?: boolean;
 }
 
 const getKycPolicy = (kycPolicyType: ExchangeKYCType | undefined) => {
@@ -47,12 +48,28 @@ export const TradingUtilsKyc = ({
     providers,
     isForComparator,
     isDex,
+    isBuySell,
 }: TradingUtilsProviderProps) => {
     const provider = providers && exchange ? providers[exchange] : null;
     const kycPolicyType = provider?.kycPolicyType;
     const kycPolicyTranslation = getKycPolicy(kycPolicyType);
 
     if (isForComparator) {
+        if (isBuySell) {
+            return (
+                <Tooltip content={<Translation id="TR_TRADING_KYC_REQUIRED" />} placement="bottom">
+                    <TooltipText>
+                        <Text color="contentWarning" typographyStyle="body-sm">
+                            <Row gap={4}>
+                                <Icon name="identificationCard" color="contentWarning" size={12} />
+                                <Translation id="TR_TRADING_KYC_POLICY" />
+                            </Row>
+                        </Text>
+                    </TooltipText>
+                </Tooltip>
+            );
+        }
+
         if (isDex) {
             return (
                 <Row alignItems="center" gap={4}>
@@ -95,5 +112,5 @@ export const TradingUtilsKyc = ({
         return null;
     }
 
-    return <Banner icon description={kycPolicyTranslation} />;
+    return <Banner intent="neutral" icon="identificationCard" description={kycPolicyTranslation} />;
 };

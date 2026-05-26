@@ -10,6 +10,7 @@ import { useSelector } from 'src/hooks/suite';
 import { useTradingFormContext } from 'src/hooks/wallet/trading/form/useTradingCommonForm';
 import { useTradingStellarActivation } from 'src/hooks/wallet/trading/useTradingStellarActivation';
 import { TradingFormOfferConfirmButton } from 'src/views/wallet/trading/common/TradingForm/TradingFormOffer/components/TradingFormOfferConfirmButton';
+import { TradingFormOfferKYCWarning } from 'src/views/wallet/trading/common/TradingForm/TradingFormOffer/components/TradingFormOfferKYCWarning';
 import { TradingFormOfferOTC } from 'src/views/wallet/trading/common/TradingForm/TradingFormOffer/components/TradingFormOfferOTC';
 import { useTradingFormOfferCommon } from 'src/views/wallet/trading/common/TradingForm/TradingFormOffer/hooks/useTradingFormOfferCommon';
 import { useReceiveAddressModalControls } from 'src/views/wallet/trading/common/TradingSelectedOffer/TradingReceiveAddress/useReceiveAddressModalControls';
@@ -28,14 +29,8 @@ export const TradingFormOfferBuyActions = () => {
         selectAccountByKey(suiteState, receiveAccountKey),
     );
 
-    const {
-        quote,
-        areFeesLoading,
-        isConfirmButtonLoading,
-        confirmButtonTranslationId,
-        selectedAssetCryptoId,
-        isBaseButtonDisabled,
-    } = useTradingFormOfferCommon<'buy'>();
+    const { quote, areFeesLoading, confirmButton, selectedAssetCryptoId, isBaseButtonDisabled } =
+        useTradingFormOfferCommon<'buy'>();
     const isButtonDisabled = isBaseButtonDisabled || state.isFormLoading;
 
     const { stellarActivateButton, stellarActivateModal } = useTradingStellarActivation({
@@ -76,10 +71,9 @@ export const TradingFormOfferBuyActions = () => {
 
         return (
             <TradingFormOfferConfirmButton
+                {...confirmButton}
                 onClick={onSelectQuote}
                 isDisabled={isButtonDisabled}
-                isLoading={isConfirmButtonLoading}
-                translationId={confirmButtonTranslationId}
                 testId="@trading/form/buy-button"
             />
         );
@@ -88,6 +82,7 @@ export const TradingFormOfferBuyActions = () => {
     return (
         <>
             {renderActionButton()}
+            {quote && <TradingFormOfferKYCWarning />}
             {stellarActivateModal}
             <TradingFormOfferOTC />
         </>
