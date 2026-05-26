@@ -1,6 +1,6 @@
 import { CoinSelectionError, trezorUtils } from '@fivebinaries/coin-selection';
 
-import { type MethodPermission } from '@trezor/connect-common';
+import { type PermissionRequest } from '@trezor/connect-common';
 import {
     type CardanoComposeTransactionParams,
     CardanoComposeTransactionParamsSchema,
@@ -26,7 +26,7 @@ export default class CardanoComposeTransaction extends AbstractMethod<
         this.useUi = false;
     }
 
-    get requiredPermissions(): MethodPermission[] {
+    get requiredPermissions(): PermissionRequest[] {
         return [];
     }
 

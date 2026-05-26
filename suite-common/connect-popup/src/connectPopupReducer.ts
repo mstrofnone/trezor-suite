@@ -38,7 +38,20 @@ export const prepareConnectPopupReducer = createReducerWithExtraDeps(
             .addCase(
                 extra.actionTypes.storageLoad,
                 (state, { payload }: PayloadAction<StorageActionPayload>) => {
-                    if (payload.connect) state.permissions = payload.connect.permissions;
+                    // Drop entries persisted in the legacy `MethodPermission[]`
+                    // shape (a list of plain strings). Only keep entries whose
+                    // `types` already use the new `PermissionRequest` object
+                    // shape with a `permission` field. Affected users will be
+                    // re-prompted once on the next call from the same origin.
+                    if (payload.connect) {
+                        state.permissions = (payload.connect.permissions ?? []).filter(
+                            p =>
+                                Array.isArray(p.types) &&
+                                p.types.every(
+                                    t => t !== null && typeof t === 'object' && 'permission' in t,
+                                ),
+                        );
+                    }
                 },
             )
             .addCase(connectPopupActions.initiateCall, (state, { payload }) => {

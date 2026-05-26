@@ -1,4 +1,4 @@
-import type { MethodPermission, PROTO } from '@trezor/connect-common';
+import type { PROTO, PermissionRequest } from '@trezor/connect-common';
 import { ERRORS } from '@trezor/connect-common/src/constants';
 
 import type { MethodMessage, MethodReturnType } from '../../../core/AbstractMethod';
@@ -41,8 +41,8 @@ export default class MoneroSignTransactionMethod extends AbstractMethod<
     'moneroSignTransaction',
     Params
 > {
-    get requiredPermissions(): MethodPermission[] {
-        return ['read', 'write'];
+    get requiredPermissions(): PermissionRequest[] {
+        return this.coinPerms('sign', this.requiredFirmwareCoins);
     }
 
     private state: ProtocolState = {

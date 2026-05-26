@@ -2,25 +2,41 @@ import styled from 'styled-components';
 
 import { Translation } from '@suite/intl';
 import { selectIsDebugModeActive } from '@suite/settings';
-import { connectPopupActions, selectConnectAppPermissions } from '@suite-common/connect-popup';
+import {
+    connectPopupActions,
+    groupPermissionsByCoin,
+    selectConnectAppPermissions,
+} from '@suite-common/connect-popup';
 import { Card, Column, Dropdown, H3, Row, Text, Tooltip } from '@trezor/components';
+import { type MethodPermission, type PermissionRequest } from '@trezor/connect';
 import { spacings } from '@trezor/theme';
 
 import { ConnectAppIcon } from 'src/components/suite/ConnectAppIcon';
 import { ConnectProcessLabel } from 'src/components/suite/ConnectProcessLabel';
 import { useDispatch, useSelector } from 'src/hooks/suite';
+import { getCoinLabel } from 'src/utils/suite/connectPermissions';
 
 const PermissionsList = styled.ul`
     list-style: disc;
     margin-left: 16px;
 `;
 
-export const getPermissionText = (permissionType: string) => {
+export const getPermissionText = (permissionType: MethodPermission | string) => {
     switch (permissionType) {
-        case 'read':
-            return <Translation id="TR_PERMISSION_READ" />;
-        case 'write':
-            return <Translation id="TR_PERMISSION_WRITE" />;
+        case 'read_address':
+            return <Translation id="TR_PERMISSION_READ_ADDRESS" />;
+        case 'read_xpub':
+            return <Translation id="TR_PERMISSION_READ_XPUB" />;
+        case 'read_account_info':
+            return <Translation id="TR_PERMISSION_READ_ACCOUNT_INFO" />;
+        case 'read_settings':
+            return <Translation id="TR_PERMISSION_READ_SETTINGS" />;
+        case 'read_features':
+            return <Translation id="TR_PERMISSION_READ_FEATURES" />;
+        case 'sign':
+            return <Translation id="TR_PERMISSION_SIGN" />;
+        case 'verify_message':
+            return <Translation id="TR_PERMISSION_VERIFY_MESSAGE" />;
         case 'management':
             return <Translation id="TR_PERMISSION_MANAGEMENT" />;
         case 'push_tx':
@@ -31,6 +47,23 @@ export const getPermissionText = (permissionType: string) => {
             return '';
     }
 };
+
+export const GroupedPermissionsList = ({ permissions }: { permissions: PermissionRequest[] }) => (
+    <PermissionsList>
+        {groupPermissionsByCoin(permissions).map(group => (
+            <li key={group.coin ?? '__device__'}>
+                <Text>
+                    {group.coin ? getCoinLabel(group.coin) : <Translation id="TR_DEVICE" />}
+                </Text>
+                <PermissionsList>
+                    {group.permissions.map(p => (
+                        <li key={p}>{getPermissionText(p)}</li>
+                    ))}
+                </PermissionsList>
+            </li>
+        ))}
+    </PermissionsList>
+);
 
 export const ConnectPermissions = () => {
     const dispatch = useDispatch();
@@ -83,11 +116,7 @@ export const ConnectPermissions = () => {
                                 {app.process && <ConnectProcessLabel process={app.process} />}
                             </Row>
                             <Text intent="neutral" priority="secondary">
-                                <PermissionsList>
-                                    {app.types.map(permission => (
-                                        <li key={permission}>{getPermissionText(permission)}</li>
-                                    ))}
-                                </PermissionsList>
+                                <GroupedPermissionsList permissions={app.types} />
                             </Text>
                         </Column>
 

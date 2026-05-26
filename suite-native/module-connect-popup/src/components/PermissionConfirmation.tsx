@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { connectPopupActions, selectConnectPopupCall } from '@suite-common/connect-popup';
+import {
+    connectPopupActions,
+    groupPermissionsByCoin,
+    selectConnectPopupCall,
+} from '@suite-common/connect-popup';
+import { networks } from '@suite-common/wallet-config';
 import {
     Button,
     Card,
@@ -23,12 +28,23 @@ import { type MethodPermission } from '@trezor/connect';
 import { ConnectAppIcon } from '../components/ConnectAppIcon';
 
 const permissionTranslationKeysMap = {
-    read: 'moduleConnectPopup.permissions.read',
-    write: 'moduleConnectPopup.permissions.write',
+    read_address: 'moduleConnectPopup.permissions.read_address',
+    read_xpub: 'moduleConnectPopup.permissions.read_xpub',
+    read_account_info: 'moduleConnectPopup.permissions.read_account_info',
+    read_settings: 'moduleConnectPopup.permissions.read_settings',
+    read_features: 'moduleConnectPopup.permissions.read_features',
+    sign: 'moduleConnectPopup.permissions.sign',
+    verify_message: 'moduleConnectPopup.permissions.verify_message',
     management: 'moduleConnectPopup.permissions.management',
     push_tx: 'moduleConnectPopup.permissions.push_tx',
     internal: 'moduleConnectPopup.permissions.internal',
 } as const satisfies Record<MethodPermission, TxKeyPath>;
+
+const getCoinLabel = (shortcut: string): string => {
+    const key = shortcut.toLowerCase() as keyof typeof networks;
+
+    return networks[key]?.name ?? shortcut.toUpperCase();
+};
 
 export const PermissionConfirmation = () => {
     const dispatch = useDispatch();
@@ -88,14 +104,34 @@ export const PermissionConfirmation = () => {
 
                 <TextDivider title="moduleConnectPopup.permissions.title" />
 
-                <VStack spacing="sp8" padding="sp8">
-                    {popupCall.methodInfo.permissionTypes.map(permission => (
-                        <HStack key={permission} alignItems="center" spacing="sp8">
-                            <Icon name="checkCircle" color="contentBrand" />
-                            <Text color="contentSecondary" variant="body-sm" style={{ flex: 1 }}>
-                                <Translation id={permissionTranslationKeysMap[permission]} />
+                <VStack spacing="sp12" padding="sp8">
+                    {groupPermissionsByCoin(popupCall.methodInfo.permissionTypes).map(group => (
+                        <VStack key={group.coin ?? '__device__'} spacing="sp4">
+                            <Text variant="body-sm">
+                                {group.coin ? (
+                                    <Translation
+                                        id="moduleConnectPopup.permissions.coinHeading"
+                                        values={{ coin: getCoinLabel(group.coin) }}
+                                    />
+                                ) : (
+                                    <Translation id="moduleConnectPopup.permissions.deviceHeading" />
+                                )}
                             </Text>
-                        </HStack>
+                            {group.permissions.map(permission => (
+                                <HStack key={permission} alignItems="center" spacing="sp8">
+                                    <Icon name="checkCircle" color="contentBrand" />
+                                    <Text
+                                        color="contentSecondary"
+                                        variant="body-sm"
+                                        style={{ flex: 1 }}
+                                    >
+                                        <Translation
+                                            id={permissionTranslationKeysMap[permission]}
+                                        />
+                                    </Text>
+                                </HStack>
+                            ))}
+                        </VStack>
                     ))}
                 </VStack>
 

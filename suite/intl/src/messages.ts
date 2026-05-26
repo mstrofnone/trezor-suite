@@ -11240,13 +11240,33 @@ export const messages = defineMessages({
         defaultMessage:
             'Suite will only appear when action is required, such as entering PIN or passphrase.',
     },
-    TR_PERMISSION_READ: {
-        id: 'TR_PERMISSION_READ',
-        defaultMessage: 'Access public keys from your Trezor device',
+    TR_PERMISSION_READ_ADDRESS: {
+        id: 'TR_PERMISSION_READ_ADDRESS',
+        defaultMessage: 'Read an address derived on your Trezor',
     },
-    TR_PERMISSION_WRITE: {
-        id: 'TR_PERMISSION_WRITE',
+    TR_PERMISSION_READ_XPUB: {
+        id: 'TR_PERMISSION_READ_XPUB',
+        defaultMessage: 'Read an extended public key from your Trezor',
+    },
+    TR_PERMISSION_READ_ACCOUNT_INFO: {
+        id: 'TR_PERMISSION_READ_ACCOUNT_INFO',
+        defaultMessage: 'Read account info (balances, transactions) from your Trezor',
+    },
+    TR_PERMISSION_READ_SETTINGS: {
+        id: 'TR_PERMISSION_READ_SETTINGS',
+        defaultMessage: 'Read Trezor Connect settings',
+    },
+    TR_PERMISSION_READ_FEATURES: {
+        id: 'TR_PERMISSION_READ_FEATURES',
+        defaultMessage: 'Read device model, firmware, and capabilities',
+    },
+    TR_PERMISSION_SIGN: {
+        id: 'TR_PERMISSION_SIGN',
         defaultMessage: 'Permit transaction and data signing on Trezor',
+    },
+    TR_PERMISSION_VERIFY_MESSAGE: {
+        id: 'TR_PERMISSION_VERIFY_MESSAGE',
+        defaultMessage: 'Display a signed message on Trezor for verification',
     },
     TR_PERMISSION_MANAGEMENT: {
         id: 'TR_PERMISSION_MANAGEMENT',
@@ -11259,6 +11279,14 @@ export const messages = defineMessages({
     TR_PERMISSION_CUSTOM_MESSAGE: {
         id: 'TR_PERMISSION_CUSTOM_MESSAGE',
         defaultMessage: 'Run custom operations',
+    },
+    TR_PERMISSION_COIN_GROUP: {
+        id: 'TR_PERMISSION_COIN_GROUP',
+        defaultMessage: '{coinLabel}: {permissions}',
+    },
+    TR_PERMISSION_DEVICE_GROUP: {
+        id: 'TR_PERMISSION_DEVICE_GROUP',
+        defaultMessage: 'Device: {permissions}',
     },
     TR_GRANT_PERMISSIONS: {
         id: 'TR_GRANT_PERMISSIONS',
