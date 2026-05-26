@@ -9,16 +9,6 @@ import { ThpGlobalModalManager } from 'src/components/connection/thp/ThpGlobalMo
 import { useDispatch, usePreferredModal, useSelector } from 'src/hooks/suite';
 import { SwitchDevice } from 'src/views/suite/SwitchDevice/SwitchDevice';
 
-/**
- * Render layer for the `switch-device` foreground app + the modals that
- * must layer on top of it (THP pairing, SuiteSync). The main
- * `ModalSwitcher` delegates `switch-device` here because its main
- * `ForegroundAppModal` map intentionally returns `null` for that app —
- * SwitchDevice needs ThpGlobalModalManager (and friends) rendered above
- * it, which the main switcher's early-return branch wouldn't otherwise do.
- *
- * Mounted alongside `<ModalSwitcher />` in `SuiteLayout` / `WelcomeLayout`.
- */
 export const SwitchDeviceLayer = () => {
     const modal = usePreferredModal();
     const dispatch = useDispatch();

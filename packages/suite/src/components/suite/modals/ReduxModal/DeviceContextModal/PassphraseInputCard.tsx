@@ -66,13 +66,6 @@ export const PassphraseInputCard = ({
 }: PassphraseInputCardProps) => {
     const modal = useSelector(state => state.modal);
     const selectedDevice = useSelector(selectSelectedDevice);
-    // For scoped-call flows (e.g. AddWalletButton's local hidden-wallet
-    // discovery) the global UI_EVENT dispatch is suppressed, so `modal`
-    // never transitions into REQUEST_PASSPHRASE. Use the discovery slice
-    // as a complementary signal: when its status is `enter-passphrase`,
-    // we know the call has been issued and we're past the eager set —
-    // close enough for "device is ready". For non-scoped flows the
-    // original modal-slice check still works.
     const discovery = useSelector(state =>
         selectedDevice?.path ? selectDiscoveryByDevicePath(state, selectedDevice.path) : undefined,
     );
@@ -87,11 +80,6 @@ export const PassphraseInputCard = ({
     const isDeviceLoading = !(
         (modal.context === MODAL_CONTEXT_DEVICE &&
             modal.windowType === UI_REQUEST.REQUEST_PASSPHRASE) ||
-        // Scoped flow fallback: any discovery status that means
-        // "device is waiting for passphrase input" counts as ready.
-        // `enter-passphrase` is the initial entry; `confirm-empty-passphrase`
-        // is the re-entry step that follows when the user submitted a
-        // passphrase the device couldn't reconcile to a known wallet.
         discovery?.status === 'enter-passphrase' ||
         discovery?.status === 'confirm-empty-passphrase'
     );

@@ -7,12 +7,6 @@ type CommonDiscoveryStatus = {
     passphraseOnDevice?: boolean;
     startTimestamp?: number;
     passphraseSubmitted?: boolean;
-    // When true, every TC call inside this discovery is stamped with a callId
-    // so the global UI_EVENT dispatch in connectInitThunks is suppressed and
-    // the caller can render passphrase / button modals locally.
-    // Persisted on the discovery slice so downstream callers (e.g.
-    // PassphraseWalletIsNotExistFlow dispatching `runDiscoveryThunk`) carry
-    // the same intent without having to thread it through every UI surface.
     useScopedCallIds?: boolean;
 };
 

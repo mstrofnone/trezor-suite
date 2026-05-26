@@ -68,11 +68,6 @@ export const AddWalletButton = ({ device, instances, onCancel }: AddWalletButton
     }) => {
         const isHidden = walletType === WalletType.PASSPHRASE;
 
-        // Synchronous close+goto for both flows. For the hidden-wallet
-        // path, the local PassphraseModal + ConfirmActionModal aren't
-        // rendered here — they're rendered by `<HiddenWalletFlow />`
-        // mounted at SuiteLayout level, which watches discovery state.
-        // That layer survives this modal closing and the route change.
         onCancel?.(false);
         dispatch(selectDeviceThunk({ device }));
         dispatch(closeModalApp());

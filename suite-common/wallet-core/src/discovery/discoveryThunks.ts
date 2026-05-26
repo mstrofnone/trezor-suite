@@ -347,13 +347,6 @@ export const cancelDiscoveryThunk = createThunk(
     },
 );
 
-// Builds the per-call callId generator. When `enabled` is false, returns a
-// no-op that yields `undefined` — equivalent to "don't stamp callId". When
-// true, returns a generator that produces a fresh UUID per call. UUIDs are
-// required because `@trezor/connect` validates callId as a UUID
-// (`Method_InvalidParameter` otherwise — see schema-utils). The value
-// itself doesn't carry meaning; it just suppresses the global UI_EVENT
-// dispatch in `connectInitThunks` for these events.
 const makeCallIdGenerator = (enabled: boolean) => {
     if (!enabled) return () => undefined;
 
@@ -362,10 +355,6 @@ const makeCallIdGenerator = (enabled: boolean) => {
 
 type RunDiscoveryParams = {
     device: TrezorDevice;
-    // When true, every TC call inside this discovery has `callId` stamped
-    // on its params. That suppresses global UI_EVENT dispatch (and thus
-    // global modal routing) for those events, and lets the caller render a
-    // local passphrase modal off the discovery slice instead.
     useScopedCallIds?: boolean;
 };
 
@@ -682,10 +671,6 @@ type StartDiscoveryThunkParams = {
     device: TrezorDevice | undefined;
     isAddingHiddenWallet?: boolean;
     isAddingExistingWallet?: boolean;
-    // Stamp every TC call inside discovery with a callId so global UI_EVENT
-    // dispatch is suppressed for those events. Callers that want to render
-    // passphrase / button modals locally (e.g. AddWalletButton) opt in;
-    // everything else keeps the default global modal flow.
     useScopedCallIds?: boolean;
 };
 
