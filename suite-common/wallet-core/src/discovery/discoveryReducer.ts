@@ -45,6 +45,7 @@ export const prepareDiscoveryReducer = createReducerWithExtraDeps(
                 status: 'starting',
                 isAddingHiddenWallet: payload.isAddingHiddenWallet,
                 isAddingExistingWallet: payload.isAddingExistingWallet,
+                useScopedCallIds: payload.useScopedCallIds,
                 startTimestamp: Date.now() as Timestamp,
             };
         });

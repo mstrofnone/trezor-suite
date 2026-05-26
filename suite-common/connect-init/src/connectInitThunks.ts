@@ -91,6 +91,14 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
         });
 
         TrezorConnect.on(UI_EVENT, ({ event: _, ...action }) => {
+            // UI events stamped with a `callId` are driven by a scoped
+            // caller that owns its UI locally (e.g. `HiddenWalletFlow`
+            // when adding a passphrase wallet). Don't dispatch them
+            // through the global modal flow — the local owner subscribes
+            // directly to TrezorConnect and renders the modals itself.
+            if ('callId' in action && action.callId) {
+                return;
+            }
             if (action.type === UI_REQUEST.FIRMWARE_DOWNLOADED) {
                 // We are in web therefore we ignore `FIRMWARE_DOWNLOADED` action.
                 return;

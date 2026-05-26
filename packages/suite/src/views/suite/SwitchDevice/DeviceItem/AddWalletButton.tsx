@@ -66,15 +66,22 @@ export const AddWalletButton = ({ device, instances, onCancel }: AddWalletButton
         walletType: WalletType;
         isExisting?: boolean;
     }) => {
+        const isHidden = walletType === WalletType.PASSPHRASE;
+
+        // Synchronous close+goto for both flows. For the hidden-wallet
+        // path, the local PassphraseModal + ConfirmActionModal aren't
+        // rendered here — they're rendered by `<HiddenWalletFlow />`
+        // mounted at SuiteLayout level, which watches discovery state.
+        // That layer survives this modal closing and the route change.
         onCancel?.(false);
         dispatch(selectDeviceThunk({ device }));
         dispatch(closeModalApp());
-        // TODO: when creating a new hidden wallet, we should not start discovery yet, but only after going through the best practices flow
         dispatch(
             startDiscoveryThunk({
                 device,
-                isAddingHiddenWallet: walletType === WalletType.PASSPHRASE,
+                isAddingHiddenWallet: isHidden,
                 isAddingExistingWallet: isExisting,
+                useScopedCallIds: isHidden,
             }),
         );
         dispatch(goto({ routeName: 'suite-index' }));

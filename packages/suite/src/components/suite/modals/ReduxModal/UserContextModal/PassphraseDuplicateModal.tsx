@@ -40,6 +40,7 @@ export const PassphraseDuplicateModal = ({
                 device,
                 isAddingHiddenWallet: true,
                 isAddingExistingWallet: !!discovery.isAddingExistingWallet,
+                useScopedCallIds: discovery.useScopedCallIds,
             }),
         );
     };
@@ -53,7 +54,12 @@ export const PassphraseDuplicateModal = ({
             }),
         );
 
-        dispatch(runDiscoveryThunk(device));
+        dispatch(
+            runDiscoveryThunk({
+                device,
+                useScopedCallIds: discovery.useScopedCallIds,
+            }),
+        );
     };
 
     return (

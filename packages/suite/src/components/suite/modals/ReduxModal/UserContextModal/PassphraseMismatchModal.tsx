@@ -31,6 +31,7 @@ export const PassphraseMismatchModal = ({
                 device,
                 isAddingHiddenWallet: discovery.isAddingHiddenWallet,
                 isAddingExistingWallet: discovery.isAddingExistingWallet,
+                useScopedCallIds: discovery.useScopedCallIds,
             }),
         );
     };
