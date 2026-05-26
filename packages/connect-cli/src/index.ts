@@ -146,7 +146,7 @@ const runTestCase = async (device: Device) => {
         case 'nostr-sign-event':
             result = await TrezorConnect.nostrSignEvent({
                 device,
-                __experimental: true,
+                __experimental: false,
                 path: "m/44'/1237'/0'/0/0",
                 created_at: Math.floor(Date.now() / 1000),
                 kind: 1,
