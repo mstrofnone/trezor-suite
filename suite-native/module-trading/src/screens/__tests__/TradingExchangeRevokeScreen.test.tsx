@@ -72,6 +72,15 @@ jest.mock('@suite-common/device', () => ({
     selectIsDeviceConnected: () => mockIsDeviceConnected,
 }));
 
+const mockAnalyticsReport = jest.fn();
+jest.mock('@suite-native/trading-analytics', () => ({
+    ...jest.requireActual('@suite-native/trading-analytics'),
+    useExchangeAnalyticsStepReport:
+        (action: unknown) =>
+        (...args: unknown[]) =>
+            mockAnalyticsReport(action, ...args),
+}));
+
 const testQuote = mercuryoFixedWorstQuote;
 
 describe('TradingExchangeRevokeScreen', () => {
@@ -196,5 +205,26 @@ describe('TradingExchangeRevokeScreen', () => {
         expect(
             getByText(getTranslation('moduleConnectDevice.connectAndUnlockScreen.title')),
         ).toBeOnTheScreen();
+    });
+
+    describe('analytics', () => {
+        it('should report revoke-preview visit ', () => {
+            renderScreen();
+
+            expect(mockAnalyticsReport).toHaveBeenCalledWith('revoke-preview', 'visit');
+            expect(mockAnalyticsReport).toHaveBeenCalledTimes(1);
+        });
+
+        it('should report revoke-preview cancel on back navigation', () => {
+            store.dispatch(tradingExchangeActions.saveSelectedQuote(testQuote));
+            renderScreen();
+
+            // Simulate the beforeRemove event with a GO_BACK action (back button / swipe back).
+            const [, listener] =
+                mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
+            listener?.({ data: { action: { type: 'GO_BACK' } } });
+
+            expect(mockAnalyticsReport).toHaveBeenCalledWith('revoke-preview', 'cancel');
+        });
     });
 });

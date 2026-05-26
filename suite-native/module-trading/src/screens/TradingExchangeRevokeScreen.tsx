@@ -19,6 +19,7 @@ import {
     ScreenHeader,
     type StackProps,
 } from '@suite-native/navigation';
+import { useExchangeAnalyticsStepReport } from '@suite-native/trading-analytics';
 
 import { ApprovalButton } from '../components/exchange/Approval/ApprovalButton';
 import { ExchangeRevokeDetails } from '../components/exchange/Approval/ExchangeRevokeDetails';
@@ -37,6 +38,7 @@ export const TradingExchangeRevokeScreen = ({
 }: TradingExchangeRevokeScreenProps) => {
     const { shouldIncreaseLimit } = params;
     const dispatch = useDispatch();
+    const reportToAnalytics = useExchangeAnalyticsStepReport('revoke-preview');
 
     const quote = useSelector(selectTradingExchangeSelectedQuote);
 
@@ -98,10 +100,12 @@ export const TradingExchangeRevokeScreen = ({
             }
         });
 
+        reportToAnalytics('visit');
+
         return () => {
             isActive = false;
         };
-    }, [quote, isReady, dispatch, confirmApproval]);
+    }, [quote, isReady, dispatch, confirmApproval, reportToAnalytics]);
 
     useEffect(() => {
         // Clear the selected quote only when the user navigates backward (back button / swipe back).
@@ -117,11 +121,12 @@ export const TradingExchangeRevokeScreen = ({
 
             if (isSingleBackPress) {
                 dispatch(tradingExchangeActions.saveSelectedQuote(undefined));
+                reportToAnalytics('cancel');
             }
         });
 
         return unsubscribe;
-    }, [dispatch, navigation]);
+    }, [dispatch, navigation, reportToAnalytics]);
 
     if (!quote) {
         return (
