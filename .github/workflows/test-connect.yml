@@ -33,6 +33,8 @@ on:
       - "packages/protocol/**"
       - "packages/schema-utils/**"
       - "packages/transport/**"
+      - "packages/transport-common/**"
+      - "packages/transport-web/**"
       - "packages/type-utils/**"
       - "packages/utils/**"
       - "packages/utxo-lib/**"
