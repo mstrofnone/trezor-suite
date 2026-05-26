@@ -453,6 +453,10 @@ export const TrezorConnectNostr = Type.Object({
 });
 export type TrezorConnectNostr = Static<typeof TrezorConnectNostr>;
 
+// Experimental methods — each requires `__experimental: true` in its params.
+export const TrezorConnectExperimental = Type.Composite([TrezorConnectNostr]);
+export type TrezorConnectExperimental = Static<typeof TrezorConnectExperimental>;
+
 // Runtime schema for key access
 export const TrezorConnectSchema = Type.Composite([
     TrezorConnectManagement,
@@ -469,7 +473,7 @@ export const TrezorConnectSchema = Type.Composite([
     TrezorConnectTezos,
     TrezorConnectTron,
     TrezorConnectEvolu,
-    TrezorConnectNostr,
+    TrezorConnectExperimental,
 ]);
 
 // Type-level interface for precise function types.
@@ -489,4 +493,4 @@ export interface TrezorConnect
         TrezorConnectTezos,
         TrezorConnectTron,
         TrezorConnectEvolu,
-        TrezorConnectNostr {}
+        TrezorConnectExperimental {}
