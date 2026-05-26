@@ -3,3 +3,4 @@ export { ResponsiveContextProvider } from './src/support/suite/ResponsiveContext
 export { extraDependenciesDesktopMock } from './src/support/tests/extraDependenciesDesktop.mock';
 export { initStore, type PreloadedState } from './src/reducers/store';
 export { type Store } from './src/types/suite';
+export { type SuiteDBSchema } from './src/storage/definitions';

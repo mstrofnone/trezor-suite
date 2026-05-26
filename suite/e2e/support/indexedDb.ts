@@ -1,18 +1,17 @@
 import type { Page } from '@playwright/test';
+import type { StoreKey, StoreNames, StoreValue } from 'idb';
 
-type IndexedDbDumpKey = string | number | Array<string | number>;
+import type { SuiteDBSchema } from '@trezor/suite';
 
-type IndexedDbDumpEntry = {
-    key: IndexedDbDumpKey;
-    value: unknown;
+type IndexedDbDumpEntry<S extends StoreNames<SuiteDBSchema>> = {
+    key: StoreKey<SuiteDBSchema, S>;
+    value: StoreValue<SuiteDBSchema, S>;
 };
 
-type IndexedDbDumpV1 = {
+export type IndexedDbDump = {
     version: 1;
-    stores: Record<string, IndexedDbDumpEntry[]>;
+    stores: { [S in StoreNames<SuiteDBSchema>]?: IndexedDbDumpEntry<S>[] };
 };
-
-export type IndexedDbDump = IndexedDbDumpV1;
 
 export class IndexedDbFixture {
     constructor(private page: Page) {}
@@ -86,7 +85,13 @@ export class IndexedDbFixture {
 
                         storeNames.forEach(storeName => {
                             const store = tx.objectStore(storeName);
-                            const entries = dumpData.stores[storeName] ?? [];
+                            const entries =
+                                (
+                                    dumpData.stores as Record<
+                                        string,
+                                        { key: IDBValidKey; value: unknown }[] | undefined
+                                    >
+                                )[storeName] ?? [];
                             const hasKeyPath = store.keyPath !== null;
 
                             store.clear();

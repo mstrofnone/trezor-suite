@@ -62,6 +62,7 @@
         { "path": "../../packages/e2e-utils" },
         { "path": "../../packages/eslint" },
         { "path": "../../packages/protobuf" },
+        { "path": "../../packages/suite" },
         { "path": "../../packages/suite-data" },
         { "path": "../../packages/theme" },
         { "path": "../../packages/transport" },

@@ -20,7 +20,7 @@ test.describe('Trading - remembered wallet loading', { tag: ['@noDevice'] }, () 
         });
 
         await test.step('Seed remembered wallet from real DB dump', async () => {
-            await indexedDb.seedFromDump(dump as IndexedDbDump);
+            await indexedDb.seedFromDump(dump as unknown as IndexedDbDump);
         });
 
         await test.step('Reload Suite with remembered state', async () => {
