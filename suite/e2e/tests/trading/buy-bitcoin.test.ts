@@ -70,6 +70,7 @@ test.describe('Trading - Buy BTC', { tag: ['@webOnly', '@T3W1', '@T3T1'] }, () =
             await expect(tradingPage.buyBestOfferButton).toHaveTranslation('TR_TRADING_BUY_VIA', {
                 values: { providerName: bestBuyProviderCompanyName },
             });
+            await expect(tradingPage.buyBestOfferButton.locator('svg')).toBeVisible();
             await expect(tradingPage.kycWarning).toBeVisible();
         });
 

@@ -29,8 +29,13 @@ export const TradingFormOfferBuyActions = () => {
         selectAccountByKey(suiteState, receiveAccountKey),
     );
 
-    const { quote, areFeesLoading, confirmButton, selectedAssetCryptoId, isBaseButtonDisabled } =
-        useTradingFormOfferCommon<'buy'>();
+    const {
+        quote,
+        areFeesLoading,
+        confirmButtonData,
+        selectedAssetCryptoId,
+        isBaseButtonDisabled,
+    } = useTradingFormOfferCommon<'buy'>();
     const isButtonDisabled = isBaseButtonDisabled || state.isFormLoading;
 
     const { stellarActivateButton, stellarActivateModal } = useTradingStellarActivation({
@@ -71,7 +76,7 @@ export const TradingFormOfferBuyActions = () => {
 
         return (
             <TradingFormOfferConfirmButton
-                {...confirmButton}
+                {...confirmButtonData}
                 onClick={onSelectQuote}
                 isDisabled={isButtonDisabled}
                 testId="@trading/form/buy-button"

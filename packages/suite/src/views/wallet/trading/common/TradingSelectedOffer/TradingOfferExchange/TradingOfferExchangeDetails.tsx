@@ -23,7 +23,7 @@ import { useTradingFormContext } from 'src/hooks/wallet/trading/form/useTradingC
 import { type TradingExchangeProvidersInfoProps } from 'src/types/trading/trading';
 import { formatCryptoAmountAsAmount } from 'src/views/wallet/trading/common/formatCryptoAmountAsAmount';
 
-import { TradingUtilsKyc } from '../../TradingUtils/TradingUtilsKyc';
+import { TradingUtilsProviderKyc } from '../../TradingUtils/TradingUtilsProviderKyc';
 import { TradingExchangeMevProtectionInfoItem } from '../TradingInfo/TradingExchangeMevProtectionInfoItem';
 import { TradingExchangeMinimumReceivedInfoItem } from '../TradingInfo/TradingExchangeMinimumReceivedInfoItem';
 import { TradingExchangeRateInfoItem } from '../TradingInfo/TradingExchangeRateInfoItem';
@@ -136,7 +136,7 @@ export const TradingOfferExchangeDetails = ({
                         </Tooltip>
                     </Text>
                 </InfoItem>
-                <TradingUtilsKyc
+                <TradingUtilsProviderKyc
                     exchange={exchange}
                     providers={providers as TradingExchangeProvidersInfoProps}
                 />

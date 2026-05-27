@@ -2,7 +2,7 @@ import type { BuyTrade, ExchangeTrade, SellFiatTrade } from 'invity-api';
 
 import { type TranslationKey } from '@suite/intl';
 import { selectTorState } from '@suite/tor';
-import type { TradingType } from '@suite-common/trading';
+import { type TradingType, selectTradingProviderCompanyName } from '@suite-common/trading';
 import { selectAreFeesLoading, selectHasRunningDiscovery } from '@suite-common/wallet-core';
 import { type IconName } from '@trezor/components';
 
@@ -11,7 +11,6 @@ import { useTradingDeviceDisconnected } from 'src/hooks/wallet/trading/form/comm
 import { useTradingFormContext } from 'src/hooks/wallet/trading/form/useTradingCommonForm';
 import {
     getCryptoQuoteAmountProps,
-    getProvidersInfoProps,
     getSelectedCryptoId,
     getSelectedQuote,
     isTradingExchangeContext,
@@ -63,14 +62,11 @@ export const useTradingFormOfferCommon = <T extends TradingType>() => {
     const noOffersWithTor = isTorEnabled && !quote && !state.isFormLoading;
     const isLookingForQuote = state.isFormLoading && !isAmountEmpty;
 
-    const providers = getProvidersInfoProps(context);
-    const exchangeName = (quote as BuyTrade | SellFiatTrade | undefined)?.exchange;
-    const providerName =
-        exchangeName && providers
-            ? (providers[exchangeName]?.companyName ?? exchangeName)
-            : undefined;
+    const providerName = useSelector(suiteState =>
+        selectTradingProviderCompanyName(suiteState, quote?.exchange, type),
+    );
 
-    const confirmButton: {
+    const confirmButtonData: {
         translationId: TranslationKey;
         translationValues?: Record<string, string>;
         iconRight?: IconName;
@@ -81,11 +77,15 @@ export const useTradingFormOfferCommon = <T extends TradingType>() => {
     };
 
     if (isLookingForQuote) {
-        confirmButton.translationId = 'TR_TRADING_OFFER_LOOKING';
-    } else if (quote && providerName && (type === 'buy' || type === 'sell')) {
-        confirmButton.translationId = type === 'buy' ? 'TR_TRADING_BUY_VIA' : 'TR_TRADING_SELL_VIA';
-        confirmButton.translationValues = { providerName };
-        confirmButton.iconRight = 'arrowSquareOut';
+        confirmButtonData.translationId = 'TR_TRADING_OFFER_LOOKING';
+    } else if (providerName && type === 'buy') {
+        confirmButtonData.translationId = 'TR_TRADING_BUY_VIA';
+        confirmButtonData.translationValues = { providerName };
+        confirmButtonData.iconRight = 'arrowSquareOut';
+    } else if (providerName && type === 'sell') {
+        confirmButtonData.translationId = 'TR_TRADING_SELL_VIA';
+        confirmButtonData.translationValues = { providerName };
+        confirmButtonData.iconRight = 'arrowSquareOut';
     }
 
     const amountLabels = tradingGetAmountLabels({ type, amountInCrypto: !!amountInCrypto });
@@ -102,7 +102,7 @@ export const useTradingFormOfferCommon = <T extends TradingType>() => {
         quoteAmounts,
         areFeesLoading,
         noOffersWithTor,
-        confirmButton,
+        confirmButtonData,
         sendAmount,
         receiveAmount,
         selectedAssetCryptoId,
