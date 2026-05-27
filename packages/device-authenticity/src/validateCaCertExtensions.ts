@@ -8,8 +8,8 @@ export const validateCaCertExtensions = (
     cert: ReturnType<typeof parseCertificate>,
     pathLen: number,
 ) => {
-    let hasKeyUsage,
-        hasBasicConstraints = false;
+    let hasKeyUsage = false;
+    let hasBasicConstraints = false;
     cert.tbsCertificate.extensions.forEach(ext => {
         if (ext.key === 'keyUsage') {
             if (ext.keyCertSign !== '1') {
