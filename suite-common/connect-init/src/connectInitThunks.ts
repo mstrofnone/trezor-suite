@@ -24,6 +24,7 @@ import TrezorConnect, {
     UI_EVENT,
     UI_REQUEST,
 } from '@trezor/connect';
+import { type PopupEventMessage, type UiEventMessage } from '@trezor/connect-common';
 import { isDesktop, isWeb } from '@trezor/env-utils';
 import { DATA_URL } from '@trezor/urls';
 import { capitalizeFirstLetter, getSynchronize, isArrayMember } from '@trezor/utils';
@@ -32,6 +33,51 @@ import { blacklist } from './blacklist';
 import { type ConnectKey } from './types';
 
 const CONNECT_INIT_MODULE = '@common/connect-init';
+
+// Distributive Omit preserves the discriminated union on `type` after stripping `event`.
+type DistributiveOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
+type UiEventAction = DistributiveOmit<UiEventMessage | PopupEventMessage, 'event'>;
+
+// Static portion of the connect UI_EVENT handler (no init-hook side effects).
+// Shared between the global connectInitThunk listener and PassphraseFlow so the
+// scoped path also dispatches the action and the matching addButtonRequest.
+export const handleUiEventActionThunk = createThunk<void, UiEventAction, void>(
+    `${CONNECT_INIT_MODULE}/handleUiEventAction`,
+    (action, { dispatch, getState }) => {
+        if (action.type === UI_REQUEST.FIRMWARE_DOWNLOADED) {
+            // We are in web therefore we ignore `FIRMWARE_DOWNLOADED` action.
+            return;
+        }
+
+        dispatch(action);
+
+        switch (action.type) {
+            case UI_REQUEST.REQUEST_PIN:
+            case UI_REQUEST.INVALID_PIN:
+                dispatch(
+                    deviceActions.addButtonRequest({
+                        // todo: note that this is not 'threadsafe', currently selected device is not necessarily the device
+                        // connect call was made for
+                        device: selectSelectedDevice(getState()),
+                        buttonRequest: {
+                            code: action.payload.type ? action.payload.type : action.type,
+                        },
+                    }),
+                );
+                break;
+            case UI_REQUEST.REQUEST_BUTTON: {
+                const { device: _, ...request } = action.payload;
+                dispatch(
+                    deviceActions.addButtonRequest({
+                        device: selectSelectedDevice(getState()),
+                        buttonRequest: request,
+                    }),
+                );
+                break;
+            }
+        }
+    },
+);
 
 // If you are looking where connectInitSettings is defined, it is defined in packages/suite/src/support/extraDependencies.ts
 // or in suite-native/state/src/extraDependencies.ts depends on which platform this connectInitThunk runs.
@@ -94,41 +140,8 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             if ('callId' in action && action.callId) {
                 return;
             }
-            if (action.type === UI_REQUEST.FIRMWARE_DOWNLOADED) {
-                // We are in web therefore we ignore `FIRMWARE_DOWNLOADED` action.
-                return;
-            }
 
-            // dispatch event as action
-            dispatch(action);
-
-            // this switch is still one more layer of indirection to be removed. connect actions are dispatched
-            // and could be handled directly in reducers
-            switch (action.type) {
-                case UI_REQUEST.REQUEST_PIN:
-                case UI_REQUEST.INVALID_PIN:
-                    dispatch(
-                        deviceActions.addButtonRequest({
-                            // todo: note that this is not 'threadsafe', currently selected device is not necessarily the device
-                            // connect call was made for
-                            device: selectSelectedDevice(getState()),
-                            buttonRequest: {
-                                code: action.payload.type ? action.payload.type : action.type,
-                            },
-                        }),
-                    );
-                    break;
-                case UI_REQUEST.REQUEST_BUTTON: {
-                    const { device: _, ...request } = action.payload;
-                    dispatch(
-                        deviceActions.addButtonRequest({
-                            device: selectSelectedDevice(getState()),
-                            buttonRequest: request,
-                        }),
-                    );
-                    break;
-                }
-            }
+            dispatch(handleUiEventActionThunk(action));
 
             if (
                 connectInitHooks &&

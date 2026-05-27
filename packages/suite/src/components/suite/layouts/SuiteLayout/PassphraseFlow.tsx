@@ -1,25 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { MODAL_CONTEXT_NONE, type State, modalReducer } from '@suite/modal';
+import { handleUiEventActionThunk } from '@suite-common/connect-init';
 import { selectSelectedDevice } from '@suite-common/device';
 import { selectDiscoveryByDevicePath } from '@suite-common/wallet-core';
 import TrezorConnect, { UI_EVENT, UI_REQUEST } from '@trezor/connect';
 import { type PopupEventMessage, type UiEventMessage } from '@trezor/connect-common';
 
 import { PassphraseModal } from 'src/components/suite/modals/ReduxModal/DeviceContextModal/PassphraseModal';
-import { ReduxModal } from 'src/components/suite/modals/ReduxModal/ReduxModal';
-import { useSelector } from 'src/hooks/suite';
+import { useDispatch, useSelector } from 'src/hooks/suite';
 
 const HIDDEN_WALLET_TERMINAL_STATUSES = new Set(['cancelled', 'failed', 'complete']);
 
-const initialModalState: State = { context: MODAL_CONTEXT_NONE };
-
 export const PassphraseFlow = () => {
+    const dispatch = useDispatch();
     const device = useSelector(selectSelectedDevice);
     const discovery = useSelector(state =>
         device?.path ? selectDiscoveryByDevicePath(state, device.path) : undefined,
     );
-    const [modalState, setModalState] = useState<State>(initialModalState);
 
     const callIds = discovery?.callIds;
     const isActive =
@@ -29,22 +26,19 @@ export const PassphraseFlow = () => {
         !HIDDEN_WALLET_TERMINAL_STATUSES.has(discovery.status);
 
     useEffect(() => {
-        if (!isActive || !callIds) {
-            setModalState(initialModalState);
+        if (!isActive || !callIds) return undefined;
 
-            return undefined;
-        }
         const scopedCallIds = new Set<string>(Object.values(callIds));
         const onUiEvent = (message: UiEventMessage | PopupEventMessage) => {
             const { event: _, ...action } = message;
             if (!('callId' in action) || !action.callId) return;
-            if (!action.callId || !scopedCallIds.has(action.callId)) return;
+            if (!scopedCallIds.has(action.callId)) return;
             // Passphrase request stays handled by <PassphraseModal /> below,
             // because it's driven off discovery state + has its own
             // sub-flows (best-practices, wallet-exists / not-exist,
             // confirm-empty-passphrase).
             if (action.type === UI_REQUEST.REQUEST_PASSPHRASE) return;
-            setModalState(prev => modalReducer(prev, action));
+            dispatch(handleUiEventActionThunk(action));
         };
 
         TrezorConnect.on(UI_EVENT, onUiEvent);
@@ -52,13 +46,9 @@ export const PassphraseFlow = () => {
         return () => {
             TrezorConnect.off(UI_EVENT, onUiEvent);
         };
-    }, [isActive, callIds]);
+    }, [isActive, callIds, dispatch]);
 
     if (!isActive || !device) return null;
-
-    if (modalState.context !== MODAL_CONTEXT_NONE) {
-        return <ReduxModal {...modalState} />;
-    }
 
     return <PassphraseModal device={device} />;
 };
