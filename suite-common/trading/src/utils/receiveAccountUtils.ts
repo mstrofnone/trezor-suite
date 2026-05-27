@@ -11,7 +11,7 @@ type GetReceiveAccountPreselectionParams = {
 
 export type ReceiveAccountPreselection = {
     accountKey: AccountKey;
-    address?: string | undefined;
+    address?: string;
 };
 
 export const getReceiveAccountPreselection = ({

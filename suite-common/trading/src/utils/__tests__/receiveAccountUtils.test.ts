@@ -36,14 +36,14 @@ describe('getReceiveAccountPreselection', () => {
 
     it('returns the send account key when send account has the receive symbol', () => {
         const sendAccount = mockWalletAccount({
-            symbol: 'btc',
-            descriptor: asAccountDescriptor('btc-send-descriptor'),
+            symbol: 'eth',
+            descriptor: asAccountDescriptor('eth-send-descriptor'),
         });
 
         expect(
             getReceiveAccountPreselection({
-                symbol: 'btc',
-                accounts: [btcAccount],
+                symbol: 'eth',
+                accounts: [ethAccount],
                 sendAccount,
             }),
         ).toEqual({
