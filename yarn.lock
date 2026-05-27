@@ -10223,6 +10223,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@suite-common/backup@workspace:*, @suite-common/backup@workspace:suite-common/backup":
+  version: 0.0.0-use.local
+  resolution: "@suite-common/backup@workspace:suite-common/backup"
+  dependencies:
+    "@suite-common/device": "workspace:*"
+    "@suite-common/redux-utils": "workspace:*"
+    "@trezor/connect": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@suite-common/bip329-types@workspace:*, @suite-common/bip329-types@workspace:suite-common/bip329-types":
   version: 0.0.0-use.local
   resolution: "@suite-common/bip329-types@workspace:suite-common/bip329-types"
@@ -14286,16 +14296,25 @@ __metadata:
   resolution: "@suite/backup@workspace:suite/backup"
   dependencies:
     "@reduxjs/toolkit": "npm:2.11.2"
+    "@suite-common/backup": "workspace:*"
     "@suite-common/device": "workspace:*"
     "@suite-common/redux-utils": "workspace:*"
     "@suite-common/suite-types": "workspace:*"
     "@suite-common/test-utils": "workspace:*"
     "@suite-common/toast-notifications": "workspace:*"
     "@suite/analytics": "workspace:*"
+    "@suite/external-links": "workspace:*"
+    "@suite/intl": "workspace:*"
     "@suite/router": "workspace:*"
+    "@suite/settings": "workspace:*"
     "@trezor/connect": "workspace:*"
     "@trezor/device-utils": "workspace:*"
+    "@trezor/product-components": "workspace:*"
     "@trezor/protobuf": "workspace:*"
+    "@trezor/urls": "workspace:*"
+    react: "npm:19.2.4"
+    react-redux: "npm:9.2.0"
+    styled-components: "npm:^6.3.9"
   languageName: unknown
   linkType: soft
 
@@ -14597,6 +14616,7 @@ __metadata:
     "@suite/intl": "workspace:*"
     "@suite/onboarding-components": "workspace:*"
     "@trezor/components": "workspace:*"
+    "@trezor/theme": "workspace:*"
     "@trezor/type-utils": "workspace:*"
     react: "npm:19.2.4"
     styled-components: "npm:^6.3.9"
@@ -14676,6 +14696,7 @@ __metadata:
   resolution: "@suite/recovery@workspace:suite/recovery"
   dependencies:
     "@reduxjs/toolkit": "npm:2.11.2"
+    "@suite-common/backup": "workspace:*"
     "@suite-common/device": "workspace:*"
     "@suite-common/redux-utils": "workspace:*"
     "@suite-common/test-utils": "workspace:*"
