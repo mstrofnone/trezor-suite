@@ -37,9 +37,9 @@ type DistributiveOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> :
 type UiEventAction = DistributiveOmit<UiEventMessage | PopupEventMessage, 'event'>;
 
 // Static portion of the connect UI_EVENT handler. Shared between the global
-// connectInitThunk listener and PassphraseFlow so the scoped path also dispatches
-// the action, runs the matching addButtonRequest, and fires the platform init
-// hooks (sourced from extra.services so the static body stays self-contained).
+// connectInitThunk listener and AddPassphraseWalletFlow so the scoped path also
+// dispatches the action, runs the matching addButtonRequest, and fires the platform
+// init hooks (sourced from extra.services so the static body stays self-contained).
 export const handleUiEventActionThunk = createThunk<void, UiEventAction, void>(
     `${CONNECT_INIT_MODULE}/handleUiEventAction`,
     (action, { dispatch, getState, extra }) => {

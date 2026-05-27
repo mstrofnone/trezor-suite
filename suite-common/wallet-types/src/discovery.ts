@@ -1,8 +1,8 @@
 import type { BundleProgress, DeviceUniquePath, StaticSessionId } from '@trezor/connect';
 
 // Stable set of callIds minted once when a scoped discovery starts. Each Connect
-// call in runDiscoveryThunk uses its named slot, and PassphraseFlow accepts only
-// UI events whose callId is in this set. The field is set on startDiscovery and
+// call in runDiscoveryThunk uses its named slot, and AddPassphraseWalletFlow accepts
+// only UI events whose callId is in this set. The field is set on startDiscovery and
 // must not be mutated for the lifetime of that discovery instance.
 export type DiscoveryCallIds = {
     initialDeviceState: string;

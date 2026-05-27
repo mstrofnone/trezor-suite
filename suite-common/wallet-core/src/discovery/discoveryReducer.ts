@@ -28,8 +28,8 @@ const update = (draft: Discovery, payload: { status: DiscoveryStatus; path: Devi
         ...payload.status,
         hasLoadedAnyNonEmptyAccount,
         // callIds are minted once at startDiscovery and must stay stable for the
-        // lifetime of the discovery instance — PassphraseFlow filters UI events
-        // by membership in this set.
+        // lifetime of the discovery instance — AddPassphraseWalletFlow filters UI
+        // events by membership in this set.
         callIds: currentStatus.callIds,
         ...{
             passphraseSubmitted:

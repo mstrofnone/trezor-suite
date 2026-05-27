@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'src/hooks/suite';
 
 const HIDDEN_WALLET_TERMINAL_STATUSES = new Set(['cancelled', 'failed', 'complete']);
 
-export const PassphraseFlow = () => {
+export const AddPassphraseWalletFlow = () => {
     const dispatch = useDispatch();
     const device = useSelector(selectSelectedDevice);
     const discovery = useSelector(state =>

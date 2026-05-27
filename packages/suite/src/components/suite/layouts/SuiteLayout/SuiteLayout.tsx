@@ -17,9 +17,9 @@ import { LayoutContext, type LayoutContextPayload } from 'src/support/suite/Layo
 
 import { AppShortcuts } from './AppShortcuts';
 import { ContentContainer } from '../ContentContainer';
+import { AddPassphraseWalletFlow } from './AddPassphraseWalletFlow';
 import { CoinjoinBars } from './CoinjoinBars/CoinjoinBars';
 import { DebugLegend } from './DebugLegend';
-import { PassphraseFlow } from './PassphraseFlow';
 import { PowerMonitorManager } from './PowerMonitor/PowerMonitor';
 import { Sidebar } from './Sidebar/Sidebar';
 import { SwitchDeviceLayer } from './SwitchDeviceLayer';
@@ -121,7 +121,7 @@ export const SuiteLayout = ({ children, 'data-testid': dataTest }: SuiteLayoutPr
 
                             <ModalSwitcher />
                             <SwitchDeviceLayer />
-                            <PassphraseFlow />
+                            <AddPassphraseWalletFlow />
 
                             <AppShortcuts />
                             <PowerMonitorManager />
