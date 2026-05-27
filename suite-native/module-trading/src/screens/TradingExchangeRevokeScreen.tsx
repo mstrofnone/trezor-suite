@@ -32,7 +32,7 @@ type TradingExchangeRevokeScreenProps = StackProps<
     RootStackRoutes.TradingExchangeRevoke
 >;
 
-export const TradingExchangeRevokeScreen = ({
+const TradingExchangeRevokeScreenContent = ({
     route: { params },
     navigation,
 }: TradingExchangeRevokeScreenProps) => {
@@ -142,48 +142,52 @@ export const TradingExchangeRevokeScreen = ({
     }
 
     return (
-        <TradingDeviceConnectionGuard>
-            <Screen
-                header={
-                    <DynamicScreenHeader
-                        title={
+        <Screen
+            header={
+                <DynamicScreenHeader
+                    title={
+                        <Translation
+                            id="moduleTrading.tradingExchangeRevokeScreen.revokeTitle"
+                            values={{ symbol: coinSymbol }}
+                        />
+                    }
+                    subtitle={
+                        shouldIncreaseLimit ? undefined : (
                             <Translation
-                                id="moduleTrading.tradingExchangeRevokeScreen.revokeTitle"
+                                id="moduleTrading.tradingExchangeRevokeScreen.revokeSubtitle"
                                 values={{ symbol: coinSymbol }}
                             />
+                        )
+                    }
+                    closeActionType="back"
+                />
+            }
+            footer={
+                <ApprovalButton
+                    isReady={isRevokeReady}
+                    isDisabled={!!error}
+                    flowType={shouldIncreaseLimit ? 'revoke-and-approve' : 'revoke'}
+                />
+            }
+        >
+            <VStack spacing="sp12">
+                {!!shouldIncreaseLimit && (
+                    <InlineAlertBox
+                        variant="info"
+                        title={
+                            <Translation id="moduleTrading.tradingExchangeRevokeScreen.lowLimitInfoAlert" />
                         }
-                        subtitle={
-                            shouldIncreaseLimit ? undefined : (
-                                <Translation
-                                    id="moduleTrading.tradingExchangeRevokeScreen.revokeSubtitle"
-                                    values={{ symbol: coinSymbol }}
-                                />
-                            )
-                        }
-                        closeActionType="back"
                     />
-                }
-                footer={
-                    <ApprovalButton
-                        isReady={isRevokeReady}
-                        isDisabled={!!error}
-                        flowType={shouldIncreaseLimit ? 'revoke-and-approve' : 'revoke'}
-                    />
-                }
-            >
-                <VStack spacing="sp12">
-                    {!!shouldIncreaseLimit && (
-                        <InlineAlertBox
-                            variant="info"
-                            title={
-                                <Translation id="moduleTrading.tradingExchangeRevokeScreen.lowLimitInfoAlert" />
-                            }
-                        />
-                    )}
+                )}
 
-                    <ExchangeRevokeDetails exchange={quote.exchange} />
-                </VStack>
-            </Screen>
-        </TradingDeviceConnectionGuard>
+                <ExchangeRevokeDetails exchange={quote.exchange} />
+            </VStack>
+        </Screen>
     );
 };
+
+export const TradingExchangeRevokeScreen = (props: TradingExchangeRevokeScreenProps) => (
+    <TradingDeviceConnectionGuard>
+        <TradingExchangeRevokeScreenContent {...props} />
+    </TradingDeviceConnectionGuard>
+);

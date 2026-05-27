@@ -3,7 +3,7 @@ import { type RouteProp } from '@react-navigation/native';
 import { selectTradingExchangeSelectedQuote, tradingExchangeActions } from '@suite-common/trading';
 import { getTranslation } from '@suite-native/intl';
 import { type RootStackParamList, RootStackRoutes } from '@suite-native/navigation';
-import { type TestStore } from '@suite-native/test-utils-store';
+import { type TestStore, act } from '@suite-native/test-utils-store';
 import { eth1NormalAccount, mercuryoFixedWorstQuote } from '@suite-native/trading-fixtures';
 
 import {
@@ -169,7 +169,9 @@ describe('TradingExchangeRevokeScreen', () => {
         // Simulate the beforeRemove event with a GO_BACK action (back button / swipe back).
         const [, listener] =
             mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
-        listener?.({ data: { action: { type: 'GO_BACK' } } });
+        act(() => {
+            listener?.({ data: { action: { type: 'GO_BACK' } } });
+        });
 
         const selectedQuote = selectTradingExchangeSelectedQuote(store.getState());
         expect(selectedQuote).toBeUndefined();
@@ -181,7 +183,9 @@ describe('TradingExchangeRevokeScreen', () => {
 
         const [, listener] =
             mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
-        listener?.({ data: { action: { type: 'POP', payload: { count: 3 } } } });
+        act(() => {
+            listener?.({ data: { action: { type: 'POP', payload: { count: 3 } } } });
+        });
 
         const selectedQuote = selectTradingExchangeSelectedQuote(store.getState());
         expect(selectedQuote).toEqual({ ...testQuote, approvalType: 'ZERO' });
@@ -222,7 +226,9 @@ describe('TradingExchangeRevokeScreen', () => {
             // Simulate the beforeRemove event with a GO_BACK action (back button / swipe back).
             const [, listener] =
                 mockAddListener.mock.calls.find(([event]) => event === 'beforeRemove') ?? [];
-            listener?.({ data: { action: { type: 'GO_BACK' } } });
+            act(() => {
+                listener?.({ data: { action: { type: 'GO_BACK' } } });
+            });
 
             expect(mockAnalyticsReport).toHaveBeenCalledWith('revoke-preview', 'cancel');
         });
