@@ -3,14 +3,14 @@ import {
     type WelcomeLayoutWithoutModalSwitcherProps,
 } from './WelcomeLayoutWithoutModalSwitcher';
 import { ModalSwitcher } from '../../modals/ModalSwitcher/ModalSwitcher';
-import { HiddenWalletFlow } from '../SuiteLayout/HiddenWalletFlow';
+import { PassphraseFlow } from '../SuiteLayout/PassphraseFlow';
 import { SwitchDeviceLayer } from '../SuiteLayout/SwitchDeviceLayer';
 
 export const WelcomeLayout = ({ children, ...rest }: WelcomeLayoutWithoutModalSwitcherProps) => (
     <WelcomeLayoutWithoutModalSwitcher {...rest}>
         <ModalSwitcher />
         <SwitchDeviceLayer />
-        <HiddenWalletFlow />
+        <PassphraseFlow />
         {children}
     </WelcomeLayoutWithoutModalSwitcher>
 );

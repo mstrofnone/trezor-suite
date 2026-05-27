@@ -19,7 +19,7 @@ import { AppShortcuts } from './AppShortcuts';
 import { ContentContainer } from '../ContentContainer';
 import { CoinjoinBars } from './CoinjoinBars/CoinjoinBars';
 import { DebugLegend } from './DebugLegend';
-import { HiddenWalletFlow } from './HiddenWalletFlow';
+import { PassphraseFlow } from './PassphraseFlow';
 import { PowerMonitorManager } from './PowerMonitor/PowerMonitor';
 import { Sidebar } from './Sidebar/Sidebar';
 import { SwitchDeviceLayer } from './SwitchDeviceLayer';
@@ -121,7 +121,7 @@ export const SuiteLayout = ({ children, 'data-testid': dataTest }: SuiteLayoutPr
 
                             <ModalSwitcher />
                             <SwitchDeviceLayer />
-                            <HiddenWalletFlow />
+                            <PassphraseFlow />
 
                             <AppShortcuts />
                             <PowerMonitorManager />
