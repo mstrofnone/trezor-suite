@@ -3,7 +3,8 @@ import { type PrecomposedTransactionFinal } from '@suite-common/wallet-types';
 import {
     calculateTotalGasCost,
     evmHexToBigNumber,
-    evmHexWeiToGwei,
+    hexToWei,
+    weiToGwei,
 } from '@suite-common/wallet-utils';
 
 type ParsedUnsignedEvmTransaction = NonNullable<
@@ -21,15 +22,15 @@ const buildPrecomposedTransaction = (
 
     const gasLimit = evmHexToBigNumber(tx.gasLimit).toFixed(0);
     const gasPrice = evmHexToBigNumber(gasPriceHex).toFixed(0);
-    const feePerByte = evmHexWeiToGwei(gasPriceHex);
+    const feePerByte = weiToGwei(hexToWei(gasPriceHex));
     const fee = calculateTotalGasCost(gasPrice, gasLimit);
     const eip1559Fields: Partial<
         Pick<PrecomposedTransactionFinal, 'maxFeePerGas' | 'maxPriorityFeePerGas'>
     > =
         tx.maxFeePerGas && tx.maxPriorityFeePerGas
             ? {
-                  maxFeePerGas: evmHexWeiToGwei(tx.maxFeePerGas),
-                  maxPriorityFeePerGas: evmHexWeiToGwei(tx.maxPriorityFeePerGas),
+                  maxFeePerGas: weiToGwei(hexToWei(tx.maxFeePerGas)),
+                  maxPriorityFeePerGas: weiToGwei(hexToWei(tx.maxPriorityFeePerGas)),
               }
             : {};
 

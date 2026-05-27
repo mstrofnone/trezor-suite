@@ -10,9 +10,10 @@ import {
 import {
     asAmountUnit,
     evmHexToBigNumber,
-    evmHexWeiToGwei,
     getContractAddressForNetworkSymbol,
+    hexToWei,
     unitsToSubunits,
+    weiToGwei,
 } from '@suite-common/wallet-utils';
 import { type EthereumSignTransaction, type TokenInfo } from '@trezor/connect-common';
 import { BigNumber } from '@trezor/utils';
@@ -133,7 +134,7 @@ export const buildStablecoinYieldReviewState = ({
     const gasPriceHex = tx.maxFeePerGas ?? tx.gasPrice ?? ('0x0' as `0x${string}`);
     const gasLimit = evmHexToBigNumber(tx.gasLimit);
     const gasPrice = evmHexToBigNumber(gasPriceHex);
-    const feePerUnit = evmHexWeiToGwei(gasPriceHex);
+    const feePerUnit = weiToGwei(hexToWei(gasPriceHex));
     const fee = gasLimit.multipliedBy(gasPrice);
     const reviewToken = buildStablecoinYieldReviewToken({ token, symbol });
     const amountSubunits = unitsToSubunits({
@@ -146,8 +147,8 @@ export const buildStablecoinYieldReviewState = ({
     > =
         tx.maxFeePerGas && tx.maxPriorityFeePerGas
             ? {
-                  maxFeePerGas: evmHexWeiToGwei(tx.maxFeePerGas),
-                  maxPriorityFeePerGas: evmHexWeiToGwei(tx.maxPriorityFeePerGas),
+                  maxFeePerGas: weiToGwei(hexToWei(tx.maxFeePerGas)),
+                  maxPriorityFeePerGas: weiToGwei(hexToWei(tx.maxPriorityFeePerGas)),
               }
             : {};
 

@@ -1,5 +1,3 @@
-import { fromWei, hexToNumberString, numberToHex } from 'web3-utils';
-
 import { asTypedDesktopAnalytics, events } from '@suite/analytics';
 import { closeModal, openDeferredModal, preserveModal } from '@suite/modal';
 import { Calldata, asEvmAddress } from '@suite-common/calldata';
@@ -29,7 +27,15 @@ import {
     type FormState,
     type PrecomposedTransactionFinal,
 } from '@suite-common/wallet-types';
-import { getAccountIdentity, getMevProtectedTxData, sanitizeHex } from '@suite-common/wallet-utils';
+import {
+    bigIntStringToHex,
+    getAccountIdentity,
+    getMevProtectedTxData,
+    hexToBigIntString,
+    hexToWei,
+    sanitizeHex,
+    weiToGwei,
+} from '@suite-common/wallet-utils';
 import TrezorConnect, { type StaticSessionId } from '@trezor/connect';
 import { BigNumber } from '@trezor/utils';
 
@@ -52,12 +58,12 @@ const buildClaimReviewState = ({
     fee,
 }: BuildClaimReviewStateParams): BuildClaimReviewStateResult => {
     const feePriceWei = new BigNumber(
-        hexToNumberString(fee.type === 'eip1559' ? fee.maxFeePerGas : fee.gasPrice),
+        hexToWei(fee.type === 'eip1559' ? fee.maxFeePerGas : fee.gasPrice),
     );
-    const feeLimitWei = hexToNumberString(fee.gasLimit);
+    const feeLimitWei = hexToBigIntString(fee.gasLimit);
     const feeWei = new BigNumber(feeLimitWei).multipliedBy(feePriceWei).toFixed(0);
 
-    const feePerUnitGwei = fromWei(feePriceWei.toFixed(0), 'gwei');
+    const feePerUnitGwei = weiToGwei(feePriceWei.toFixed(0));
     const eip1559Fields: {
         maxFeePerGasGwei?: PrecomposedTransactionFinal['maxFeePerGas'];
         maxPriorityFeePerGasGwei?: PrecomposedTransactionFinal['maxPriorityFeePerGas'];
@@ -66,9 +72,9 @@ const buildClaimReviewState = ({
 
     if (fee.type === 'eip1559') {
         Object.assign(eip1559Fields, {
-            maxFeePerGasGwei: fromWei(hexToNumberString(fee.maxFeePerGas), 'gwei'),
-            maxPriorityFeePerGasGwei: fromWei(hexToNumberString(fee.maxPriorityFeePerGas), 'gwei'),
-            baseFeePerGasGwei: fromWei(hexToNumberString(fee.baseFeePerGas), 'gwei'),
+            maxFeePerGasGwei: weiToGwei(fee.maxFeePerGas),
+            maxPriorityFeePerGasGwei: weiToGwei(fee.maxPriorityFeePerGas),
+            baseFeePerGasGwei: weiToGwei(fee.baseFeePerGas),
         });
     }
 
@@ -313,7 +319,7 @@ export const claimMerkleRewardsThunk = createThunk(
                         to: unsignedClaimTx.to,
                         chainId: unsignedClaimTx.chainId,
                         value: '0x0',
-                        nonce: numberToHex(unsignedClaimTx.nonce),
+                        nonce: bigIntStringToHex(unsignedClaimTx.nonce),
                         data: sanitizeHex(unsignedClaimTx.data),
                         gasLimit: parsedSelectedFee.gasLimit,
                         ...(parsedSelectedFee.type === 'eip1559'

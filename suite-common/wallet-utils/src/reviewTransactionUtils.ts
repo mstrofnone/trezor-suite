@@ -1,5 +1,3 @@
-import { fromWei, toWei } from 'web3-utils';
-
 import { Calldata } from '@suite-common/calldata';
 import { EVM_SPENDER_LABELS, KNOWN_VAULTS } from '@suite-common/suite-constants';
 import { type TrezorDevice } from '@suite-common/suite-types';
@@ -17,6 +15,7 @@ import type { CardanoOutput } from '@trezor/connect';
 import { getFirmwareVersion } from '@trezor/device-utils';
 import { versionUtils } from '@trezor/utils';
 
+import { gweiToWei, weiToEther } from './amountUtils';
 import { datetimeToLocktime } from './bitcoinUtils';
 import { getShortFingerprint, isCardanoTx } from './cardanoUtils';
 import { isApprovalFlowSupported as isApprovalSupported } from './deviceUtils';
@@ -499,8 +498,8 @@ const constructNewFlow = ({
 
     if (networkType === 'ethereum' && !isUpdatedEthereumSendFlow) {
         // device shows ether, precomposedTx.feePerByte is in gwei
-        const wei = toWei(precomposedTx.feePerByte, 'gwei'); // from gwei to wei
-        const ether = fromWei(wei, 'ether'); // from wei to ether
+        const wei = gweiToWei(precomposedTx.feePerByte); // from gwei to wei
+        const ether = weiToEther(wei); // from wei to ether
 
         outputs.push({
             type: 'gas',

@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import type PdfMake from 'pdfmake/build/pdfmake';
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { fromWei } from 'web3-utils';
 
 import { trezorLogo } from '@suite-common/suite-constants';
 import { type TokenDefinitions, isPhishingTransaction } from '@suite-common/token-definitions';
@@ -22,6 +21,7 @@ import {
     localizeNumber,
     roundTimestampToNearestPastHour,
     subtypeToStakeTypeMap,
+    weiToGwei,
 } from '@suite-common/wallet-utils';
 import type { BaseCurrencyCode } from '@trezor/blockchain-link-types';
 import { type TransactionTarget } from '@trezor/connect';
@@ -113,7 +113,7 @@ const formatAmounts =
         ethereumSpecific: tx.ethereumSpecific
             ? {
                   ...tx.ethereumSpecific,
-                  gasPrice: fromWei(tx.ethereumSpecific?.gasPrice ?? '0', 'gwei'),
+                  gasPrice: weiToGwei(tx.ethereumSpecific?.gasPrice ?? '0'),
               }
             : undefined,
         cardanoSpecific: tx.cardanoSpecific

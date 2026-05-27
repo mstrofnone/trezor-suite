@@ -1,5 +1,3 @@
-import { toWei } from 'web3-utils';
-
 import { asTypedDesktopAnalytics, events } from '@suite/analytics';
 import { selectSelectedDevice } from '@suite-common/device';
 import { type ExtraDependencies } from '@suite-common/redux-utils';
@@ -31,7 +29,12 @@ import {
     type PrecomposedTransactionFinal,
     type StakeFormState,
 } from '@suite-common/wallet-types';
-import { calculateTotalGasCost, getAccountIdentity } from '@suite-common/wallet-utils';
+import {
+    calculateTotalGasCost,
+    etherToWei,
+    getAccountIdentity,
+    gweiToWei,
+} from '@suite-common/wallet-utils';
 import TrezorConnect, { type FeeLevel } from '@trezor/connect';
 
 import { type Dispatch, type GetState } from 'src/types/suite';
@@ -44,15 +47,15 @@ const calculateStakingTransaction = (
     symbol: NetworkSymbol,
 ): PrecomposedTransaction => {
     const totalGasCostInWei = calculateTotalGasCost(
-        toWei(feeLevel.maxFeePerGas || feeLevel.feePerUnit, 'gwei'),
+        gweiToWei(feeLevel.maxFeePerGas || feeLevel.feePerUnit),
         feeLevel.feeLimit,
     );
 
     const stakingParams = {
         feeInBaseUnits: totalGasCostInWei,
-        minBalanceForStakingInBaseUnits: toWei(MIN_ETH_BALANCE_FOR_STAKING.toString(), 'ether'),
-        minAmountForStakingInBaseUnits: toWei(MIN_ETH_AMOUNT_FOR_STAKING.toString(), 'ether'),
-        minAmountForWithdrawalInBaseUnits: toWei(MIN_ETH_FOR_WITHDRAWALS.toString(), 'ether'),
+        minBalanceForStakingInBaseUnits: etherToWei(MIN_ETH_BALANCE_FOR_STAKING.toString()),
+        minAmountForStakingInBaseUnits: etherToWei(MIN_ETH_AMOUNT_FOR_STAKING.toString()),
+        minAmountForWithdrawalInBaseUnits: etherToWei(MIN_ETH_FOR_WITHDRAWALS.toString()),
     };
 
     return calculate(availableBalance, output, feeLevel, compareWithAmount, symbol, stakingParams);

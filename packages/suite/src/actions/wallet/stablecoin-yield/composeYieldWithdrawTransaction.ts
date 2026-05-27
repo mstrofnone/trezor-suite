@@ -1,5 +1,3 @@
-import { numberToHex, toWei } from 'web3-utils';
-
 import { Calldata, asEvmAddress } from '@suite-common/calldata';
 import { getYieldVault } from '@suite-common/earn-stablecoin-api';
 import { notificationsActions } from '@suite-common/toast-notifications';
@@ -14,9 +12,12 @@ import { ethereumGetCurrentNonceThunk } from '@suite-common/wallet-core/src/send
 import { type Account } from '@suite-common/wallet-types';
 import {
     asAmountUnit,
+    bigIntStringToHex,
     getAccountIdentity,
     getConvertedOrDefaultFeeInfo,
+    gweiToWei,
     unitsToSubunits,
+    weiToHex,
 } from '@suite-common/wallet-utils';
 import TrezorConnect from '@trezor/connect';
 import { BigNumber } from '@trezor/utils';
@@ -120,9 +121,10 @@ export const composeYieldWithdrawTransaction = async ({
 
     const gasLimit = estimatedGasLimit ?? ETH_CONTRACT_CALL_BACKUP_GAS_LIMIT;
 
+    const rawFeeInfo = selectRawNetworkFeeInfo(getState(), account.symbol);
     const feeInfo = getConvertedOrDefaultFeeInfo({
         networkType: account.networkType,
-        feeInfo: selectRawNetworkFeeInfo(getState(), account.symbol),
+        feeInfo: rawFeeInfo,
     });
     const normalLevel = feeInfo.levels.find(level => level.label === 'normal') ?? feeInfo.levels[0];
 
@@ -137,7 +139,7 @@ export const composeYieldWithdrawTransaction = async ({
         value: '0x0',
         nonce: Number(nonce),
         chainId: network.chainId,
-        gasLimit: numberToHex(gasLimit),
+        gasLimit: bigIntStringToHex(gasLimit),
     };
 
     const unsignedTx =
@@ -145,14 +147,12 @@ export const composeYieldWithdrawTransaction = async ({
             ? {
                   ...commonFields,
                   type: 2,
-                  maxFeePerGas: numberToHex(toWei(normalLevel.maxFeePerGas, 'gwei')),
-                  maxPriorityFeePerGas: numberToHex(
-                      toWei(normalLevel.maxPriorityFeePerGas, 'gwei'),
-                  ),
+                  maxFeePerGas: weiToHex(gweiToWei(normalLevel.maxFeePerGas)),
+                  maxPriorityFeePerGas: weiToHex(gweiToWei(normalLevel.maxPriorityFeePerGas)),
               }
             : {
                   ...commonFields,
-                  gasPrice: numberToHex(toWei(normalLevel.feePerUnit, 'gwei')),
+                  gasPrice: weiToHex(gweiToWei(normalLevel.feePerUnit)),
               };
 
     return JSON.stringify(unsignedTx);

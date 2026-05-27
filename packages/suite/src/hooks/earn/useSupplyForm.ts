@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useForm, useWatch } from 'react-hook-form';
 
 import useDebounce from 'react-use/lib/useDebounce';
-import { fromWei } from 'web3-utils';
 
 import { getStakeFormsDefaultValues, getStakingContractAddress } from '@suite-common/staking';
 import { getNetwork } from '@suite-common/wallet-config';
@@ -23,6 +22,7 @@ import {
     getFiatRateKey,
     getStakingLimitsByNetworkSymbol,
     toFiatCurrency,
+    weiToEther,
 } from '@suite-common/wallet-utils';
 import { isChanged, throwError } from '@trezor/utils';
 import { BigNumber } from '@trezor/utils/src/bigNumber';
@@ -173,7 +173,7 @@ export const useSupplyForm = ({ account }: UseSupplyFormProps): SupplyContextVal
         const transactionInfo = composedLevels?.[selectedFee];
 
         return transactionInfo !== undefined && transactionInfo.type !== 'error'
-            ? new BigNumber(fromWei(transactionInfo.fee, 'ether'))
+            ? new BigNumber(weiToEther(transactionInfo.fee))
             : new BigNumber('0');
     }, [composedLevels, selectedFee]);
 

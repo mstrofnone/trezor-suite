@@ -5,7 +5,6 @@ import { BigNumber } from '@trezor/utils';
 import {
     buildApprovalTransactionData,
     evmHexToBigNumber,
-    evmHexWeiToGwei,
     getEvmTransactionTextSignature,
     padLeftEven,
     sanitizeHex,
@@ -35,7 +34,6 @@ describe('eth utils', () => {
 
     it('converts EVM fee units', () => {
         expect(evmHexToBigNumber('0x5208').toFixed()).toBe('21000');
-        expect(evmHexWeiToGwei('0x3b9aca00')).toBe('1');
     });
 
     describe('getEvmTransactionTextSignature', () => {

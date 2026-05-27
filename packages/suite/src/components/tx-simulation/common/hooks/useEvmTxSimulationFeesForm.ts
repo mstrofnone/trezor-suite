@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { numberToHex, toWei } from 'web3-utils';
-
 import { type TxSimulationEVMResult } from '@suite-common/tx-simulation';
 import {
     type NetworkSymbol,
@@ -12,7 +10,12 @@ import {
 import { ETH_CONTRACT_CALL_BACKUP_GAS_LIMIT } from '@suite-common/wallet-constants';
 import { selectRawNetworkFeeInfo } from '@suite-common/wallet-core';
 import { type EvmSelectedFee } from '@suite-common/wallet-types';
-import { getConvertedOrDefaultFeeInfo } from '@suite-common/wallet-utils';
+import {
+    bigIntStringToHex,
+    getConvertedOrDefaultFeeInfo,
+    gweiToWei,
+    weiToHex,
+} from '@suite-common/wallet-utils';
 import { BigNumber } from '@trezor/utils';
 
 import { useSelector } from 'src/hooks/suite';
@@ -119,12 +122,10 @@ export function useEvmTxSimulationFeesForm({
         ) {
             return {
                 type: 'eip1559',
-                gasLimit: numberToHex(values.feeLimit),
-                maxFeePerGas: numberToHex(toWei(eip1559payload.maxFeePerGas, 'gwei')),
-                maxPriorityFeePerGas: numberToHex(
-                    toWei(eip1559payload.maxPriorityFeePerGas, 'gwei'),
-                ),
-                baseFeePerGas: numberToHex(toWei(eip1559payload.baseFeePerGas, 'gwei')),
+                gasLimit: bigIntStringToHex(values.feeLimit),
+                maxFeePerGas: weiToHex(gweiToWei(eip1559payload.maxFeePerGas)),
+                maxPriorityFeePerGas: weiToHex(gweiToWei(eip1559payload.maxPriorityFeePerGas)),
+                baseFeePerGas: weiToHex(gweiToWei(eip1559payload.baseFeePerGas)),
             };
         }
 
@@ -133,8 +134,8 @@ export function useEvmTxSimulationFeesForm({
         if (gasPrice) {
             return {
                 type: 'legacy',
-                gasLimit: numberToHex(values.feeLimit),
-                gasPrice: numberToHex(toWei(gasPrice, 'gwei')),
+                gasLimit: bigIntStringToHex(values.feeLimit),
+                gasPrice: weiToHex(gweiToWei(gasPrice)),
             };
         }
 

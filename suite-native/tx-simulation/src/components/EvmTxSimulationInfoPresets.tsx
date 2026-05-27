@@ -1,12 +1,10 @@
 import { type ReactNode } from 'react';
 
-import { fromWei } from 'web3-utils';
-
 import { type Formatters } from '@suite-common/formatters';
 import { type TransactionSimulation } from '@suite-common/tx-simulation';
 import { type Network } from '@suite-common/wallet-config';
 import { type TxSimulationMethod } from '@suite-common/wallet-types';
-import { getFeeUnits } from '@suite-common/wallet-utils';
+import { getFeeUnits, weiToEther, weiToGwei } from '@suite-common/wallet-utils';
 import { PressableOpacity, Text } from '@suite-native/atoms';
 import { Translation } from '@suite-native/intl';
 
@@ -74,7 +72,7 @@ export const getEvmTxSimulationFeeInfoItems = ({
             key: 'total',
             label: <Translation id="moduleSend.fees.custom.bottomSheet.total" />,
             value: formatCryptoAmount(
-                fromWei(Number(gasLimit) * Number(maxFeePerGas ?? gasPrice ?? '0'), 'ether'),
+                weiToEther((Number(gasLimit) * Number(maxFeePerGas ?? gasPrice ?? '0')).toString()),
                 {
                     symbol: network.symbol,
                     isBalance: true,
@@ -87,7 +85,7 @@ export const getEvmTxSimulationFeeInfoItems = ({
             label: (
                 <Translation id="transactionManagement.fees.custom.bottomSheet.label.maxFeePerGas" />
             ),
-            value: maxFeePerGas && `${fromWei(maxFeePerGas, 'gwei').toLocaleString()} ${feeUnits}`,
+            value: maxFeePerGas && `${weiToGwei(maxFeePerGas).toLocaleString()} ${feeUnits}`,
         },
         {
             key: 'max-priority-fee-per-gas',
@@ -96,14 +94,14 @@ export const getEvmTxSimulationFeeInfoItems = ({
             ),
             value:
                 maxPriorityFeePerGas &&
-                `${fromWei(maxPriorityFeePerGas, 'gwei').toLocaleString()} ${feeUnits}`,
+                `${weiToGwei(maxPriorityFeePerGas).toLocaleString()} ${feeUnits}`,
         },
         {
             key: 'gas-price',
             label: (
                 <Translation id="transactionManagement.fees.custom.bottomSheet.label.gasPrice" />
             ),
-            value: gasPrice && `${fromWei(Number(gasPrice), 'gwei').toLocaleString()} ${feeUnits}`,
+            value: gasPrice && `${weiToGwei(gasPrice).toLocaleString()} ${feeUnits}`,
         },
         {
             key: 'gas-limit',

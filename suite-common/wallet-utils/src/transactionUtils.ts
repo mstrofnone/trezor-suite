@@ -1,5 +1,4 @@
 import { addDays, startOfMonth } from 'date-fns';
-import { fromWei, toWei } from 'web3-utils';
 
 import { Calldata } from '@suite-common/calldata';
 import { type SignOperator } from '@suite-common/suite-types';
@@ -31,7 +30,12 @@ import {
 import { type Branded } from '@trezor/type-utils';
 import { BigNumber, arrayPartition, isNotNullOrUndefined, typedObjectKeys } from '@trezor/utils';
 
-import { convertAmountSubunitsToUnits, formatNetworkAmount } from './amountUtils';
+import {
+    convertAmountSubunitsToUnits,
+    formatNetworkAmount,
+    gweiToWei,
+    weiToGwei,
+} from './amountUtils';
 import { isCardanoStakingTx } from './cardanoStakingUtils';
 import { getEvmTransactionTextSignature } from './ethUtils';
 import { isStakeTypeTx } from './ethereumStakingUtils';
@@ -683,7 +687,7 @@ export const replaceEthereumSpecific = (
     return {
         ...tx.ethereumSpecific,
         gasLimit: Number(precomposedTx.feeLimit),
-        gasPrice: toWei(precomposedTx.feePerByte, 'gwei'),
+        gasPrice: gweiToWei(precomposedTx.feePerByte),
     };
 };
 
@@ -774,9 +778,9 @@ const getEthereumRbfParams = (
         ],
         ethereumNonce: nonce,
         transactionData: txSignature === 'transfer' ? '' : transactionData,
-        gasPrice: gasPrice ? fromWei(gasPrice, 'gwei') : '',
-        maxFeePerGas: maxFeePerGas ? fromWei(maxFeePerGas, 'gwei') : '',
-        maxPriorityFeePerGas: maxPriorityFeePerGas ? fromWei(maxPriorityFeePerGas, 'gwei') : '',
+        gasPrice: gasPrice ? weiToGwei(gasPrice) : '',
+        maxFeePerGas: maxFeePerGas ? weiToGwei(maxFeePerGas) : '',
+        maxPriorityFeePerGas: maxPriorityFeePerGas ? weiToGwei(maxPriorityFeePerGas) : '',
     };
 };
 

@@ -7,7 +7,7 @@ import {
     type Merge,
 } from 'react-hook-form';
 
-import { fromWei, numberToHex, padLeft, toWei } from 'web3-utils';
+import { padLeft } from 'web3-utils';
 
 import {
     type Network,
@@ -53,9 +53,14 @@ import {
 import { BigNumber, typedObjectKeys } from '@trezor/utils';
 
 import {
+    bigIntStringToHex,
     convertAmountUnitsToSubunits,
+    etherToWei,
     formatNetworkAmount,
+    gweiToWei,
     networkAmountToSmallestUnit,
+    weiToGwei,
+    weiToHex,
 } from './amountUtils';
 import { isBaseCurrencyWithSats } from './baseCurrency';
 import { isEip1559, isEvmApprovalTx, sanitizeHex } from './ethUtils';
@@ -124,8 +129,7 @@ export const calculateTotalGasCost = (gasPriceInWei?: string, gasLimit?: string)
     return fee.toFixed();
 };
 
-const getSerializedAmount = (amount?: string) =>
-    amount ? numberToHex(toWei(amount, 'ether')) : '0x00';
+const getSerializedAmount = (amount?: string) => (amount ? weiToHex(etherToWei(amount)) : '0x00');
 
 const getSerializedErc20Transfer = (token: TokenInfo, to: string, amount: string) => {
     // 32 bytes address parameter, remove '0x' prefix
@@ -133,7 +137,7 @@ const getSerializedErc20Transfer = (token: TokenInfo, to: string, amount: string
     // convert amount to satoshi
     const tokenAmount = convertAmountUnitsToSubunits(amount, token.decimals);
     // 32 bytes amount paramter, remove '0x' prefix
-    const erc20amount = padLeft(numberToHex(tokenAmount), 64).substring(2);
+    const erc20amount = padLeft(bigIntStringToHex(tokenAmount), 64).substring(2);
 
     // join data
     return `0x${ERC20_TRANSFER}${erc20recipient}${erc20amount}`;
@@ -180,8 +184,8 @@ export const prepareEthereumTransaction = (
         to: txInfo.to,
         value: getSerializedAmount(txInfo.amount),
         chainId: txInfo.chainId,
-        nonce: numberToHex(txInfo.nonce),
-        gasLimit: numberToHex(txInfo.gasLimit),
+        nonce: bigIntStringToHex(txInfo.nonce),
+        gasLimit: bigIntStringToHex(txInfo.gasLimit),
         payment_req: txInfo.payment_req,
     };
 
@@ -189,13 +193,13 @@ export const prepareEthereumTransaction = (
         result = {
             ...commonTxData,
             gasPrice: undefined,
-            maxFeePerGas: numberToHex(toWei(txInfo.maxFeePerGas, 'gwei')),
-            maxPriorityFeePerGas: numberToHex(toWei(txInfo.maxPriorityFeePerGas || '0', 'gwei')),
+            maxFeePerGas: weiToHex(gweiToWei(txInfo.maxFeePerGas)),
+            maxPriorityFeePerGas: weiToHex(gweiToWei(txInfo.maxPriorityFeePerGas || '0')),
         } satisfies EthereumTransactionEIP1559;
     } else if (txInfo.gasPrice) {
         result = {
             ...commonTxData,
-            gasPrice: numberToHex(toWei(txInfo.gasPrice, 'gwei')),
+            gasPrice: weiToHex(gweiToWei(txInfo.gasPrice)),
             maxFeePerGas: undefined,
             maxPriorityFeePerGas: undefined,
         } satisfies EthereumTransaction;
@@ -245,12 +249,12 @@ const getConvertedOrDefaultFeeLevels = ({
         return levels.map(level => {
             const { feePerUnit, maxFeePerGas, maxPriorityFeePerGas, baseFeePerGas } = level;
 
-            const feePerUnitInGwei = fromWei(feePerUnit, 'gwei');
-            const maxFeePerGasInGwei = maxFeePerGas ? fromWei(maxFeePerGas, 'gwei') : undefined;
+            const feePerUnitInGwei = weiToGwei(feePerUnit);
+            const maxFeePerGasInGwei = maxFeePerGas ? weiToGwei(maxFeePerGas) : undefined;
             const maxPriorityFeePerGasInGwei = maxPriorityFeePerGas
-                ? fromWei(maxPriorityFeePerGas, 'gwei')
+                ? weiToGwei(maxPriorityFeePerGas)
                 : undefined;
-            const baseFeePerGasInGwei = baseFeePerGas ? fromWei(baseFeePerGas, 'gwei') : undefined;
+            const baseFeePerGasInGwei = baseFeePerGas ? weiToGwei(baseFeePerGas) : undefined;
 
             return {
                 ...level,
