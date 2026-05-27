@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { createAdditionalBackupThunk } from '@suite/backup';
+import { LearnMoreButton } from '@suite/external-links';
 import { Translation } from '@suite/intl';
 import {
     AdditionalBackupDisclaimer,
@@ -14,7 +15,6 @@ import TrezorConnect from '@trezor/connect';
 import { ConfirmOnDevicePill } from '@trezor/product-components';
 import { HELP_CENTER_MULTI_SHARE_BACKUP_URL } from '@trezor/urls';
 
-import { LearnMoreButton } from 'src/components/suite/LearnMoreButton';
 import { useDispatch, useSelector } from 'src/hooks/suite';
 
 type CreateWalletBackupModalProps = {

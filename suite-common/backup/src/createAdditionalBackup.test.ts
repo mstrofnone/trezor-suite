@@ -7,6 +7,7 @@ jest.mock('@trezor/connect', () => {
 
     return {
         ...actual,
+        __esModule: true,
         default: {
             recoveryDevice: jest.fn(),
             backupDevice: jest.fn(),
