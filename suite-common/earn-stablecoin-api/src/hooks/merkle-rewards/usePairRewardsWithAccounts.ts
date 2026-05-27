@@ -55,3 +55,4 @@ export function usePairRewardsWithAccounts({
 }
 
 export type YieldAccountsRewards = ReturnType<typeof usePairRewardsWithAccounts>;
+export type YieldAccountRewards = YieldAccountsRewards[number];
