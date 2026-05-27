@@ -119,6 +119,12 @@ jobs:
       - name: Build message system config
         run: yarn message-system-sign-config 1>/dev/null
 
+      - name: Build suite-data lib
+        run: yarn workspace @trezor/suite-data build:lib
+
+      - name: Build suite-web
+        run: yarn workspace @trezor/suite-web build
+
       - name: Download desktop artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -143,38 +149,74 @@ jobs:
       - name: Start Docker services
         run: docker compose up -d
 
-      - name: Start web dev server
-        run: nohup yarn workspace @trezor/suite-web dev > /tmp/web-dev.log 2>&1 &
+      - name: Start web preview server
+        run: nohup yarn workspace @trezor/suite-web preview > /tmp/web-preview.log 2>&1 &
 
-      - name: Wait for web dev server
-        timeout-minutes: 10
-        run: curl -sf --retry 60 --retry-delay 5 --retry-connrefused --max-time 5 http://localhost:8000 -o /dev/null
+      - name: Wait for web preview server
+        timeout-minutes: 2
+        run: curl -sf --retry 30 --retry-delay 2 --retry-connrefused --max-time 5 http://localhost:8000 -o /dev/null
 
-      # This needs to be discussed with Tali
-      - name: Configure git identity
+      # ── DEBUG ────────────────────────────────────────────────────────────────
+      - name: Debug - listening ports
+        if: always()
+        run: ss -tlnp || netstat -tlnp || true
+
+      - name: Debug - web preview logs
+        if: always()
+        run: cat /tmp/web-preview.log || true
+
+      - name: Debug - suite-web build output
+        if: always()
+        run: ls -lh packages/suite-web/build/ | head -30 || true
+
+      - name: Debug - docker compose ps
+        if: always()
+        run: docker compose ps
+
+      - name: Debug - docker compose logs
+        if: always()
+        run: docker compose logs --tail=80
+
+      - name: Debug - curl suite-web
+        if: always()
         run: |
-          git config --global user.email "nightly-fix-bot@trezor.io"
-          git config --global user.name "Nightly Fix Bot"
+          echo "=== HTTP response headers ==="
+          curl -sv http://localhost:8000 -o /dev/null 2>&1 | head -40 || true
 
-      - name: Checkout fix branch
+      - name: Debug - env and report
+        if: always()
         run: |
-          BRANCH=$(jq -r --arg id "${{ matrix.task-id }}" '.fix_tasks[] | select(.id == $id) | .branch' "$REPORT_PATH")
-          git checkout -b "$BRANCH" origin/develop
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "REPORT_PATH=$REPORT_PATH"
+          echo "BRANCH=$BRANCH"
+          echo "=== report contents ==="
+          cat "$REPORT_PATH" | head -60 || true
+      # ── END DEBUG ─────────────────────────────────────────────────────────────
 
-      - name: Run fix agent
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.E2E_CLAUDE_API_KEY }}
-          PASSPHRASE: ${{ secrets.E2E_TEST_PASSPHRASE }}
-          TASK_ID: ${{ matrix.task-id }}
-          TEST_TIMEOUT_OVERRIDE: 180000
-        run: yarn tsx packages/e2e-utils/src/fixBot/fix.ts
+      # # This needs to be discussed with Tali
+      # - name: Configure git identity
+      #   run: |
+      #     git config --global user.email "nightly-fix-bot@trezor.io"
+      #     git config --global user.name "Nightly Fix Bot"
 
-      - name: Publish PR
-        if: ${{ !cancelled() }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: yarn tsx packages/e2e-utils/src/fixBot/publish.ts
+      # - name: Checkout fix branch
+      #   run: |
+      #     BRANCH=$(jq -r --arg id "${{ matrix.task-id }}" '.fix_tasks[] | select(.id == $id) | .branch' "$REPORT_PATH")
+      #     git checkout -b "$BRANCH" origin/develop
+      #     echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+      # - name: Run fix agent
+      #   env:
+      #     ANTHROPIC_API_KEY: ${{ secrets.E2E_CLAUDE_API_KEY }}
+      #     PASSPHRASE: ${{ secrets.E2E_TEST_PASSPHRASE }}
+      #     TASK_ID: ${{ matrix.task-id }}
+      #     TEST_TIMEOUT_OVERRIDE: 180000
+      #   run: yarn tsx packages/e2e-utils/src/fixBot/fix.ts
+
+      # - name: Publish PR
+      #   if: ${{ !cancelled() }}
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: yarn tsx packages/e2e-utils/src/fixBot/publish.ts
 
       - name: Docker Compose Down
         if: always()
