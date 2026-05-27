@@ -23,12 +23,6 @@ export const getReceiveAccountPreselection = ({
         return null;
     }
 
-    if (sendAccount?.symbol === symbol) {
-        return {
-            accountKey: sendAccount.key,
-        };
-    }
-
     if (!isAccountBasedNetwork(symbol)) {
         const account = accounts[0];
         const { address } = getUnusedAddressFromAccount(account);
@@ -36,6 +30,12 @@ export const getReceiveAccountPreselection = ({
         return {
             accountKey: account.key,
             address,
+        };
+    }
+
+    if (sendAccount?.symbol === symbol) {
+        return {
+            accountKey: sendAccount.key,
         };
     }
 
