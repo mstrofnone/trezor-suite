@@ -1,3 +1,7 @@
+import { useDispatch, useSelector } from 'react-redux';
+
+import { type ThunkDispatch, type UnknownAction } from '@reduxjs/toolkit';
+
 import { type DesktopAnalyticsDep, events } from '@suite/analytics';
 import { LearnMoreButton } from '@suite/external-links';
 import { Translation } from '@suite/intl';
@@ -9,8 +13,6 @@ import { selectSelectedDevice } from '@suite-common/device';
 import { type TrezorDevice } from '@suite-common/suite-types';
 import { ActionButton, ActionColumn, SectionItem, TextColumn } from '@trezor/product-components';
 import { HELP_CENTER_MULTI_SHARE_BACKUP_URL } from '@trezor/urls';
-
-import { useDispatch, useSelector } from 'src/hooks/suite';
 
 const doesSupportMultiShare = (device: TrezorDevice | undefined): boolean => {
     if (device?.features === undefined) {
@@ -27,7 +29,7 @@ const doesSupportMultiShare = (device: TrezorDevice | undefined): boolean => {
 export const MultiShareBackup = ({ isDeviceLocked }: { isDeviceLocked: boolean }) => {
     const { analytics } = useServices<DesktopAnalyticsDep>();
     const device = useSelector(selectSelectedDevice);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
     const isN4w1BackupEnabled = useSelector(selectIsN4w1BackupEnabled);
 
     // "NotAvailable" means, that backup has been already done and thus is not available.
