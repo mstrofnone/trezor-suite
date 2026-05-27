@@ -5,7 +5,7 @@ Your fix task is embedded at the bottom of this prompt. Read it before doing any
 
 ## Context
 
-- **Working directory:** the repo root (a git worktree already on the fix branch — do not switch branches)
+- **Working directory:** the repo root (already checked out on the fix branch — do not switch branches)
 - **Test location:** `suite/e2e/tests/`
 - **Web playwright config:** `suite/e2e/playwright-config/playwright-web.config.ts`
 - **Desktop playwright config:** `suite/e2e/playwright-config/playwright-desktop.config.ts`
