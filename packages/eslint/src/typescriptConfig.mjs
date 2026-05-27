@@ -145,6 +145,19 @@ export const typescriptConfig = [
                 },
             ],
             '@typescript-eslint/prefer-optional-chain': ['error'],
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector:
+                        "VariableDeclaration[kind='let'] > VariableDeclarator[init=null][id.type='Identifier'] > Identifier:not([typeAnnotation])",
+                    message: 'Expected let declaration without initializer to have a type annotation.',
+                },
+                {
+                    selector:
+                        "VariableDeclaration[kind='var'] > VariableDeclarator[init=null][id.type='Identifier'] > Identifier:not([typeAnnotation])",
+                    message: 'Expected var declaration without initializer to have a type annotation.',
+                },
+            ],
         },
     },
 ];
