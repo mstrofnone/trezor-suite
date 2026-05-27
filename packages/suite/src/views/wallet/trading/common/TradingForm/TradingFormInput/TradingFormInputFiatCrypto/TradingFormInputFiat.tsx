@@ -1,10 +1,5 @@
-import { useEffect } from 'react';
-import {
-    type FieldErrors,
-    type UseControllerProps,
-    useFormContext,
-    useWatch,
-} from 'react-hook-form';
+import { useCallback, useEffect, useMemo } from 'react';
+import { type FieldErrors, useFormContext, useWatch } from 'react-hook-form';
 
 import { useTranslation } from '@suite/intl';
 import { selectLanguage } from '@suite/settings';
@@ -21,18 +16,13 @@ import { formInputsMaxLength } from '@suite-common/validators';
 import { selectCurrentFiatRates, selectIsNetworkReserveEnabled } from '@suite-common/wallet-core';
 import { type TokenAddress } from '@suite-common/wallet-types';
 import {
-    buildCurrencyShortOption,
     convertAmountSubunitsToUnits,
     findToken,
-    getDecimalsForBaseCurrency,
-    getFiatRateKey,
     getNetworkReserve,
-    toFiatCurrency,
 } from '@suite-common/wallet-utils';
 import { type BaseCurrencyCode, isFiatBaseCurrencyCode } from '@trezor/blockchain-link-types';
 import { NumberInput } from '@trezor/product-components';
 import { useDidUpdate } from '@trezor/react-utils';
-import { BigNumber } from '@trezor/utils';
 
 import { useSelector } from 'src/hooks/suite';
 import { useFiatFromCryptoValue } from 'src/hooks/suite/useFiatFromCryptoValue';
@@ -43,13 +33,14 @@ import {
     type TradingFormInputFiatCryptoProps,
     type TradingSellExchangeFormProps,
 } from 'src/types/trading/tradingForm';
-import { validateDecimals, validateMin, validateNetworkReserve } from 'src/utils/suite/validation';
 import {
     isTradingExchangeContext,
     isTradingSellContext,
 } from 'src/utils/wallet/trading/tradingTypingUtils';
 import { getFeeInUnits } from 'src/utils/wallet/trading/tradingUtils';
 import { TradingFormInputCurrency } from 'src/views/wallet/trading/common/TradingForm/TradingFormInput/TradingFormInputCurrency';
+
+import { getFiatInputRules } from './tradingFormInputFiatCryptoRules';
 
 export const TradingFormInputFiat = ({
     cryptoInputName,
@@ -63,6 +54,8 @@ export const TradingFormInputFiat = ({
 
     const context = useTradingFormContext();
     const { account, amountLimits } = context;
+    const isExchangeContext = isTradingExchangeContext(context);
+    const isSellContext = isTradingSellContext(context);
     const {
         control,
         formState: { errors },
@@ -101,7 +94,7 @@ export const TradingFormInputFiat = ({
     });
 
     const feeInUnits =
-        isTradingSellContext(context) || isTradingExchangeContext(context)
+        isSellContext || isExchangeContext
             ? getFeeInUnits({
                   symbol: account.symbol,
                   composedLevels: context.composedLevels,
@@ -135,18 +128,6 @@ export const TradingFormInputFiat = ({
     } else if (isFiatBaseCurrencyCode(fiatCurrencySelect?.value)) {
         selectedCurrencyCode = fiatCurrencySelect.value;
     }
-    const fiatInputDecimals = getDecimalsForBaseCurrency({
-        code: selectedCurrencyCode,
-        isInSats: false,
-    });
-    const selectedCurrencyLabel =
-        buildCurrencyShortOption({
-            currency: selectedCurrencyCode,
-            areSatsDisplayed: false,
-        }).label ||
-        context.amountLimits?.currency ||
-        'USD';
-
     const fiatInputError =
         fiatInputName === TRADING_FORM_OUTPUT_FIAT
             ? (errors as FieldErrors<TradingSellExchangeFormProps>)?.outputs?.[0]?.fiat
@@ -157,132 +138,50 @@ export const TradingFormInputFiat = ({
             : undefined;
 
     const isNetworkReserveError =
-        (isTradingExchangeContext(context) || isTradingSellContext(context)) &&
-        fiatInputError?.type === 'networkReserve';
+        (isExchangeContext || isSellContext) && fiatInputError?.type === 'networkReserve';
     const setShowReserveBanner =
-        isTradingExchangeContext(context) || isTradingSellContext(context)
-            ? context.setShowReserveBanner
-            : undefined;
+        isExchangeContext || isSellContext ? context.setShowReserveBanner : undefined;
+    const setFractionButton =
+        isExchangeContext || isSellContext ? context.form.helpers.setFractionButton : undefined;
+    const resetSelectedOffer = isExchangeContext ? context.resetSelectedOffer : undefined;
 
     useEffect(() => {
         setShowReserveBanner?.(isNetworkReserveError);
     }, [isNetworkReserveError, setShowReserveBanner]);
 
-    const fiatInputRules: UseControllerProps['rules'] = {
-        ...(isTradingExchangeContext(context)
-            ? {
-                  validate: {
-                      min: validateMin(translationString),
-                      decimals: validateDecimals(translationString, {
-                          decimals: fiatInputDecimals,
-                      }),
-                      balance: (value: string) => {
-                          const valueBigNumber = new BigNumber(value);
-                          if (
-                              fiatAmount &&
-                              valueBigNumber.isGreaterThan(new BigNumber(fiatAmount))
-                          ) {
-                              return translationString('AMOUNT_IS_NOT_ENOUGH');
-                          }
-                      },
-                      networkReserve: isNetworkReserveEnabled
-                          ? validateNetworkReserve(translationString, {
-                                reserve: networkReserveFiatAmount?.toString(),
-                                balance: fiatAmount?.toString(),
-                                fee: feeFiatAmount?.toString(),
-                            })
-                          : () => undefined,
-                      minFiat: () => {
-                          if (
-                              normalizedCryptoAmount &&
-                              context.amountLimits?.minCrypto &&
-                              new BigNumber(normalizedCryptoAmount).isLessThan(
-                                  new BigNumber(context.amountLimits.minCrypto),
-                              )
-                          ) {
-                              const fiatRateKey = getFiatRateKey(
-                                  account.symbol,
-                                  selectedCurrencyCode || 'usd',
-                                  tokenAddress,
-                              );
-                              const rate = rates?.[fiatRateKey]?.rate;
-                              const minFiat = toFiatCurrency({
-                                  amount: context.amountLimits.minCrypto,
-                                  rate,
-                              })?.toString();
-
-                              if (minFiat) {
-                                  return translationString('TR_BUY_VALIDATION_ERROR_MINIMUM_FIAT', {
-                                      minimum: new BigNumber(minFiat).toFixed(
-                                          fiatInputDecimals,
-                                          BigNumber.ROUND_HALF_UP,
-                                      ),
-                                      currency: selectedCurrencyLabel,
-                                  });
-                              } else {
-                                  return translationString('TR_BUY_VALIDATION_ERROR_MINIMUM_FIAT', {
-                                      minimum: context.amountLimits.minCrypto,
-                                      currency: selectedCurrencyLabel,
-                                  });
-                              }
-                          }
-                      },
-                  },
-              }
-            : {
-                  validate: {
-                      min: validateMin(translationString),
-                      decimals: validateDecimals(translationString, {
-                          decimals: fiatInputDecimals,
-                      }),
-                      ...(isTradingSellContext(context)
-                          ? {
-                                networkReserve: isNetworkReserveEnabled
-                                    ? validateNetworkReserve(translationString, {
-                                          reserve: networkReserveFiatAmount?.toString(),
-                                          balance: fiatAmount?.toString(),
-                                          fee: feeFiatAmount?.toString(),
-                                      })
-                                    : () => undefined,
-                            }
-                          : {}),
-                      minFiat: (value: string) => {
-                          if (
-                              value &&
-                              context.amountLimits?.minFiat &&
-                              new BigNumber(value).isLessThan(
-                                  new BigNumber(context.amountLimits.minFiat),
-                              )
-                          ) {
-                              return translationString('TR_BUY_VALIDATION_ERROR_MINIMUM_FIAT', {
-                                  minimum: new BigNumber(context.amountLimits.minFiat).toFixed(
-                                      fiatInputDecimals,
-                                      BigNumber.ROUND_HALF_UP,
-                                  ),
-                                  currency: selectedCurrencyLabel,
-                              });
-                          }
-                      },
-                      maxFiat: (value: string) => {
-                          if (
-                              value &&
-                              context.amountLimits?.maxFiat &&
-                              new BigNumber(value).isGreaterThan(
-                                  new BigNumber(context.amountLimits.maxFiat),
-                              )
-                          ) {
-                              return translationString('TR_BUY_VALIDATION_ERROR_MAXIMUM_FIAT', {
-                                  maximum: new BigNumber(context.amountLimits.maxFiat).toFixed(
-                                      fiatInputDecimals,
-                                      BigNumber.ROUND_HALF_UP,
-                                  ),
-                                  currency: selectedCurrencyLabel,
-                              });
-                          }
-                      },
-                  },
-              }),
-    };
+    const fiatInputRules = useMemo(
+        () =>
+            getFiatInputRules({
+                isExchangeContext,
+                isSellContext,
+                translationString,
+                fiatAmount,
+                isNetworkReserveEnabled,
+                networkReserveFiatAmount,
+                feeFiatAmount,
+                normalizedCryptoAmount,
+                amountLimits,
+                accountSymbol: account.symbol,
+                selectedCurrencyCode,
+                tokenAddress,
+                rates,
+            }),
+        [
+            isExchangeContext,
+            isSellContext,
+            amountLimits,
+            translationString,
+            isNetworkReserveEnabled,
+            networkReserveFiatAmount,
+            fiatAmount,
+            feeFiatAmount,
+            normalizedCryptoAmount,
+            account.symbol,
+            selectedCurrencyCode,
+            tokenAddress,
+            rates,
+        ],
+    );
 
     useDidUpdate(() => {
         if (amountLimits) {
@@ -290,23 +189,19 @@ export const TradingFormInputFiat = ({
         }
     }, [amountLimits, fiatInputName, trigger]);
 
+    const handleChange = useCallback(() => {
+        setFractionButton?.(undefined);
+        resetSelectedOffer?.();
+        clearErrors(cryptoInputName);
+    }, [setFractionButton, resetSelectedOffer, clearErrors, cryptoInputName]);
+
     return (
         <NumberInput
             name={fiatInputName}
             locale={locale}
             labelLeft={labelLeft}
             labelRight={labelRight}
-            onChange={() => {
-                if (isTradingSellContext(context)) {
-                    context.form.helpers.setFractionButton(undefined);
-                }
-                if (isTradingExchangeContext(context)) {
-                    context.form.helpers.setFractionButton(undefined);
-                    context.resetSelectedOffer();
-                }
-
-                clearErrors(cryptoInputName);
-            }}
+            onChange={handleChange}
             hasError={!!(fiatInputError ?? cryptoInputError)}
             control={control}
             rules={fiatInputRules}

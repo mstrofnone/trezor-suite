@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { type FieldErrors, type UseFormReturn, useWatch } from 'react-hook-form';
 
 import { useTranslation } from '@suite/intl';
@@ -15,7 +15,6 @@ import {
 import { formInputsMaxLength } from '@suite-common/validators';
 import { getDisplaySymbol } from '@suite-common/wallet-config';
 import { selectAccountByKey, selectIsNetworkReserveEnabled } from '@suite-common/wallet-core';
-import { getNetworkReserve } from '@suite-common/wallet-utils';
 import { NumberInput } from '@trezor/product-components';
 import { useDidUpdate } from '@trezor/react-utils';
 
@@ -29,19 +28,13 @@ import {
     type TradingSellExchangeFormProps,
 } from 'src/types/trading/tradingForm';
 import {
-    validateCryptoLimits,
-    validateDecimals,
-    validateInteger,
-    validateMin,
-    validateNetworkReserve,
-    validateReserveOrBalance,
-} from 'src/utils/suite/validation';
-import {
     isTradingBuyContext,
     isTradingExchangeContext,
     isTradingSellContext,
 } from 'src/utils/wallet/trading/tradingTypingUtils';
 import { getFeeInUnits, tradingGetAccountLabel } from 'src/utils/wallet/trading/tradingUtils';
+
+import { getCryptoInputRules } from './tradingFormInputFiatCryptoRules';
 
 export const TradingFormInputCryptoAmount = ({
     cryptoInputName,
@@ -116,38 +109,35 @@ export const TradingFormInputCryptoAmount = ({
         setShowReserveBanner?.(isNetworkReserveError);
     }, [isNetworkReserveError, setShowReserveBanner]);
 
-    const cryptoInputRules = {
-        validate: {
-            min: validateMin(translationString),
-            integer: validateInteger(translationString, { except: !shouldSendInSats }),
-            decimals: validateDecimals(translationString, { decimals }),
-            limits: validateCryptoLimits(translationString, {
+    const cryptoInputRules = useMemo(
+        () =>
+            getCryptoInputRules({
+                isBuyContext: isTradingBuyContext(context),
+                translationString,
+                shouldSendInSats,
+                decimals,
                 amountLimits,
-                areSatsUsed: !!shouldSendInSats,
                 formatter: CryptoAmountFormatter,
+                validationAccount,
+                outputToken: getValues('outputs')?.[0]?.token,
+                isNetworkReserveEnabled,
+                contractAddress,
+                feeInUnits,
             }),
-            ...(!isTradingBuyContext(context)
-                ? {
-                      reserveOrBalance: validateReserveOrBalance(translationString, {
-                          account: validationAccount,
-                          areSatsUsed: !!shouldSendInSats,
-                          contractAddress: getValues('outputs')?.[0]?.token,
-                      }),
-                      networkReserve: isNetworkReserveEnabled
-                          ? validateNetworkReserve(translationString, {
-                                reserve: getNetworkReserve({
-                                    symbol: validationAccount.symbol,
-                                    contractAddress,
-                                    isEnabled: isNetworkReserveEnabled,
-                                }),
-                                balance: validationAccount.formattedBalance,
-                                fee: feeInUnits?.toString(),
-                            })
-                          : () => undefined,
-                  }
-                : {}),
-        },
-    };
+        [
+            context,
+            translationString,
+            shouldSendInSats,
+            decimals,
+            amountLimits,
+            CryptoAmountFormatter,
+            validationAccount,
+            getValues,
+            isNetworkReserveEnabled,
+            contractAddress,
+            feeInUnits,
+        ],
+    );
 
     useDidUpdate(() => {
         if (amountLimits) {
@@ -159,25 +149,27 @@ export const TradingFormInputCryptoAmount = ({
         trigger([cryptoInputName]);
     }, [cryptoInputName, trigger, validationAccount.key]);
 
+    const handleChange = useCallback(() => {
+        if (isTradingSellContext(context)) {
+            context.setValue(TRADING_FORM_OUTPUT_MAX, undefined, { shouldDirty: true });
+            context.form.helpers.setFractionButton(undefined);
+        }
+        if (isTradingExchangeContext(context)) {
+            context.setValue(TRADING_FORM_OUTPUT_MAX, undefined, { shouldDirty: true });
+            context.form.helpers.setFractionButton(undefined);
+            context.resetSelectedOffer();
+        }
+
+        clearErrors(fiatInputName);
+    }, [context, clearErrors, fiatInputName]);
+
     return (
         <NumberInput
             name={cryptoInputName}
             locale={locale}
             labelLeft={labelLeft}
             labelRight={labelRight}
-            onChange={() => {
-                if (isTradingSellContext(context)) {
-                    context.setValue(TRADING_FORM_OUTPUT_MAX, undefined, { shouldDirty: true });
-                    context.form.helpers.setFractionButton(undefined);
-                }
-                if (isTradingExchangeContext(context)) {
-                    context.setValue(TRADING_FORM_OUTPUT_MAX, undefined, { shouldDirty: true });
-                    context.form.helpers.setFractionButton(undefined);
-                    context.resetSelectedOffer();
-                }
-
-                clearErrors(fiatInputName);
-            }}
+            onChange={handleChange}
             hasError={!!cryptoInputError}
             control={control}
             rules={cryptoInputRules}

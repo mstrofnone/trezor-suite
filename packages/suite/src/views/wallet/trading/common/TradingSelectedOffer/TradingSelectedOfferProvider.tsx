@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 
 import { type BuyTrade, type ExchangeTrade, type SellFiatTrade } from 'invity-api';
 
@@ -40,15 +40,20 @@ export const TradingSelectedOfferProvider = () => {
     const providers = getProvidersInfoProps(context);
     const quote = getSelectedQuote(context);
 
-    const onQuoteSelect = (selected: TradingTradeType) => {
-        if (isTradingBuyContext(context)) {
-            context.onQuoteSelected(selected as BuyTrade);
-        } else if (isTradingSellContext(context)) {
-            context.onQuoteSelected(selected as SellFiatTrade);
-        } else if (isTradingExchangeContext(context)) {
-            context.onQuoteSelected(selected as ExchangeTrade);
-        }
-    };
+    const onQuoteSelect = useCallback(
+        (selected: TradingTradeType) => {
+            if (isTradingBuyContext(context)) {
+                context.onQuoteSelected(selected as BuyTrade);
+            } else if (isTradingSellContext(context)) {
+                context.onQuoteSelected(selected as SellFiatTrade);
+            } else if (isTradingExchangeContext(context)) {
+                context.onQuoteSelected(selected as ExchangeTrade);
+            }
+        },
+        [context],
+    );
+
+    const handleModalClose = useCallback(() => setIsModalOpen(false), []);
 
     useProviderMetadataChangeEffect(
         type,
@@ -101,10 +106,7 @@ export const TradingSelectedOfferProvider = () => {
                 </Row>
             </GhostContainer>
             {isModalOpen && (
-                <TradingOffersModal
-                    onClose={() => setIsModalOpen(false)}
-                    onSelect={onQuoteSelect}
-                />
+                <TradingOffersModal onClose={handleModalClose} onSelect={onQuoteSelect} />
             )}
         </>
     );
