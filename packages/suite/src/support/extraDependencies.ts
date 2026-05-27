@@ -14,7 +14,8 @@ import {
     type MetadataMigrationDep,
     createMetadataMigrationCompositionRoot,
 } from '@suite/metadata-migration';
-import { closeModal, openModal } from '@suite/modal';
+import { closeModal, openModal, preserveModal } from '@suite/modal';
+import { recoveryActions, selectRecoveryStatus } from '@suite/recovery';
 import {
     type HistoryDep,
     type SuiteRouterHistoryDep,
@@ -36,6 +37,7 @@ import { FW_HASH_CHECK_DEFAULT_TIMEOUTS } from '@suite-common/firmware-authentic
 import { type PlatformEncryptionDep } from '@suite-common/platform-encryption';
 import {
     type CommonServices,
+    type ConnectInitHooks,
     type ConnectInitSettings,
     type ExtraDependenciesStatic,
 } from '@suite-common/redux-utils';
@@ -62,7 +64,7 @@ import {
 } from '@suite-common/wallet-core';
 import { createAccountKey } from '@suite-common/wallet-types';
 import { buildHistoricRatesFromStorage } from '@suite-common/wallet-utils';
-import TrezorConnect, { type StaticSessionId } from '@trezor/connect';
+import TrezorConnect, { DEVICE, type StaticSessionId, UI_REQUEST } from '@trezor/connect';
 import { isDesktop } from '@trezor/env-utils';
 
 import { type StorageLoadAction } from 'src/actions/suite/storageActions';
@@ -71,6 +73,8 @@ import { reportSecurityCheck } from 'src/utils/suite/sentry';
 import { fixLoadedCoinjoinAccount } from 'src/utils/wallet/coinjoinUtils';
 
 import { forgetBluetoothDeviceThunk } from '../actions/bluetooth/bluetoothEraseBondsThunk';
+import { bluetoothOnDeviceConnectedThunk } from '../actions/bluetooth/bluetoothOnDeviceConnectedThunk';
+import { markDeviceAsRecentlyConnectedThunk } from '../actions/wallet/markDeviceAsRecentlyConnectedThunk';
 import type { BioAuthState } from '../reducers/bioAuth';
 import { type AppState, type TrezorDevice } from '../types/suite';
 
@@ -145,6 +149,26 @@ export const createSuiteServicesCompositionRoot = (deps: SuiteAppDeps): SuiteSer
         updateOutputLabel: suiteSync.labeling.updateOutputLabel,
     });
 
+    const connectInitHooks: ConnectInitHooks = {
+        [DEVICE.CONNECT]: device => {
+            deps.dispatch(markDeviceAsRecentlyConnectedThunk(device));
+            deps.dispatch(bluetoothOnDeviceConnectedThunk(device));
+        },
+        [DEVICE.CONNECT_UNACQUIRED]: device => {
+            deps.dispatch(markDeviceAsRecentlyConnectedThunk(device));
+        },
+        [UI_REQUEST.INVALID_PIN_ATTEMPTS_DEPLETED]: () => {
+            deps.dispatch(openModal({ type: UI_REQUEST.INVALID_PIN_ATTEMPTS_DEPLETED }));
+            deps.dispatch(preserveModal());
+        },
+        [UI_REQUEST.REQUEST_WORD]: () => {
+            if (selectRecoveryStatus(deps.getState()) === 'waiting-for-confirmation') {
+                // Since the device asked for a first word, we can safely assume we've received confirmation from the user
+                deps.dispatch(recoveryActions.setStatus('in-progress'));
+            }
+        },
+    };
+
     return {
         suiteSync,
         bip329,
@@ -158,6 +182,7 @@ export const createSuiteServicesCompositionRoot = (deps: SuiteAppDeps): SuiteSer
         reportSecurityCheck,
         saveAs: (data: Blob, fileName: string) => saveAs(data, fileName),
         connectInitSettings,
+        connectInitHooks,
         migrateSuiteSyncLabelsForRbfTransaction:
             createMigrateSuiteSyncLabelsForRbfTransactionCompositionRoot({
                 dispatch: deps.dispatch,

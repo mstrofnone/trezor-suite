@@ -12,14 +12,12 @@ import {
     selectFeatureConfig,
 } from '@suite-common/message-system';
 import { createThunk } from '@suite-common/redux-utils';
-import { type TrezorDevice } from '@suite-common/suite-types';
 import { getBrowserName } from '@suite-common/suite-utils';
 import { deviceConnectThunks, selectEnabledNetworks } from '@suite-common/wallet-core';
 import TrezorConnect, {
     BLOCKCHAIN_EVENT,
     DEVICE,
     DEVICE_EVENT,
-    type Device,
     TRANSPORT_EVENT,
     UI_EVENT,
     UI_REQUEST,
@@ -38,12 +36,15 @@ const CONNECT_INIT_MODULE = '@common/connect-init';
 type DistributiveOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
 type UiEventAction = DistributiveOmit<UiEventMessage | PopupEventMessage, 'event'>;
 
-// Static portion of the connect UI_EVENT handler (no init-hook side effects).
-// Shared between the global connectInitThunk listener and PassphraseFlow so the
-// scoped path also dispatches the action and the matching addButtonRequest.
+// Static portion of the connect UI_EVENT handler. Shared between the global
+// connectInitThunk listener and PassphraseFlow so the scoped path also dispatches
+// the action, runs the matching addButtonRequest, and fires the platform init
+// hooks (sourced from extra.services so the static body stays self-contained).
 export const handleUiEventActionThunk = createThunk<void, UiEventAction, void>(
     `${CONNECT_INIT_MODULE}/handleUiEventAction`,
-    (action, { dispatch, getState }) => {
+    (action, { dispatch, getState, extra }) => {
+        const { connectInitHooks } = extra.services;
+
         if (action.type === UI_REQUEST.FIRMWARE_DOWNLOADED) {
             // We are in web therefore we ignore `FIRMWARE_DOWNLOADED` action.
             return;
@@ -76,32 +77,26 @@ export const handleUiEventActionThunk = createThunk<void, UiEventAction, void>(
                 break;
             }
         }
+
+        if (
+            action.type === UI_REQUEST.INVALID_PIN_ATTEMPTS_DEPLETED ||
+            action.type === UI_REQUEST.REQUEST_WORD
+        ) {
+            connectInitHooks[action.type]?.();
+        }
     },
 );
 
 // If you are looking where connectInitSettings is defined, it is defined in packages/suite/src/support/extraDependencies.ts
 // or in suite-native/state/src/extraDependencies.ts depends on which platform this connectInitThunk runs.
 
-type ConnectInitHooks = Partial<
-    Record<
-        typeof DEVICE.CONNECT | typeof DEVICE.CONNECT_UNACQUIRED,
-        (device: Device, prevConnectedDevices: TrezorDevice[]) => void
-    >
-> &
-    Partial<
-        Record<
-            typeof UI_REQUEST.INVALID_PIN_ATTEMPTS_DEPLETED | typeof UI_REQUEST.REQUEST_WORD,
-            () => void
-        >
-    >;
-
-export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>(
+export const connectInitThunk = createThunk<void, void, void>(
     `${CONNECT_INIT_MODULE}/initThunk`,
-    async (connectInitHooks, { dispatch, getState, extra }) => {
+    async (_, { dispatch, getState, extra }) => {
         const {
             selectors: { selectDebugSettings, selectThpSettings },
             actions: { lockDevice },
-            services: { connectInitSettings, analytics },
+            services: { connectInitSettings, connectInitHooks, analytics },
         } = extra;
 
         const getEnabledNetworks = () => selectEnabledNetworks(getState());
@@ -117,9 +112,7 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
                 const connectedDevices = selectDevices(getState());
                 dispatch(deviceConnectThunks({ type: eventData.type, device: eventData.payload }));
 
-                if (connectInitHooks && eventData.type in connectInitHooks) {
-                    connectInitHooks[eventData.type]?.(eventData.payload, connectedDevices);
-                }
+                connectInitHooks[eventData.type]?.(eventData.payload, connectedDevices);
             } else {
                 // dispatch event as action
                 dispatch({ type: eventData.type, payload: eventData.payload });
@@ -142,14 +135,6 @@ export const connectInitThunk = createThunk<void, ConnectInitHooks | void, void>
             }
 
             dispatch(handleUiEventActionThunk(action));
-
-            if (
-                connectInitHooks &&
-                (action.type === UI_REQUEST.INVALID_PIN_ATTEMPTS_DEPLETED ||
-                    action.type === UI_REQUEST.REQUEST_WORD)
-            ) {
-                connectInitHooks[action.type]?.();
-            }
         });
 
         TrezorConnect.on(TRANSPORT_EVENT, ({ event: _, ...action }) => {
