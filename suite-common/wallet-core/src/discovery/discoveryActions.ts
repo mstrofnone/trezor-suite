@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { type DiscoveryStatus } from '@suite-common/wallet-types';
+import { type DiscoveryCallIds, type DiscoveryStatus } from '@suite-common/wallet-types';
 import { type DeviceUniquePath } from '@trezor/connect';
 
 export const DISCOVERY_MODULE_PREFIX = '@common/wallet-core/discovery';
@@ -28,6 +28,7 @@ type StartDiscoveryParams = {
     isAddingHiddenWallet?: boolean;
     isAddingExistingWallet?: boolean;
     useScopedCallIds?: boolean;
+    callIds?: DiscoveryCallIds;
 };
 
 export const startDiscovery = createAction(
@@ -38,6 +39,7 @@ export const startDiscovery = createAction(
             isAddingHiddenWallet,
             isAddingExistingWallet,
             useScopedCallIds,
+            callIds,
         }: StartDiscoveryParams = {},
     ) => ({
         payload: {
@@ -45,6 +47,7 @@ export const startDiscovery = createAction(
             isAddingHiddenWallet,
             isAddingExistingWallet,
             useScopedCallIds,
+            callIds,
         },
     }),
 );

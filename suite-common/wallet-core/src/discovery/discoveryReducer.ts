@@ -27,6 +27,10 @@ const update = (draft: Discovery, payload: { status: DiscoveryStatus; path: Devi
         ...currentStatus,
         ...payload.status,
         hasLoadedAnyNonEmptyAccount,
+        // callIds are minted once at startDiscovery and must stay stable for the
+        // lifetime of the discovery instance — PassphraseFlow filters UI events
+        // by membership in this set.
+        callIds: currentStatus.callIds,
         ...{
             passphraseSubmitted:
                 payload.status.passphraseSubmitted ?? currentStatus.passphraseSubmitted,
@@ -46,6 +50,7 @@ export const prepareDiscoveryReducer = createReducerWithExtraDeps(
                 isAddingHiddenWallet: payload.isAddingHiddenWallet,
                 isAddingExistingWallet: payload.isAddingExistingWallet,
                 useScopedCallIds: payload.useScopedCallIds,
+                callIds: payload.callIds,
                 startTimestamp: Date.now() as Timestamp,
             };
         });

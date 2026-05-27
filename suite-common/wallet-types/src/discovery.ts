@@ -1,5 +1,16 @@
 import type { BundleProgress, DeviceUniquePath, StaticSessionId } from '@trezor/connect';
 
+// Stable set of callIds minted once when a scoped discovery starts. Each Connect
+// call in runDiscoveryThunk uses its named slot, and PassphraseFlow accepts only
+// UI events whose callId is in this set. The field is set on startDiscovery and
+// must not be mutated for the lifetime of that discovery instance.
+export type DiscoveryCallIds = {
+    initialDeviceState: string;
+    emptyPassphraseCheck: string;
+    discoverAccounts: string;
+    confirmDeviceState: string;
+};
+
 type CommonDiscoveryStatus = {
     isAddingHiddenWallet?: boolean; // to control visibility of special loader
     isAddingExistingWallet?: boolean; // to control visibility of special loader
@@ -8,6 +19,7 @@ type CommonDiscoveryStatus = {
     startTimestamp?: number;
     passphraseSubmitted?: boolean;
     useScopedCallIds?: boolean;
+    callIds?: DiscoveryCallIds;
 };
 
 export type DiscoveryStatus = CommonDiscoveryStatus &

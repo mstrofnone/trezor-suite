@@ -54,12 +54,7 @@ export const PassphraseDuplicateModal = ({
             }),
         );
 
-        dispatch(
-            runDiscoveryThunk({
-                device,
-                useScopedCallIds: discovery.useScopedCallIds,
-            }),
-        );
+        dispatch(runDiscoveryThunk({ device }));
     };
 
     return (

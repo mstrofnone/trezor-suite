@@ -21,21 +21,24 @@ export const PassphraseFlow = () => {
     );
     const [modalState, setModalState] = useState<State>(initialModalState);
 
+    const callIds = discovery?.callIds;
     const isActive =
         !!device &&
-        discovery?.useScopedCallIds === true &&
-        discovery.isAddingHiddenWallet === true &&
+        callIds !== undefined &&
+        discovery?.isAddingHiddenWallet === true &&
         !HIDDEN_WALLET_TERMINAL_STATUSES.has(discovery.status);
 
     useEffect(() => {
-        if (!isActive) {
+        if (!isActive || !callIds) {
             setModalState(initialModalState);
 
             return undefined;
         }
+        const scopedCallIds = new Set<string>(Object.values(callIds));
         const onUiEvent = (message: UiEventMessage | PopupEventMessage) => {
             const { event: _, ...action } = message;
             if (!('callId' in action) || !action.callId) return;
+            if (!action.callId || !scopedCallIds.has(action.callId)) return;
             // Passphrase request stays handled by <PassphraseModal /> below,
             // because it's driven off discovery state + has its own
             // sub-flows (best-practices, wallet-exists / not-exist,
@@ -49,7 +52,7 @@ export const PassphraseFlow = () => {
         return () => {
             TrezorConnect.off(UI_EVENT, onUiEvent);
         };
-    }, [isActive]);
+    }, [isActive, callIds]);
 
     if (!isActive || !device) return null;
 

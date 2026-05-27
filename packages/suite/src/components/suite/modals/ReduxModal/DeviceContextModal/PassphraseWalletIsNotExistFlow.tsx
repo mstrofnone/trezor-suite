@@ -37,14 +37,7 @@ export const PassphraseWalletIsNotExistFlow = ({
                 device={device}
                 onBack={onBackToInitial}
                 onCancel={onCancel}
-                onNext={() =>
-                    dispatch(
-                        runDiscoveryThunk({
-                            device,
-                            useScopedCallIds: discovery.useScopedCallIds,
-                        }),
-                    )
-                }
+                onNext={() => dispatch(runDiscoveryThunk({ device }))}
             />
         );
     }

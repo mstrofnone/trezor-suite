@@ -30,6 +30,7 @@ import {
 } from '@suite-common/wallet-config';
 import {
     type Account,
+    type DiscoveryCallIds,
     type DiscoveryStatus,
     type TokenSymbol,
     toTokenAddress,
@@ -347,25 +348,23 @@ export const cancelDiscoveryThunk = createThunk(
     },
 );
 
-const makeCallIdGenerator = (enabled: boolean) => {
-    if (!enabled) return () => undefined;
-
-    return () => crypto.randomUUID();
-};
+const generateDiscoveryCallIds = (): DiscoveryCallIds => ({
+    initialDeviceState: crypto.randomUUID(),
+    emptyPassphraseCheck: crypto.randomUUID(),
+    discoverAccounts: crypto.randomUUID(),
+    confirmDeviceState: crypto.randomUUID(),
+});
 
 type RunDiscoveryParams = {
     device: TrezorDevice;
-    useScopedCallIds?: boolean;
 };
 
 export const runDiscoveryThunk = createThunk(
     `${DISCOVERY_MODULE_PREFIX}/run`,
     async (
-        { device: passedDevice, useScopedCallIds = false }: RunDiscoveryParams,
+        { device: passedDevice }: RunDiscoveryParams,
         { dispatch, getState, extra },
     ): Promise<void> => {
-        const nextCallId = makeCallIdGenerator(useScopedCallIds);
-
         try {
             let device: TrezorDevice = passedDevice;
 
@@ -391,6 +390,7 @@ export const runDiscoveryThunk = createThunk(
 
             // Can be changed later if the passphrase typed on device is identified as empty
             let { isAddingHiddenWallet } = discovery;
+            const { callIds } = discovery;
 
             assertDeviceIsAcquired(device);
 
@@ -411,7 +411,7 @@ export const runDiscoveryThunk = createThunk(
                     state: undefined,
                     useEmptyPassphrase: !isAddingHiddenWallet,
                 },
-                callId: nextCallId(),
+                callId: callIds?.initialDeviceState,
             });
 
             if (!isDiscoveryInProgress(selectDiscoveryByDevicePath(getState(), device.path))) {
@@ -460,7 +460,7 @@ export const runDiscoveryThunk = createThunk(
                     // no passphrase duplicity and no standard wallet -> check that this is not in fact empty passphrase
                     const res = await TrezorConnect.getDeviceState({
                         device: { path: passedDevice.path, useEmptyPassphrase: true },
-                        callId: nextCallId(),
+                        callId: callIds?.emptyPassphraseCheck,
                     });
 
                     if (res.success && deviceStateEqualTo(deviceState)(res.payload.state)) {
@@ -549,7 +549,7 @@ export const runDiscoveryThunk = createThunk(
                 },
                 coins: accountsParam,
                 entropyCheckResult,
-                callId: nextCallId(),
+                callId: callIds?.discoverAccounts,
             });
 
             TrezorConnect.off(UI_REQUEST.BUNDLE_PROGRESS, onBundleProgress);
@@ -616,7 +616,7 @@ export const runDiscoveryThunk = createThunk(
 
             const getDeviceState2Res = await TrezorConnect.getDeviceState({
                 device: { path: device.path, instance, state: undefined },
-                callId: nextCallId(),
+                callId: callIds?.confirmDeviceState,
             });
 
             if (!isDiscoveryInProgress(selectDiscoveryByDevicePath(getState(), device.path))) {
@@ -706,6 +706,7 @@ export const startDiscoveryThunk = createThunk(
                 isAddingHiddenWallet,
                 isAddingExistingWallet,
                 useScopedCallIds,
+                callIds: useScopedCallIds ? generateDiscoveryCallIds() : undefined,
             }),
         );
 
@@ -714,7 +715,7 @@ export const startDiscoveryThunk = createThunk(
         // - or adding an existing hidden wallet,
         // - or adding initially a hidden wallet set by settings
         if (!isAddingHiddenWallet || isAddingExistingWallet) {
-            dispatch(runDiscoveryThunk({ device, useScopedCallIds }));
+            dispatch(runDiscoveryThunk({ device }));
         }
     },
 );
