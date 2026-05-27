@@ -321,7 +321,7 @@ export const ApproveModal = ({
                                 priority="secondary"
                             >
                                 <Translation
-                                    id="TR_EXCHANGE_APPROVAL_VALUE_INFINITE_INFO"
+                                    id="TR_APPROVAL_VALUE_INFINITE_INFO"
                                     values={translationValues}
                                 />
                             </Paragraph>
@@ -350,10 +350,7 @@ export const ApproveModal = ({
                                 intent="neutral"
                                 priority="secondary"
                             >
-                                <Translation
-                                    id="TR_EXCHANGE_APPROVAL_VALUE_MINIMAL_INFO"
-                                    values={translationValues}
-                                />
+                                <Translation id="TR_APPROVAL_VALUE_MINIMAL_INFO" />
                             </Paragraph>
                         </RadioCard>
                         {isDebug && dexTx.data ? (
